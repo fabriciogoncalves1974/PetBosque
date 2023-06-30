@@ -1,0 +1,333 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_application_1/funcoes/info_contato.dart';
+import 'package:flutter_application_1/paginas/lista_contato.dart';
+import 'package:flutter_application_1/paginas/lista_pet.dart';
+import 'package:flutter_application_1/paginas/novo_contato.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+
+enum OrderOption { orderaz, orderza }
+
+class PaginaPrincipal extends StatefulWidget {
+  const PaginaPrincipal({Key? key}) : super(key: key);
+
+  @override
+  State<PaginaPrincipal> createState() => _PaginaPrincipalState();
+}
+
+class _PaginaPrincipalState extends State<PaginaPrincipal> {
+  InfoContato info = InfoContato();
+
+  List<Contato> contatos = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _obterTodosContatos();
+  }
+
+  paginaContatos() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => ListaContatos()),
+    );
+  }
+
+  paginaPets() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => ListaPet()),
+    );
+  }
+
+  paginaPet() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => ListaPet()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Agenda"),
+        centerTitle: true,
+        actions: <Widget>[
+          PopupMenuButton<OrderOption>(
+            itemBuilder: (context) => <PopupMenuEntry<OrderOption>>[
+              const PopupMenuItem<OrderOption>(
+                value: OrderOption.orderaz,
+                child: Text("Ordenar de A-Z"),
+              ),
+              const PopupMenuItem<OrderOption>(
+                value: OrderOption.orderza,
+                child: Text("Ordenar de Z-A"),
+              ),
+            ],
+            onSelected: _ordenarLista,
+          )
+        ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            DrawerHeader(
+                decoration: const BoxDecoration(
+                    gradient: LinearGradient(colors: <Color>[
+                  Colors.blue,
+                  Colors.blueAccent,
+                ])),
+                child: Container(
+                  child: Column(
+                    children: <Widget>[
+                      Material(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(50.0)),
+                        elevation: 10,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            "assets/imagens/pet.png",
+                            width: 80,
+                            height: 80,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+            CustomListTile(
+              icone: Icons.person,
+              texto: "Clientes",
+              onTap: paginaContatos,
+            ),
+            CustomListTile(
+              icone: Icons.pets,
+              texto: "Pets",
+              onTap: paginaPets,
+            ),
+            CustomListTile(
+                icone: Icons.settings, texto: "Configuração", onTap: paginaPet),
+            CustomListTile(
+                icone: Icons.exit_to_app, texto: "Sair", onTap: () {}),
+          ],
+        ),
+      ),
+      backgroundColor: Colors.white,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _ExibirNovoContato();
+        },
+        child: const Icon(Icons.add),
+      ),
+      body: ListView.builder(
+          padding: const EdgeInsets.all(10.0),
+          itemCount: contatos.length,
+          itemBuilder: (context, index) {
+            return _cartaoContato(context, index);
+          }),
+    );
+  }
+
+  Widget _cartaoContato(BuildContext context, int index) {
+    return GestureDetector(
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(children: <Widget>[
+            Container(
+              width: 80.0,
+              height: 80.0,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+              ),
+              child: Image.file(
+                File(contatos[index].idPet ?? ""),
+                errorBuilder: (context, error, stackTrace) =>
+                    Image.asset("assets/imagens/pet.png"),
+                fit: BoxFit.cover,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    contatos[index].nome ?? "",
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  Text(
+                    contatos[index].email ?? "",
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  Text(
+                    contatos[index].telefone ?? "",
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                ],
+              ),
+            ),
+          ]),
+        ),
+      ),
+      onTap: () {
+        _exibirOpcoes(context, index);
+      },
+    );
+  }
+
+  void _exibirOpcoes(BuildContext context, int index) {
+    showBottomSheet(
+        context: context,
+        builder: (context) {
+          return BottomSheet(
+            onClosing: () {},
+            builder: (context) {
+              return Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: TextButton.icon(
+                        label: const Text("Ligar"),
+                        icon: const Icon(Icons.call),
+                        style:
+                            TextButton.styleFrom(foregroundColor: Colors.green),
+                        onPressed: () {
+                          launchUrlString("tel:${contatos[index].telefone}");
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: TextButton.icon(
+                          label: const Text("Editar"),
+                          icon: const Icon(Icons.edit),
+                          style: TextButton.styleFrom(
+                              foregroundColor: Colors.lightBlue),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _ExibirNovoContato(contato: contatos[index]);
+                          }),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: TextButton.icon(
+                        label: const Text("Excluir"),
+                        icon: const Icon(Icons.delete),
+                        style:
+                            TextButton.styleFrom(foregroundColor: Colors.red),
+                        onPressed: () {
+                          info.deletarContato(contatos[index].id!);
+                          setState(() {
+                            contatos.removeAt(index);
+                            Navigator.pop(context);
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        });
+  }
+
+  void _ExibirNovoContato({Contato? contato}) async {
+    final gravaContato = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => NovoContato(
+                  contato: contato,
+                )));
+    if (gravaContato != null) {
+      if (contato != null) {
+        await info.atualizarContato(gravaContato);
+        _obterTodosContatos();
+      } else {
+        await info.salvarContato(gravaContato);
+      }
+      _obterTodosContatos();
+    }
+  }
+
+  void _obterTodosContatos() {
+    info.obterTodosContatos().then((dynamic list) {
+      setState(() {
+        contatos = list;
+      });
+    });
+  }
+
+  void _ordenarLista(OrderOption result) {
+    switch (result) {
+      case OrderOption.orderaz:
+        contatos.sort(
+            (a, b) => a.nome!.toLowerCase().compareTo(b.nome!.toLowerCase()));
+        break;
+      case OrderOption.orderza:
+        contatos.sort(
+            (a, b) => b.nome!.toLowerCase().compareTo(a.nome!.toLowerCase()));
+        break;
+    }
+    setState(() {});
+  }
+}
+
+//Customizar ListTile do menu
+class CustomListTile extends StatelessWidget {
+  final IconData icone;
+  final String texto;
+  final void Function()? onTap;
+
+  //CustomListTile(this.icone, this.texto);
+  const CustomListTile({
+    super.key,
+    required this.icone,
+    required this.texto,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.grey.shade400))),
+        child: InkWell(
+          splashColor: Colors.lightBlue,
+          onTap: onTap,
+          child: Container(
+            height: 50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Icon(icone),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        texto,
+                        style: const TextStyle(fontSize: 16.0),
+                      ),
+                    ),
+                  ],
+                ),
+                const Icon(Icons.arrow_right)
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
