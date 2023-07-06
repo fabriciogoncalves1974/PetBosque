@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
 import 'package:sqflite/sqlite_api.dart';
@@ -27,7 +28,7 @@ class InfoColaborador {
     return colaborador;
   }
 
-  Future<List> obterDadosColaborador(int id) async {
+  Future<List> obterDadosColaborador(dynamic id) async {
     Database? db = await DB.instance.database;
     Database? dbColaborador = db;
     List listMap = await dbColaborador!
@@ -39,21 +40,23 @@ class InfoColaborador {
     return listaColaborador;
   }
 
-  Future<Future<List<Map<String, Object?>>>> inativarColaborador(int id) async {
+  Future<Future<List<Map<String, Object?>>>> inativarColaborador(
+      dynamic id) async {
     Database? db = await DB.instance.database;
     Database? dbColaborador = db;
     return dbColaborador!.rawQuery(
         "UPDATE '$tabelaColaborador' SET  status = 'Inativo' WHERE id = '$id'");
   }
 
-  Future<Future<List<Map<String, Object?>>>> ativarColaborador(int id) async {
+  Future<Future<List<Map<String, Object?>>>> ativarColaborador(
+      dynamic id) async {
     Database? db = await DB.instance.database;
     Database? dbColaborador = db;
     return dbColaborador!.rawQuery(
         "UPDATE '$tabelaColaborador' SET  status = 'Ativo' WHERE id = '$id'");
   }
 
-  Future<Colaborador?> obterColaborador(int id) async {
+  Future<Colaborador?> obterColaborador(dynamic id) async {
     Database? db = await DB.instance.database;
     Database? dbColaborador = db;
     List<Map> maps = await dbColaborador!.query(tabelaColaborador,
@@ -74,7 +77,7 @@ class InfoColaborador {
     }
   }
 
-  Future<int> deletarColaborador(int id) async {
+  Future<dynamic> deletarColaborador(dynamic id) async {
     Database? db = await DB.instance.database;
     Database? dbColaborador = db;
     return await dbColaborador!
@@ -124,17 +127,44 @@ class InfoColaborador {
     Database? dbPlano = db;
     dbPlano!.close();
   }
+
+  Future<List> obterTodosColaboradoresFirestore() async {
+    CollectionReference colaboradorCollection =
+        FirebaseFirestore.instance.collection('colaborador');
+    var result = await colaboradorCollection.get();
+    return result.docs
+        .map((doc) => Colaborador(
+            nomeColaborador: doc['nomeColaborador'],
+            funcao: doc['funcao'],
+            porcenComissao: doc['porcenComissao'],
+            metaComissao: doc['metaComissao'],
+            status: doc['status'],
+            id: doc['idColaborador']))
+        .toList();
+  }
+
+  deletarColaboradorFirestore(id) async {
+    CollectionReference planoCollection =
+        FirebaseFirestore.instance.collection('planos');
+    planoCollection.doc(id).delete();
+  }
 }
 
 class Colaborador {
-  int? id;
+  dynamic id;
   String? nomeColaborador;
   String? funcao;
-  double? porcenComissao;
-  double? metaComissao;
+  dynamic porcenComissao;
+  dynamic metaComissao;
   String? status;
 
-  Colaborador();
+  Colaborador(
+      {this.nomeColaborador,
+      this.funcao,
+      this.porcenComissao,
+      this.metaComissao,
+      this.status,
+      this.id});
 
   Colaborador.fromMap(Map map) {
     id = map[idColuna];

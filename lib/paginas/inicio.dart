@@ -2,6 +2,7 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/paginas/agendamentos.dart';
+import 'package:pet_bosque/paginas/lista.dart';
 import 'package:pet_bosque/paginas/lista_agendamentos.dart';
 import 'package:pet_bosque/paginas/lista_agendamentosPendentes.dart';
 import 'package:pet_bosque/paginas/lista_colaborador.dart';
@@ -74,10 +75,7 @@ class _InicioState extends State<Inicio> {
 
   paginaPlanos() {
     Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => const Inicio(
-                index: 4,
-              )),
+      MaterialPageRoute(builder: (context) => const Lista()),
     );
   }
 

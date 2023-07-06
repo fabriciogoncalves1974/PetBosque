@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/paginas/detalhe_agendamento.dart';
@@ -16,7 +15,7 @@ class ListaAgendamentosColaborador extends StatefulWidget {
   const ListaAgendamentosColaborador(
       {Key? key, required this.idColaborador, required this.taxaComissao})
       : super(key: key);
-  final int idColaborador;
+  final dynamic idColaborador;
   final double taxaComissao;
   @override
   State<ListaAgendamentosColaborador> createState() =>

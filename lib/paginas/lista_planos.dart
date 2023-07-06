@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_bosque/funcoes/info_plano.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
@@ -13,6 +13,8 @@ class ListaPlanos extends StatefulWidget {
   @override
   State<ListaPlanos> createState() => _ListaPlanosState();
 }
+
+FirebaseFirestore db = FirebaseFirestore.instance;
 
 class _ListaPlanosState extends State<ListaPlanos> {
   InfoPlano info = InfoPlano();
@@ -31,8 +33,13 @@ class _ListaPlanosState extends State<ListaPlanos> {
   @override
   void initState() {
     super.initState();
-
-    _obterTodosPlanos();
+    db.collection('planos').snapshots().listen(
+      (event) {
+        setState(() {
+          _obterTodosPlanos();
+        });
+      },
+    );
   }
 
   @override
@@ -125,7 +132,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
                                   borderRadius: BorderRadius.circular(10)),
                             ),
                             onPressed: () {
-                              info.deletarPlano(plano[index].id!);
+                              info.deletarPlanoFirestore(plano[index].id!);
                               setState(() {
                                 plano.removeAt(index);
                                 Navigator.pop(context);
@@ -309,7 +316,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
   }
 
   void _obterTodosPlanos() {
-    info.obterTodosPlanos().then((dynamic list) {
+    info.obterTodosPlanosFirestore().then((dynamic list) {
       setState(() {
         plano = list;
       });

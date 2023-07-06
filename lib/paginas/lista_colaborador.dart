@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -16,6 +17,8 @@ class ListaColaborador extends StatefulWidget {
   @override
   State<ListaColaborador> createState() => _ListaColaboradorState();
 }
+
+FirebaseFirestore db = FirebaseFirestore.instance;
 
 class _ListaColaboradorState extends State<ListaColaborador> {
   InfoColaborador info = InfoColaborador();
@@ -43,7 +46,13 @@ class _ListaColaboradorState extends State<ListaColaborador> {
   @override
   void initState() {
     super.initState();
-    _obterDadosColaboradores();
+    db.collection('colaborador').snapshots().listen(
+      (event) {
+        setState(() {
+          _obterDadosColaboradores();
+        });
+      },
+    );
   }
 
   @override
@@ -113,7 +122,15 @@ class _ListaColaboradorState extends State<ListaColaborador> {
                 icon: Icons.add,
                 caption: 'Desativar',
                 onTap: () {
-                  info.inativarColaborador(colaborador[index].id!);
+                  //info.inativarColaborador(colaborador[index].id!);
+                  db.collection("colaborador").doc(colaborador[index].id).set({
+                    "idColaborador": colaborador[index].id,
+                    "nomeColaborador": colaborador[index].nomeColaborador,
+                    "funcao": colaborador[index].funcao,
+                    "porcenComissao": colaborador[index].porcenComissao,
+                    "metaComissao": colaborador[index].metaComissao,
+                    "status": "Inativo"
+                  });
                   setState(() {
                     _obterDadosColaboradores();
                   });
@@ -125,7 +142,15 @@ class _ListaColaboradorState extends State<ListaColaborador> {
                 icon: Icons.add,
                 caption: 'Ativar',
                 onTap: () {
-                  info.ativarColaborador(colaborador[index].id!);
+                  //info.ativarColaborador(colaborador[index].id!);
+                  db.collection("colaborador").doc(colaborador[index].id).set({
+                    "idColaborador": colaborador[index].id,
+                    "nomeColaborador": colaborador[index].nomeColaborador,
+                    "funcao": colaborador[index].funcao,
+                    "porcenComissao": colaborador[index].porcenComissao,
+                    "metaComissao": colaborador[index].metaComissao,
+                    "status": "Ativo"
+                  });
                   setState(() {
                     _obterDadosColaboradores();
                   });
@@ -259,7 +284,7 @@ class _ListaColaboradorState extends State<ListaColaborador> {
   }
 
   void _obterDadosColaboradores() {
-    info.obterTodosColaboradores().then((dynamic list) {
+    info.obterTodosColaboradoresFirestore().then((dynamic list) {
       setState(() {
         colaborador = list;
       });

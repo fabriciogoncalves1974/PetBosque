@@ -1,6 +1,5 @@
 //import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_bosque/funcoes/info_contato.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
@@ -52,8 +51,13 @@ class _ListaContatosState extends State<ListaContatos> {
   @override
   void initState() {
     super.initState();
-
-    _obterTodosContatos();
+    db.collection('contato').snapshots().listen(
+      (event) {
+        setState(() {
+          _obterTodosContatos();
+        });
+      },
+    );
   }
 
   @override
@@ -131,7 +135,7 @@ class _ListaContatosState extends State<ListaContatos> {
               caption: 'Editar',
               onTap: () {
                 Navigator.pop(context);
-                _ExibirNovoContato(contato: contatos[index]);
+                //_ExibirNovoContato(contato: contatos[index]);
               },
             ),
             IconSlideAction(
@@ -260,6 +264,60 @@ class _ListaContatosState extends State<ListaContatos> {
                 Row(
                   children: [
                     const Text(
+                      "Endereço: ",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      contatos[index].endereco ?? "",
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      "Complemento: ",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      contatos[index].complemento ?? "",
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      "Bairro: ",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      contatos[index].bairro ?? "",
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
                       "Cidade: ",
                       style: TextStyle(
                         color: Color.fromARGB(255, 73, 66, 2),
@@ -269,6 +327,41 @@ class _ListaContatosState extends State<ListaContatos> {
                     ),
                     Text(
                       contatos[index].cidade ?? "",
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 25,
+                    ),
+                    const Text(
+                      "UF: ",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      contatos[index].uf ?? "",
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      "Email: ",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      contatos[index].email ?? "",
                       style: const TextStyle(
                         fontSize: 12,
                       ),
@@ -385,18 +478,18 @@ class _ListaContatosState extends State<ListaContatos> {
                 )));
     if (gravaContato != null) {
       if (contato != null) {
-        await info.atualizarContato(gravaContato);
+        // await info.atualizarContato(gravaContato);
 
         _obterTodosContatos();
       } else {
-        await info.salvarContato(gravaContato);
+        //await info.salvarContato(gravaContato);
       }
       _obterTodosContatos();
     }
   }
 
   void _obterTodosContatos() {
-    info.obterTodosContatos().then((dynamic list) {
+    info.obterTodosContatosFirestore().then((dynamic list) {
       setState(() {
         contatos = list;
       });

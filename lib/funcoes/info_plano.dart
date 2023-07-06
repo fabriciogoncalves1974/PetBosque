@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
 import 'package:sqflite/sqlite_api.dart';
@@ -23,6 +24,8 @@ class InfoPlano {
   factory InfoPlano() => _instance;
 
   InfoPlano.internal();
+
+  late CollectionReference planoCollection;
 
   Future<Plano> salvarPlano(Plano plano) async {
     Database? db = await DB.instance.database;
@@ -94,6 +97,54 @@ class InfoPlano {
     return listaPlano;
   }
 
+  Future<List> obterTodosPlanosFirestore() async {
+    CollectionReference planoCollection =
+        FirebaseFirestore.instance.collection('planos');
+    var result = await planoCollection.get();
+    return result.docs
+        .map((doc) => Plano(
+            nomePlano: doc['nomePlano'],
+            svBanho: doc['svBanho'],
+            svTosa: doc['svTosa'],
+            svCorteUnha: doc['svCorteUnha'],
+            svHidratacao: doc['svHidratacao'],
+            svTosaHigienica: doc['svTosaHigienica'],
+            svPintura: doc['svPintura'],
+            svHospedagem: doc['svHospedagem'],
+            svTransporte: doc['svTransporte'],
+            valor: doc['valor'],
+            id: doc['idPlano']))
+        .toList();
+  }
+
+  deletarPlanoFirestore(id) async {
+    CollectionReference planoCollection =
+        FirebaseFirestore.instance.collection('planos');
+    planoCollection.doc(id).delete();
+  }
+
+  Future<List?> obterTodosPlanosFirestore2() async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    db.collection('planos').snapshots().listen((query) {
+      List lista = query.docs
+          .map((DocumentSnapshot doc) => Plano(
+              nomePlano: doc['nomePlano'],
+              svBanho: doc['svBanho'],
+              svTosa: doc['svTosa'],
+              svCorteUnha: doc['svCorteUnha'],
+              svHidratacao: doc['svHidratacao'],
+              svTosaHigienica: doc['svTosaHigienica'],
+              svPintura: doc['svPintura'],
+              svHospedagem: doc['svHospedagem'],
+              svTransporte: doc['svTransporte'],
+              valor: doc['valor'],
+              id: doc['idPlano']))
+          .toList();
+      var a = query.docs;
+      print(lista);
+    });
+  }
+
   Future<List> obterPlanosPet2(int id) async {
     Database? db = await DB.instance.database;
     Database? dbPlano = db;
@@ -128,7 +179,7 @@ class InfoPlano {
 }
 
 class Plano {
-  int? id;
+  dynamic id;
   String? nomePlano;
   String? svBanho;
   String? svTosa;
@@ -138,9 +189,20 @@ class Plano {
   String? svPintura;
   String? svHospedagem;
   String? svTransporte;
-  double? valor;
+  dynamic? valor;
 
-  Plano();
+  Plano(
+      {this.nomePlano,
+      this.svBanho,
+      this.svTosa,
+      this.svCorteUnha,
+      this.svHidratacao,
+      this.svTosaHigienica,
+      this.svPintura,
+      this.svHospedagem,
+      this.svTransporte,
+      this.valor,
+      this.id});
 
   Plano.fromMap(Map map) {
     id = map[idColuna];

@@ -1,14 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_bosque/funcoes/info_plano.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
 import 'package:pet_bosque/paginas/lista_planos.dart';
+import 'package:uuid/uuid.dart';
 
 class NovoPlano extends StatefulWidget {
   final Plano _plano;
   NovoPlano({
     super.key,
     Plano? plano,
-  }) : _plano = plano ?? Plano();
+  }) : _plano = plano ??
+            Plano(
+                nomePlano: null,
+                svBanho: null,
+                svCorteUnha: null,
+                svHidratacao: null,
+                svHospedagem: null,
+                svPintura: null,
+                svTosa: null,
+                svTosaHigienica: null,
+                svTransporte: null,
+                valor: null,
+                id: null);
 
   @override
   _NovoPlanoState createState() => _NovoPlanoState();
@@ -40,14 +54,36 @@ class _NovoPlanoState extends State<NovoPlano> {
   TextEditingController valorController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  final Plano _novoPlano = Plano();
+  final Plano _novoPlano = Plano(
+      nomePlano: null,
+      svBanho: null,
+      svCorteUnha: null,
+      svHidratacao: null,
+      svPintura: null,
+      svHospedagem: null,
+      svTosa: null,
+      svTosaHigienica: null,
+      svTransporte: null,
+      valor: null,
+      id: null);
   bool _planoEditado = false;
   late Plano _editarPlano;
-
+  FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
     _editarPlano = Plano.fromMap(widget._plano.toMap());
+  }
+
+  void _limpaCheck() {
+    svcBanho = false;
+    svcTosa = false;
+    svcTosaHigienica = false;
+    svcCorteUnha = false;
+    svcHidratacao = false;
+    svcPintura = false;
+    svcHospedagem = false;
+    svcTransporte = false;
   }
 
   @override
@@ -77,8 +113,22 @@ class _NovoPlanoState extends State<NovoPlano> {
             onPressed: () async {
               if (_editarPlano.nomePlano != null &&
                   _editarPlano.nomePlano!.isNotEmpty) {
-                info.salvarPlano(_editarPlano);
-
+                // info.salvarPlano(_editarPlano);
+                String id = Uuid().v1();
+                db.collection("planos").doc(id).set({
+                  "idPlano": id,
+                  "nomePlano": _editarPlano.nomePlano,
+                  "svBanho": _editarPlano.svBanho,
+                  "svTosa": _editarPlano.svTosa,
+                  "svCorteUnha": _editarPlano.svCorteUnha,
+                  "svHidratacao": _editarPlano.svHidratacao,
+                  "svTosaHigienica": _editarPlano.svTosaHigienica,
+                  "svPintura": _editarPlano.svPintura,
+                  "svHospedagem": _editarPlano.svHospedagem,
+                  "svTransporte": _editarPlano.svTransporte,
+                  "valor": _editarPlano.valor,
+                });
+                _limpaCheck();
                 Navigator.of(context).push(
                   MaterialPageRoute(
                       builder: (context) => const Inicio(

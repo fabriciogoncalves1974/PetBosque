@@ -43,7 +43,8 @@ class _AgendamentosState extends State<Agendamentos> {
                         child: Container(
                           height: 100,
                           width: 371,
-                          decoration: BoxDecoration(
+                          color: Colors.black,
+                          /*decoration: BoxDecoration(
                             image: const DecorationImage(
                                 image: AssetImage("assets/imagens/botao.png"),
                                 fit: BoxFit.cover),
@@ -51,7 +52,7 @@ class _AgendamentosState extends State<Agendamentos> {
                               color: Colors.white,
                             ),
                             borderRadius: BorderRadius.circular(25.0),
-                          ),
+                          ),*/
                           child: Row(children: [
                             IconButton(
                               iconSize: 72,
@@ -89,7 +90,8 @@ class _AgendamentosState extends State<Agendamentos> {
                         child: Container(
                           height: 100,
                           width: 371,
-                          decoration: BoxDecoration(
+                          color: Colors.black,
+                          /*decoration: BoxDecoration(
                             image: const DecorationImage(
                                 image: AssetImage("assets/imagens/botao.png"),
                                 fit: BoxFit.cover),
@@ -97,7 +99,7 @@ class _AgendamentosState extends State<Agendamentos> {
                               color: Colors.white,
                             ),
                             borderRadius: BorderRadius.circular(25.0),
-                          ),
+                          ),*/
                           child: Row(children: [
                             IconButton(
                               iconSize: 72,
@@ -136,7 +138,8 @@ class _AgendamentosState extends State<Agendamentos> {
                         child: Container(
                           height: 100,
                           width: 371,
-                          decoration: BoxDecoration(
+                          color: Colors.black,
+                          /*decoration: BoxDecoration(
                             image: const DecorationImage(
                                 image: AssetImage("assets/imagens/botao.png"),
                                 fit: BoxFit.cover),
@@ -144,7 +147,7 @@ class _AgendamentosState extends State<Agendamentos> {
                               color: Colors.white,
                             ),
                             borderRadius: BorderRadius.circular(25.0),
-                          ),
+                          ),*/
                           child: Row(children: [
                             IconButton(
                               iconSize: 72,

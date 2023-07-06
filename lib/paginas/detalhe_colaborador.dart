@@ -17,7 +17,7 @@ class DetalheColaborador extends StatefulWidget {
       {Key? key, required this.idColaborador, required this.nome})
       : super(key: key);
 
-  final int idColaborador;
+  final dynamic idColaborador;
   final String nome;
 
   @override
@@ -106,10 +106,10 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
       default:
         print('choose a different number!');
     }
-    _obterColaboradores();
-    _obterQuantidadeAgendamentos(int);
-    _totalAgendamentosColaborador(int);
-    _totalAgendamentosAvulso(int);
+    //_obterColaboradores();
+    //_obterQuantidadeAgendamentos(int);
+    //_totalAgendamentosColaborador(int);
+    //_totalAgendamentosAvulso(int);
   }
 
   Colaborador? selectedValue;
@@ -355,7 +355,7 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
     );
   }
 
-  void _obterQuantidadeAgendamentos(int) {
+  /*void _obterQuantidadeAgendamentos(int) {
     info.quantidadeAgendamentosColaborador(
         int.parse(widget.idColaborador).then((dynamic result) {
       setState(() {
@@ -399,7 +399,7 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
         porcentComissao = colaborador[0].porcenComissao as double;
       });
     });
-  }
+  }*/
 }
 
 //Customizar ListTile do menu

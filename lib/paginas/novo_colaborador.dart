@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_bosque/funcoes/info_coloborador.dart';
 import 'package:pet_bosque/paginas/lista_colaborador.dart';
+import 'package:uuid/uuid.dart';
 
 class NovoColaborador extends StatefulWidget {
   final Colaborador _colaborador;
@@ -13,6 +15,7 @@ class NovoColaborador extends StatefulWidget {
   _NovoColaboradorState createState() => _NovoColaboradorState();
 }
 
+FirebaseFirestore db = FirebaseFirestore.instance;
 InfoColaborador info = InfoColaborador();
 
 class _NovoColaboradorState extends State<NovoColaborador> {
@@ -65,7 +68,16 @@ class _NovoColaboradorState extends State<NovoColaborador> {
               _editarColaborador.metaComissao ??= 0;
               if (_editarColaborador.nomeColaborador != null &&
                   _editarColaborador.nomeColaborador!.isNotEmpty) {
-                info.salvarColaborador(_editarColaborador);
+                //info.salvarColaborador(_editarColaborador);
+                String id = Uuid().v1();
+                db.collection("colaborador").doc(id).set({
+                  "idColaborador": id,
+                  "nomeColaborador": _editarColaborador.nomeColaborador,
+                  "funcao": _editarColaborador.funcao,
+                  "porcenComissao": _editarColaborador.porcenComissao,
+                  "metaComissao": _editarColaborador.metaComissao,
+                  "status": _editarColaborador.status
+                });
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => ListaColaborador()));
               } else {

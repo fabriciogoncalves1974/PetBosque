@@ -116,11 +116,11 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
     setState(() {
       double valorAdicional =
           double.tryParse(valorAdicionalController.text) ?? 0;
-      double? valorPlano = itens?.valor ?? 0;
+      //double? valorPlano = itens?.valor ?? 0;
 
-      double valorTotal = (valorPlano + valorAdicional);
+      //double valorTotal = (valorPlano + valorAdicional);
 
-      _novoAgendamento.valorTotal = valorTotal;
+      // _novoAgendamento.valorTotal = valorTotal;
       _novoAgendamento.data = DateFormat("dd/MM/yyyy").format(_dateTime);
       _novoAgendamento.hora = _time.format(context);
       _novoAgendamento.status = status;

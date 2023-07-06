@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "379303878360",
+    "project_id": "petbosque-7e36e",
+    "storage_bucket": "petbosque-7e36e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379303878360:android:dacfc171b167ad3100c1ad",
+        "android_client_info": {
+          "package_name": "com.example.pet_bosque"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "379303878360-i6a7at1nf8vfj2ktgj9562ar2f4b4lmv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiwgpTQGW8jKUQS-AKxRXnI0mFUSQnPR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "379303878360-i6a7at1nf8vfj2ktgj9562ar2f4b4lmv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

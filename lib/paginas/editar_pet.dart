@@ -285,8 +285,8 @@ class _EditarPetState extends State<EditarPet> {
                               _editarPet.idPlano = selectedValue!.id.toString();
                               _editarPet.contaPlano = 4;
                               _editarPet.dataContrato = dataContrato;
-                              _editarPet.valorPlano =
-                                  selectedValue!.valor.toString();
+                              // _editarPet.valorPlano =
+                              //selectedValue!.valor.toString();
                             });
                           });
                         },

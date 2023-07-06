@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/funcoes/info_contato.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
 import 'package:pet_bosque/paginas/novo_pet.dart';
+import 'package:uuid/uuid.dart';
 
 InfoPet infoPet = InfoPet();
 
@@ -26,6 +28,8 @@ class NovoContato extends StatefulWidget {
   @override
   _NovoContatoState createState() => _NovoContatoState();
 }
+
+FirebaseFirestore db = FirebaseFirestore.instance;
 
 class _NovoContatoState extends State<NovoContato> {
   final _formKey = GlobalKey<FormState>();
@@ -75,8 +79,20 @@ class _NovoContatoState extends State<NovoContato> {
             onPressed: () async {
               if (_editarContato.nome != null &&
                   _editarContato.nome!.isNotEmpty) {
-                await infoPet.atualizarNomeContato(_editarContato.id.toString(),
-                    _editarContato.nome.toString());
+                //await infoPet.atualizarNomeContato(_editarContato.id.toString(),
+                //  _editarContato.nome.toString());
+                String id = Uuid().v1();
+                db.collection("contato").doc(id).set({
+                  "idContato": id,
+                  "nome": _editarContato.nome,
+                  "telefone": _editarContato.telefone,
+                  "email": _editarContato.email,
+                  "endereco": _editarContato.endereco,
+                  "complemento": _editarContato.complemento,
+                  "bairro": _editarContato.bairro,
+                  "cidade": _editarContato.cidade,
+                  "uf": _editarContato.uf
+                });
                 Navigator.pop(context, _editarContato);
                 showDialog(
                     context: context,

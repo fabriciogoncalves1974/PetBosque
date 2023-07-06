@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_bosque/funcoes/info_coloborador.dart';
 import 'package:pet_bosque/paginas/lista_colaborador.dart';
@@ -14,6 +15,7 @@ class EditarColaborador extends StatefulWidget {
 }
 
 InfoColaborador info = InfoColaborador();
+FirebaseFirestore db = FirebaseFirestore.instance;
 
 class _EditarColaboradorState extends State<EditarColaborador> {
   final _nomeColaboradorFocus = FocusNode();
@@ -77,7 +79,15 @@ class _EditarColaboradorState extends State<EditarColaborador> {
               _editarColaborador.metaComissao ??= 0;
               if (_editarColaborador.nomeColaborador != null &&
                   _editarColaborador.nomeColaborador!.isNotEmpty) {
-                info.atualizarColaborador(_editarColaborador);
+                //info.atualizarColaborador(_editarColaborador);
+                db.collection("colaborador").doc(_editarColaborador.id).set({
+                  "idColaborador": _editarColaborador.id,
+                  "nomeColaborador": _editarColaborador.nomeColaborador,
+                  "funcao": _editarColaborador.funcao,
+                  "porcenComissao": _editarColaborador.porcenComissao,
+                  "metaComissao": _editarColaborador.metaComissao,
+                  "status": _editarColaborador.status
+                });
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => ListaColaborador()));
               } else {

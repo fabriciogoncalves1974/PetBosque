@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
 import 'package:sqflite/sqlite_api.dart';
@@ -116,31 +117,27 @@ class InfoContato {
     dbContato!.close();
   }
 
-  /* Future<List> obterTodosContatosFirestore() async {
-    var result = await contactCollection.get();
-    List listMap = result.docs
+  Future<List> obterTodosContatosFirestore() async {
+    CollectionReference contatoCollection =
+        FirebaseFirestore.instance.collection('contato');
+    var result = await contatoCollection.get();
+    return result.docs
         .map((doc) => Contato(
-              id: doc.reference.id.toString(),
-              nome: doc['nome'],
-              email: doc['email'],
-              telefone: doc['telefone'],
-              bairro: doc['bairro'],
-              endereco: doc['endereco'],
-              complemento: doc['complemento'],
-              cidade: doc['cidade'],
-            ))
+            id: doc['idContato'],
+            nome: doc['nome'],
+            email: doc['email'],
+            telefone: doc['telefone'],
+            bairro: doc['bairro'],
+            endereco: doc['endereco'],
+            complemento: doc['complemento'],
+            cidade: doc['cidade'],
+            uf: doc['uf']))
         .toList();
-    List<Contato> listaContato = [];
-    for (Map m in listMap) {
-      listaContato.add(Contato.fromMap(m));
-    }
-    print(listaContato);
-    return listaContato;
-  }*/
+  }
 }
 
 class Contato {
-  int? id;
+  dynamic id;
   String? idPet;
   String? nome;
   String? email;
@@ -152,14 +149,15 @@ class Contato {
   String? uf;
 
   Contato(
-      {required nome,
-      required email,
-      required telefone,
-      required String id,
-      required bairro,
-      required endereco,
-      required complemento,
-      required cidade});
+      {this.nome,
+      this.email,
+      this.telefone,
+      this.id,
+      this.bairro,
+      this.endereco,
+      this.complemento,
+      this.cidade,
+      this.uf});
 
   Contato.fromMap(Map map) {
     id = map[idColuna];
