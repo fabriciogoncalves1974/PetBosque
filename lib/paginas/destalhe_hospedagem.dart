@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_bosque/funcoes/info_coloborador.dart';
 import 'package:pet_bosque/funcoes/info_hospedagem.dart';
@@ -17,7 +18,7 @@ class DetalheHospedagem extends StatefulWidget {
       {Key? key, required this.idHospedagem, required this.pendente})
       : super(key: key);
 
-  final int idHospedagem;
+  final String idHospedagem;
   final bool pendente;
 
   @override
@@ -30,8 +31,8 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
   List<Colaborador> itens = [];
 
   late String status;
-  late int idHospedagem;
-  late int hospedagemId;
+  late String idHospedagem;
+  late String hospedagemId;
   String nomeColaborador = "Geral";
   String idColaborador = "1";
   late String valorBanho;
@@ -57,6 +58,7 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
     );
   }
 
+  FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
@@ -666,15 +668,22 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
   }
 
   void _alterarStatus(
-      int id, String status, String colaborador, String idColaborador) {
-    info.atualizarStatus(idHospedagem, status, nomeColaborador, idColaborador);
+      String id, String status, String colaborador, String idColaborador) {
+    // info.atualizarStatus(idHospedagem, status, nomeColaborador, idColaborador);
+    db.collection('hospedagem').doc(idHospedagem).update({
+      'status': status,
+      'colaborador': nomeColaborador,
+      'idColaborador': idColaborador
+    });
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const ListaHospedagem()),
     );
   }
 
   void _obterHospedagem() {
-    info.obterHospedagemContato(widget.idHospedagem).then((dynamic list) {
+    info
+        .obterTodasHospedagemDetalheFirestore(widget.idHospedagem)
+        .then((dynamic list) {
       setState(() {
         hospedagem = list;
       });

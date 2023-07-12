@@ -198,6 +198,6 @@ class PesquisaPage extends SearchDelegate<Contato?> {
   }
 
   Future<List<Contato>> _pesquisarTodosContatos() {
-    return info.pesquisarTodosContatos(query);
+    return info.pesquisarTodosContatosFirestore(query);
   }
 }

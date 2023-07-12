@@ -120,7 +120,47 @@ class InfoContato {
   Future<List> obterTodosContatosFirestore() async {
     CollectionReference contatoCollection =
         FirebaseFirestore.instance.collection('contato');
-    var result = await contatoCollection.get();
+    var result = await contatoCollection.orderBy('nome').get();
+    return result.docs
+        .map((doc) => Contato(
+            id: doc['idContato'],
+            nome: doc['nome'],
+            email: doc['email'],
+            telefone: doc['telefone'],
+            bairro: doc['bairro'],
+            endereco: doc['endereco'],
+            complemento: doc['complemento'],
+            cidade: doc['cidade'],
+            uf: doc['uf']))
+        .toList();
+  }
+
+  Future<List> obterDadosContatosFirestore(id) async {
+    CollectionReference contatoCollection =
+        FirebaseFirestore.instance.collection('contato');
+    var result =
+        await contatoCollection.where('idContato', isEqualTo: '$id').get();
+    return result.docs
+        .map((doc) => Contato(
+            id: doc['idContato'],
+            nome: doc['nome'],
+            email: doc['email'],
+            telefone: doc['telefone'],
+            bairro: doc['bairro'],
+            endereco: doc['endereco'],
+            complemento: doc['complemento'],
+            cidade: doc['cidade'],
+            uf: doc['uf']))
+        .toList();
+  }
+
+  Future<List<Contato>> pesquisarTodosContatosFirestore(teclado) async {
+    CollectionReference contatoCollection =
+        FirebaseFirestore.instance.collection('contato');
+
+    var result = await contatoCollection
+        .where('nome', isEqualTo: teclado, isLessThanOrEqualTo: teclado)
+        .get();
     return result.docs
         .map((doc) => Contato(
             id: doc['idContato'],

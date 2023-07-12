@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
 import 'package:sqflite/sqlite_api.dart';
@@ -186,10 +187,65 @@ class InfoPet {
     Database? dbPet = db;
     dbPet!.close();
   }
+
+  Future<List> obterTodosPetFirestore() async {
+    CollectionReference petCollection =
+        FirebaseFirestore.instance.collection('pet');
+    var result = await petCollection.get();
+    return result.docs
+        .map((doc) => Pet(
+            id: doc['idPet'],
+            idContato: doc['idContato'],
+            nomePet: doc['nomePet'],
+            raca: doc['raca'],
+            peso: doc['peso'],
+            genero: doc['genero'],
+            dtNasc: doc['dtNasc'],
+            especie: doc['especie'],
+            cor: doc['cor'],
+            foto: doc['foto'],
+            nomeContato: doc['nomeContato'],
+            nomePlano: doc['nomePlano'],
+            idPlano: doc['idPlano'],
+            dataContrato: doc['dataContrato'],
+            valorPlano: doc['valorPlano'],
+            porte: doc['porte'],
+            planoVencido: doc['planoVencido'],
+            contaPlano: doc['contaPlano']))
+        .toList();
+  }
+
+  Future<List> obterTodosPetContatoFirestore(String id) async {
+    CollectionReference petCollection =
+        FirebaseFirestore.instance.collection('pet');
+    var result = await petCollection.where('idContato', isEqualTo: '$id').get();
+    return result.docs
+        .map((doc) => Pet(
+              id: doc['idPet'],
+              idContato: doc['idContato'],
+              nomePet: doc['nomePet'],
+              raca: doc['raca'],
+              peso: doc['peso'],
+              genero: doc['genero'],
+              dtNasc: doc['dtNasc'],
+              especie: doc['especie'],
+              cor: doc['cor'],
+              foto: doc['foto'],
+              nomeContato: doc['nomeContato'],
+              contaPlano: doc['contaPlano'],
+              nomePlano: doc['nomePlano'],
+              idPlano: doc['idPlano'],
+              dataContrato: doc['dataContrato'],
+              valorPlano: doc['valorPlano'],
+              porte: doc['porte'],
+              planoVencido: doc['planoVencido'],
+            ))
+        .toList();
+  }
 }
 
 class Pet {
-  int? id;
+  dynamic id;
   String? idContato;
   String? nomePet;
   String? raca;
@@ -200,7 +256,7 @@ class Pet {
   String? cor;
   String? foto;
   String? nomeContato;
-  int? contaPlano;
+  dynamic contaPlano;
   String? nomePlano;
   String? idPlano;
   String? dataContrato;
@@ -208,7 +264,25 @@ class Pet {
   String? porte;
   String? planoVencido;
 
-  Pet();
+  Pet(
+      {this.id,
+      this.idContato,
+      this.nomePet,
+      this.raca,
+      this.peso,
+      this.genero,
+      this.dtNasc,
+      this.especie,
+      this.cor,
+      this.foto,
+      this.nomeContato,
+      this.contaPlano,
+      this.nomePlano,
+      this.idPlano,
+      this.dataContrato,
+      this.planoVencido,
+      this.valorPlano,
+      this.porte});
 
   Pet.fromMap(Map map) {
     id = map[idColunaPet];

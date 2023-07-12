@@ -430,7 +430,7 @@ class _ListaPetContatoState extends State<ListaPetContato> {
   }
 
   void _obterTodosPetContato() {
-    info.obterTodosPetContato(widget.idContato).then((dynamic list) {
+    info.obterTodosPetContatoFirestore(widget.idContato).then((dynamic list) {
       setState(() {
         pet = list;
       });

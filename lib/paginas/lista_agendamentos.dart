@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
@@ -38,7 +38,7 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
   Color corCancelado = Colors.red;
   Color corFinalizado = Colors.blue;
   Color corStatus = Color.fromRGBO(202, 236, 236, 1);
-
+  bool loading = true;
   paginaInicial() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -84,6 +84,7 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
     );
   }
 
+  FirebaseFirestore db = FirebaseFirestore.instance;
   void _showDatePicker(BuildContext context) {
     showDatePicker(
       context: context,
@@ -94,7 +95,14 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
       setState(() {
         _dataAgendamento = DateFormat("dd/MM/yyyy").format(value!);
         _dateTime = value;
-        _obterTodosAgendamentos(_dataAgendamento);
+
+        db.collection('agendamentos').snapshots().listen(
+          (event) {
+            setState(() {
+              _obterTodosAgendamentos(_dataAgendamento);
+            });
+          },
+        );
       });
     });
   }
@@ -107,7 +115,15 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
     _dateTime = DateTime.now();
     dataAtual = DateFormat("dd/MM/yyyy").format(_dateTime!);
     _dataAgendamento = DateFormat("dd/MM/yyyy").format(_dateTime);
-    _obterTodosAgendamentos(_dataAgendamento);
+
+    db.collection('agendamentos').snapshots().listen(
+      (event) {
+        setState(() {
+          _obterTodosAgendamentos(_dataAgendamento);
+          loading = false;
+        });
+      },
+    );
   }
 
   @override
@@ -149,12 +165,19 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
             foregroundColor: Colors.white,
             label: Text("Novo"),
           ),
-          body: ListView.builder(
-              padding: const EdgeInsets.all(10.0),
-              itemCount: agendamento.length,
-              itemBuilder: (context, index) {
-                return _cartaoContato(context, index);
-              }),
+          body: !loading
+              ? ListView.builder(
+                  padding: const EdgeInsets.all(10.0),
+                  itemCount: agendamento.length,
+                  itemBuilder: (context, index) {
+                    return _cartaoContato(context, index);
+                  })
+              : Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.greenAccent,
+                    backgroundColor: Colors.grey,
+                  ),
+                ),
         ));
   }
 
@@ -448,7 +471,7 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => DetalheAgendamentos(
-                    idAgendamento: agendamento[index].id as int,
+                    idAgendamento: agendamento[index].id,
                     pendente: pendente,
                   )));
         });
@@ -459,7 +482,7 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
       _dataAgendamento = dataRetorno;
       dataRetorno = _dataAgendamento;
     }
-    info.obterTodosAgendamentos(_dataAgendamento).then((dynamic list) {
+    info.obterTodosAgendamentosFirestore(_dataAgendamento).then((dynamic list) {
       setState(() {
         agendamento = list;
       });

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
 import 'package:pet_bosque/funcoes/pesquisa_petHospedagem.dart';
@@ -184,13 +183,13 @@ class _ListaPetHospedagem extends State<ListaPetHospedagem> {
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) =>
-                DetalheContato(idContato: int.parse(pet[index].idContato!))));
+                DetalheContato(idContato: pet[index].idContato!)));
       },
     );
   }
 
   void _obterTodosPet() {
-    info.obterTodosPet().then((dynamic list) {
+    info.obterTodosPetFirestore().then((dynamic list) {
       setState(() {
         pet = list;
       });

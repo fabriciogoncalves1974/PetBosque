@@ -18,7 +18,7 @@ FirebaseFirestore db = FirebaseFirestore.instance;
 
 class _ListaPlanosState extends State<ListaPlanos> {
   InfoPlano info = InfoPlano();
-
+  bool loading = true;
   List<Plano> plano = [];
 
   paginaInicial() {
@@ -37,6 +37,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
       (event) {
         setState(() {
           _obterTodosPlanos();
+          loading = false;
         });
       },
     );
@@ -69,12 +70,16 @@ class _ListaPlanosState extends State<ListaPlanos> {
           foregroundColor: Colors.white,
           label: Text("Novo"),
         ),
-        body: ListView.builder(
-            padding: const EdgeInsets.all(10.0),
-            itemCount: plano.length,
-            itemBuilder: (context, index) {
-              return _cartaoPet(context, index);
-            }),
+        body: !loading
+            ? ListView.builder(
+                padding: const EdgeInsets.all(10.0),
+                itemCount: plano.length,
+                itemBuilder: (context, index) {
+                  return _cartaoPet(context, index);
+                })
+            : Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
     );
   }

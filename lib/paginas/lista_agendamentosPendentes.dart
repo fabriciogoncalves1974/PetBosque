@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/paginas/detalhe_agendamento.dart';
@@ -32,6 +32,7 @@ class _ListaAgendamentosPendentesState
   Color corCancelado = Colors.red;
   Color corFinalizado = Colors.blue;
   Color corStatus = Color.fromRGBO(202, 236, 236, 1);
+  bool loading = true;
 
   paginaInicial() {
     Navigator.of(context).push(
@@ -78,10 +79,19 @@ class _ListaAgendamentosPendentesState
     );
   }
 
+  FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
-    _obterTodosAgendamentosPendentes();
+
+    db.collection('agendamentos').snapshots().listen(
+      (event) {
+        setState(() {
+          _obterTodosAgendamentosPendentes();
+          loading = false;
+        });
+      },
+    );
   }
 
   @override
@@ -115,12 +125,19 @@ class _ListaAgendamentosPendentesState
           foregroundColor: Colors.white,
           label: Text("Novo"),
         ),
-        body: ListView.builder(
-            padding: const EdgeInsets.all(10.0),
-            itemCount: agendamento.length,
-            itemBuilder: (context, index) {
-              return _cartaoContato(context, index);
-            }),
+        body: !loading
+            ? ListView.builder(
+                padding: const EdgeInsets.all(10.0),
+                itemCount: agendamento.length,
+                itemBuilder: (context, index) {
+                  return _cartaoContato(context, index);
+                })
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Colors.greenAccent,
+                  backgroundColor: Colors.grey,
+                ),
+              ),
       ),
     );
   }
@@ -346,14 +363,14 @@ class _ListaAgendamentosPendentesState
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => DetalheAgendamentos(
-                    idAgendamento: agendamento[index].id as int,
+                    idAgendamento: agendamento[index].id,
                     pendente: pendente,
                   )));
         });
   }
 
   void _obterTodosAgendamentosPendentes() {
-    info.obterTodosAgendamentosPendentes().then((dynamic list) {
+    info.obterTodosAgendamentosPendentesFirestore().then((dynamic list) {
       setState(() {
         agendamento = list;
       });

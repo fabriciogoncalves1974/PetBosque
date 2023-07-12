@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
@@ -19,7 +20,7 @@ class DetalheAgendamentos extends StatefulWidget {
       {Key? key, required this.idAgendamento, required this.pendente})
       : super(key: key);
 
-  final int idAgendamento;
+  final String idAgendamento;
   final bool pendente;
 
   @override
@@ -33,13 +34,14 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
   DateTime data = DateTime.now();
 
   late String status;
-  late int idAgendamento;
-  late int agendamentoId;
+  late String idAgendamento;
+  late String agendamentoId;
   String nomeColaborador = "Geral";
   String idColaborador = "1";
   late String valorBanho;
   late String valoradicional;
   late String observacao;
+  bool informarPagamento = false;
 
   paginaContatos() {
     Navigator.of(context).push(
@@ -59,12 +61,31 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
     );
   }
 
+  FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
 
     _obterAgendamentos();
     _obterColaboradores();
+  }
+
+  void _alteraPlanoVencido(idPet, String planoVencido) {
+    //infoPet.atualizaPlanoVencido(id, planoVencido);
+    db.collection('pet').doc(idPet).update({'planoVencido': planoVencido});
+  }
+
+  void _alteraPlanoVencidoAgendamento(idAgendamento, String planoVencido) {
+    //infoPet.atualizaPlanoVencido(id, planoVencido);
+    db
+        .collection('agendamentos')
+        .doc(idAgendamento)
+        .update({'planoVencido': planoVencido});
+  }
+
+  void _renovaPlano(idPet, contadorPlano) {
+    //infoPet.renovaPlano(id, contadorPlano);
+    db.collection('pet').doc(idPet).update({'contaPlano': contadorPlano});
   }
 
   Colaborador? selectedValue;
@@ -593,6 +614,38 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                 style: const TextStyle(height: 2, fontSize: 15),
               ),
             ]),
+            if (agendamento[index].planoVencido == "S" && status == "Pendente")
+              Container(
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(color: Colors.green, Icons.money),
+                          Text(
+                            " Informar Pagamento ",
+                            style: TextStyle(
+                              backgroundColor: Colors.green,
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints.tightFor(
+                          width: 150,
+                        ),
+                        child: Checkbox(
+                            value: informarPagamento,
+                            onChanged: (checked) {
+                              setState(() {
+                                informarPagamento = checked!;
+                              });
+                            }),
+                      ),
+                    ]),
+              ),
             Row(children: [
               const Text(
                 "Colaborador:",
@@ -806,8 +859,24 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                                       onPressed: () {
                                         status = "Finalizado";
                                         idAgendamento = agendamentoId;
+                                        if (informarPagamento == true) {
+                                          _renovaPlano(
+                                              agendamento[index].idPet, 3);
+                                          _alteraPlanoVencido(
+                                              agendamento[index].idPet, "N");
+                                          _alteraPlanoVencidoAgendamento(
+                                              idAgendamento, "N");
+                                        }
                                         _alterarStatus(idAgendamento, status,
                                             nomeColaborador, idColaborador);
+                                        if (selectedValue != null) {
+                                          nomeColaborador = selectedValue!
+                                              .nomeColaborador
+                                              .toString();
+                                          idColaborador =
+                                              selectedValue!.id.toString();
+                                        }
+
                                         if (widget.pendente == false) {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
@@ -874,17 +943,24 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
   }
 
   void _alterarStatus(
-      int id, String status, String colaborador, String idColaborador) {
+      String id, String status, String colaborador, String idColaborador) {
     if (selectedValue != null) {
       nomeColaborador = selectedValue!.nomeColaborador.toString();
       idColaborador = selectedValue!.id.toString();
     }
-    info.atualizarStatus(idAgendamento, status, nomeColaborador, idColaborador);
+    //info.atualizarStatus(idAgendamento, status, nomeColaborador, idColaborador);
+    db.collection('agendamentos').doc(idAgendamento).update({
+      'status': status,
+      'colaborador': nomeColaborador,
+      'idColaborador': idColaborador
+    });
     Navigator.pop(context);
   }
 
   void _obterAgendamentos() {
-    info.obterAgendamentoContato(widget.idAgendamento).then((dynamic list) {
+    info
+        .obterAgendamentoDetalheFirestore(widget.idAgendamento)
+        .then((dynamic list) {
       setState(() {
         agendamento = list;
       });
@@ -892,7 +968,9 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
   }
 
   void _obterColaboradores() {
-    infoColaborador.obterNomeColaborador().then((dynamic listaColaborador) {
+    infoColaborador
+        .obterNomeColaboradorFirestore()
+        .then((dynamic listaColaborador) {
       setState(() {
         itens = listaColaborador;
       });

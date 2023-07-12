@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_hospedagem.dart';
@@ -33,6 +33,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
   Color corCancelado = Colors.red;
   Color corFinalizado = Colors.blue;
   Color corStatus = Color.fromRGBO(202, 236, 236, 1);
+  bool loading = true;
 
   paginaInicial() {
     Navigator.of(context).push(
@@ -90,15 +91,24 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
         _dataAgendamento = DateFormat("dd/MM/yyyy").format(value!);
         _dateTime = value;
         _obterTodasHospedagem(_dataAgendamento);
+        loading = false;
       });
     });
   }
 
+  FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
-    _dataAgendamento = DateFormat("dd/MM/yyyy").format(_dateTime);
-    _obterTodasHospedagem(_dataAgendamento);
+    db.collection('hospedagem').snapshots().listen(
+      (event) {
+        setState(() {
+          _dataAgendamento = DateFormat("dd/MM/yyyy").format(_dateTime);
+          _obterTodasHospedagem(_dataAgendamento);
+          loading = false;
+        });
+      },
+    );
   }
 
   @override
@@ -140,12 +150,19 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
           foregroundColor: Colors.white,
           label: Text("Novo"),
         ),
-        body: ListView.builder(
-            padding: const EdgeInsets.all(10.0),
-            itemCount: hospedagen.length,
-            itemBuilder: (context, index) {
-              return _cartaoHospedagem(context, index);
-            }),
+        body: !loading
+            ? ListView.builder(
+                padding: const EdgeInsets.all(10.0),
+                itemCount: hospedagen.length,
+                itemBuilder: (context, index) {
+                  return _cartaoHospedagem(context, index);
+                })
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Colors.greenAccent,
+                  backgroundColor: Colors.grey,
+                ),
+              ),
       ),
     );
   }
@@ -362,13 +379,14 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => DetalheHospedagem(
-                  idHospedagem: hospedagen[index].id as int,
-                  pendente: pendente)));
+                  idHospedagem: hospedagen[index].id, pendente: pendente)));
         });
   }
 
   void _obterTodasHospedagem(String dataAgendamento) {
-    info.obterTodasHospedagem(_dataAgendamento).then((dynamic list) {
+    info
+        .obterTodasHospedagemDiaFirestore(_dataAgendamento)
+        .then((dynamic list) {
       setState(() {
         hospedagen = list;
       });

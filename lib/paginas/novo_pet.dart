@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
 import 'package:pet_bosque/funcoes/info_plano.dart';
 import 'package:pet_bosque/paginas/lista_pet_contato.dart';
+import 'package:uuid/uuid.dart';
 
 class NovoPet extends StatefulWidget {
   final Pet _pet;
@@ -35,7 +37,7 @@ final String dataContrato = DateFormat("dd/MM/yyyy").format(DateTime.now());
 
 class _NovoPetState extends State<NovoPet> {
   Genero? _genero = Genero.Macho;
-
+  FirebaseFirestore db = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
   final _nomePetController = TextEditingController();
 
@@ -62,6 +64,7 @@ class _NovoPetState extends State<NovoPet> {
     super.initState();
     _obterPlanos();
     _editarPet = Pet.fromMap(widget._pet.toMap());
+    _editarPet.idContato = widget.idContato;
     _editarPet.genero = "Macho";
     _nomePetController.text = _editarPet.nomePet ?? '';
   }
@@ -115,7 +118,28 @@ class _NovoPetState extends State<NovoPet> {
               if (_editarPet.nomePet != null &&
                   _editarPet.nomePet!.isNotEmpty) {
                 _editarPet.dtNasc = DateFormat("dd/MM/yyyy").format(_dateTime);
-                info.salvarPet(_editarPet);
+                // info.salvarPet(_editarPet);
+                String id = Uuid().v1();
+                db.collection("pet").doc(id).set({
+                  "idPet": id,
+                  "idContato": _editarPet.idContato,
+                  "nomePet": _editarPet.nomePet,
+                  "raca": _editarPet.raca,
+                  "peso": _editarPet.peso,
+                  "genero": _editarPet.genero,
+                  "dtNasc": _editarPet.dtNasc,
+                  "especie": _editarPet.especie,
+                  "cor": _editarPet.cor,
+                  "foto": _editarPet.foto,
+                  "nomeContato": _editarPet.nomeContato,
+                  "contaPlano": _editarPet.contaPlano,
+                  "nomePlano": _editarPet.nomePlano,
+                  "idPlano": _editarPet.idPlano,
+                  "valorPlano": _editarPet.valorPlano,
+                  "porte": _editarPet.porte,
+                  "dataContrato": _editarPet.dataContrato,
+                  "planoVencido": _editarPet.planoVencido,
+                });
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => ListaPetContato(
                           idContato: widget.idContato.toString(),
@@ -522,7 +546,7 @@ class _NovoPetState extends State<NovoPet> {
   }
 
   void _obterPlanos() {
-    infoPlano.obterTodosPlanos().then((dynamic listaPlano) {
+    infoPlano.obterTodosPlanosFirestore().then((dynamic listaPlano) {
       setState(() {
         itens = listaPlano;
       });

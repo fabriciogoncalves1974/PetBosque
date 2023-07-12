@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
@@ -6,6 +7,7 @@ import 'package:pet_bosque/funcoes/info_plano.dart';
 import 'package:pet_bosque/paginas/lista_agendamentos.dart';
 import 'package:pet_bosque/paginas/lista_pet.dart';
 import 'package:pet_bosque/paginas/novo_agendamento.dart';
+import 'package:uuid/uuid.dart';
 
 class NovoAgendamentoPlano extends StatefulWidget {
   final Agendamento _agendamento;
@@ -53,7 +55,8 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
   late String _dataAgendamento;
   late int contadorPlano;
   String planoVencido = "N";
-
+  bool loading = false;
+  FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
@@ -109,18 +112,22 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
       contadorPlano = 4;
     }
     contadorPlano = (contadorPlano - 1);
-    infoPet.contaPlanoPet(widget.idPet, contadorPlano);
+    //infoPet.contaPlanoPet(widget.idPet, contadorPlano);
+    db
+        .collection('pet')
+        .doc(widget.idPet)
+        .update({'contaPlano': contadorPlano});
   }
 
   void _total() {
     setState(() {
       double valorAdicional =
           double.tryParse(valorAdicionalController.text) ?? 0;
-      //double? valorPlano = itens?.valor ?? 0;
+      double? valorPlano = itens?.valor ?? 0;
 
-      //double valorTotal = (valorPlano + valorAdicional);
+      double valorTotal = (valorPlano! + valorAdicional);
 
-      // _novoAgendamento.valorTotal = valorTotal;
+      _novoAgendamento.valorTotal = valorTotal;
       _novoAgendamento.data = DateFormat("dd/MM/yyyy").format(_dateTime);
       _novoAgendamento.hora = _time.format(context);
       _novoAgendamento.status = status;
@@ -193,9 +200,18 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
               ),
               floatingActionButton: FloatingActionButton.extended(
                 onPressed: () {
-                  int idPet = int.parse(widget.idPet);
+                  loading = true;
+                  if (loading = true) {
+                    Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.greenAccent,
+                        backgroundColor: Colors.grey,
+                      ),
+                    );
+                  }
+                  String idPet = widget.idPet;
                   _novoAgendamento.planoVencido = planoVencido;
-                  if (widget.idPlano != 0 &&
+                  if (widget.idPlano != "" &&
                       contadorPlano == 0 &&
                       widget.renovaPlano == "N") {
                     planoVencido = "S";
@@ -205,12 +221,46 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                   if (widget.renovaPlano == "S") {
                     planoVencido = "N";
                     _contadorPLano();
-                    _renovaPlano(int.parse(widget.idPet), contadorPlano);
+                    _renovaPlano(widget.idPet, contadorPlano);
                     _alteraPlanoVencido(idPet, planoVencido);
                   }
-                  info.salvarAgendamento(_novoAgendamento);
-
+                  //info.salvarAgendamento(_novoAgendamento);
                   _executaFuncoes();
+
+                  String id = Uuid().v1();
+                  db.collection("agendamentos").doc(id).set({
+                    "idAgendamento": id,
+                    "idPet": _novoAgendamento.idPet,
+                    "nomeContato": _novoAgendamento.nomeContato,
+                    "fotoPet": _novoAgendamento.fotoPet,
+                    "nomePet": _novoAgendamento.nomePet,
+                    "data": _novoAgendamento.data,
+                    "hora": _novoAgendamento.hora,
+                    "svBanho": _novoAgendamento.svBanho,
+                    "valorBanho": _novoAgendamento.valorBanho,
+                    "svTosa": _novoAgendamento.svTosa,
+                    "valorTosa": _novoAgendamento.valorTosa,
+                    "svCorteUnha": _novoAgendamento.svCorteUnha,
+                    "valorCorteUnha": _novoAgendamento.valorCorteUnha,
+                    "svHidratacao": _novoAgendamento.svHidratacao,
+                    "valorHidratacao": _novoAgendamento.valorHidratacao,
+                    "svTosaHigienica": _novoAgendamento.svTosaHigienica,
+                    "valorTosaHigienica": _novoAgendamento.valorTosaHigienica,
+                    "svPintura": _novoAgendamento.svPintura,
+                    "valorPintura": _novoAgendamento.valorPintura,
+                    "svHospedagem": _novoAgendamento.svHospedagem,
+                    "valorHospedagem": _novoAgendamento.valorHospedagem,
+                    "svTransporte": _novoAgendamento.svTransporte,
+                    "valorTransporte": _novoAgendamento.valorTransporte,
+                    "valorAdicional": _novoAgendamento.valorAdicional,
+                    "valorTotal": _novoAgendamento.valorTotal,
+                    "observacao": _novoAgendamento.observacao,
+                    "status": _novoAgendamento.status,
+                    "colaborador": _novoAgendamento.colaborador,
+                    "idColaborador": _novoAgendamento.idColaborador,
+                    "planoVencido": _novoAgendamento.planoVencido
+                  });
+                  loading = false;
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -583,17 +633,25 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
     paginaAgendamentos();
   }
 
-  void _alteraPlanoVencido(int id, String planoVencido) {
-    infoPet.atualizaPlanoVencido(id, planoVencido);
+  void _alteraPlanoVencido(String id, String planoVencido) {
+    //infoPet.atualizaPlanoVencido(id, planoVencido);
+    db
+        .collection('pet')
+        .doc(widget.idPet)
+        .update({'planoVencido': planoVencido});
   }
 
-  void _renovaPlano(int id, int contadorPlano) {
-    infoPet.renovaPlano(id, contadorPlano);
+  void _renovaPlano(id, contadorPlano) {
+    //infoPet.renovaPlano(id, contadorPlano);
+    db
+        .collection('pet')
+        .doc(widget.idPet)
+        .update({'contaPlano': contadorPlano});
   }
 
   void _obterPlanos() async {
     infoPlano
-        .obterPlanosPet2(int.parse(widget.idPlano))
+        .obterPlanosPet2Firestore(widget.idPlano)
         .then((dynamic listaPlano) {
       setState(() {
         itens = listaPlano[0]!;

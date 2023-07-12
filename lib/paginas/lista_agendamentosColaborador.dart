@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
@@ -34,6 +35,7 @@ class _ListaAgendamentosColabordorState
   Color corCancelado = Colors.red;
   Color corFinalizado = Colors.blue;
   Color corStatus = Color.fromRGBO(202, 236, 236, 1);
+  bool loading = true;
 
   paginaContatos() {
     Navigator.of(context).push(
@@ -66,12 +68,18 @@ class _ListaAgendamentosColabordorState
   }
 
   paginaConfig() {}
-
+  FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
-
-    _obterTodosAgendamentos();
+    db.collection('agendamentos').snapshots().listen(
+      (event) {
+        setState(() {
+          _obterTodosAgendamentos();
+          loading = false;
+        });
+      },
+    );
   }
 
   @override
@@ -89,12 +97,19 @@ class _ListaAgendamentosColabordorState
           title: const Text("Lista de Agendamentos"),
           centerTitle: true,
         ),
-        body: ListView.builder(
-            padding: const EdgeInsets.all(10.0),
-            itemCount: agendamento.length,
-            itemBuilder: (context, index) {
-              return _cartaoContato(context, index);
-            }),
+        body: !loading
+            ? ListView.builder(
+                padding: const EdgeInsets.all(10.0),
+                itemCount: agendamento.length,
+                itemBuilder: (context, index) {
+                  return _cartaoContato(context, index);
+                })
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Colors.greenAccent,
+                  backgroundColor: Colors.grey,
+                ),
+              ),
       ),
     );
   }
@@ -383,7 +398,7 @@ class _ListaAgendamentosColabordorState
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => DetalheAgendamentos(
-                    idAgendamento: agendamento[index].id as int,
+                    idAgendamento: agendamento[index].id,
                     pendente: pendente,
                   )));
         });

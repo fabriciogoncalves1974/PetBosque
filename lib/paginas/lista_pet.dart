@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
@@ -22,7 +21,7 @@ class ListaPet extends StatefulWidget {
 
 class _ListaPetState extends State<ListaPet> {
   InfoPet info = InfoPet();
-
+  bool loading = true;
   List<Pet> pet = [];
   late String contadorPlano;
   String data = DateFormat("dd/MM/yyyy").format(DateTime.now());
@@ -50,6 +49,7 @@ class _ListaPetState extends State<ListaPet> {
     super.initState();
 
     _obterTodosPet();
+    loading = false;
   }
 
   @override
@@ -97,12 +97,16 @@ class _ListaPetState extends State<ListaPet> {
             )
           ],
         ),
-        body: ListView.builder(
-            padding: const EdgeInsets.all(10.0),
-            itemCount: pet.length,
-            itemBuilder: (context, index) {
-              return _cartaoPet(context, index);
-            }),
+        body: !loading
+            ? ListView.builder(
+                padding: const EdgeInsets.all(10.0),
+                itemCount: pet.length,
+                itemBuilder: (context, index) {
+                  return _cartaoPet(context, index);
+                })
+            : Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
     );
   }
@@ -120,7 +124,8 @@ class _ListaPetState extends State<ListaPet> {
               icon: Icons.add,
               caption: 'Agendar',
               onTap: () {
-                if (pet[index].idPlano != "0" && pet[index].contaPlano! > 0) {
+                if (pet[index].idPlano.toString() != "" &&
+                    pet[index].contaPlano! > 0) {
                   contadorPlano = pet[index].contaPlano.toString();
                   showDialog(
                       context: context,
@@ -207,7 +212,7 @@ class _ListaPetState extends State<ListaPet> {
                               },
                               child: const Text(
                                 "Cancelar",
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: Colors.black),
                               ),
                             ),
                             const SizedBox(
@@ -238,8 +243,8 @@ class _ListaPetState extends State<ListaPet> {
                                             pet[index].idPlano.toString())));
                               },
                               child: const Text(
-                                "Agendar",
-                                style: TextStyle(color: Colors.white),
+                                "Agendar sem Renovar",
+                                style: TextStyle(color: Colors.black),
                               ),
                             ),
                             const SizedBox(
@@ -271,7 +276,7 @@ class _ListaPetState extends State<ListaPet> {
                               },
                               child: const Text(
                                 "Renovar e Agendar",
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: Colors.black),
                               ),
                             ),
                           ],
@@ -358,7 +363,7 @@ class _ListaPetState extends State<ListaPet> {
   }
 
   void _obterTodosPet() {
-    info.obterTodosPet().then((dynamic list) {
+    info.obterTodosPetFirestore().then((dynamic list) {
       setState(() {
         pet = list;
       });

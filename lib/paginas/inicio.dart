@@ -205,7 +205,7 @@ class _InicioState extends State<Inicio> {
             ),
             body: _paginas[_currentIndex],
             bottomNavigationBar: ConvexAppBar(
-              style: TabStyle.react,
+              style: TabStyle.titled,
               backgroundColor: Color.fromRGBO(35, 151, 166, 1),
               items: const [
                 TabItem(
@@ -218,7 +218,7 @@ class _InicioState extends State<Inicio> {
                 ),
                 TabItem(
                   icon: Icons.home,
-                  title: 'Inicio',
+                  title: 'Home',
                 ),
                 TabItem(
                   icon: Icons.pets,

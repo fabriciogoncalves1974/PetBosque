@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
 import 'package:pet_bosque/paginas/lista_agendamentos.dart';
 import 'package:pet_bosque/paginas/lista_pet.dart';
+import 'package:uuid/uuid.dart';
 
 class NovoAgendamento extends StatefulWidget {
   final Agendamento _agendamento;
@@ -112,7 +113,7 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
   late TimeOfDay picked;
   late String hora;
   String _infoValor = "0,00";
-
+  FirebaseFirestore db = FirebaseFirestore.instance;
   void _executaFuncoes() {
     _total();
     _limpaCheck();
@@ -134,7 +135,6 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
 
   void _contadorPLano() {
     contadorPlano = (contadorPlano - 1);
-    infoPet.contaPlanoPet(widget.idPet, contadorPlano);
   }
 
   void _total() {
@@ -220,8 +220,41 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
               _novoAgendamento.planoVencido = planoVencido;
-              info.salvarAgendamento(_novoAgendamento);
+              //info.salvarAgendamento(_novoAgendamento);
               _executaFuncoes();
+              String id = Uuid().v1();
+              db.collection("agendamentos").doc(id).set({
+                "idAgendamento": id,
+                "idPet": _novoAgendamento.idPet,
+                "nomeContato": _novoAgendamento.nomeContato,
+                "fotoPet": _novoAgendamento.fotoPet,
+                "nomePet": _novoAgendamento.nomePet,
+                "data": _novoAgendamento.data,
+                "hora": _novoAgendamento.hora,
+                "svBanho": _novoAgendamento.svBanho,
+                "valorBanho": _novoAgendamento.valorBanho,
+                "svTosa": _novoAgendamento.svTosa,
+                "valorTosa": _novoAgendamento.valorTosa,
+                "svCorteUnha": _novoAgendamento.svCorteUnha,
+                "valorCorteUnha": _novoAgendamento.valorCorteUnha,
+                "svHidratacao": _novoAgendamento.svHidratacao,
+                "valorHidratacao": _novoAgendamento.valorHidratacao,
+                "svTosaHigienica": _novoAgendamento.svTosaHigienica,
+                "valorTosaHigienica": _novoAgendamento.valorTosaHigienica,
+                "svPintura": _novoAgendamento.svPintura,
+                "valorPintura": _novoAgendamento.valorPintura,
+                "svHospedagem": _novoAgendamento.svHospedagem,
+                "valorHospedagem": _novoAgendamento.valorHospedagem,
+                "svTransporte": _novoAgendamento.svTransporte,
+                "valorTransporte": _novoAgendamento.valorTransporte,
+                "valorAdicional": _novoAgendamento.valorAdicional,
+                "valorTotal": _novoAgendamento.valorTotal,
+                "observacao": _novoAgendamento.observacao,
+                "status": _novoAgendamento.status,
+                "colaborador": _novoAgendamento.colaborador,
+                "idColaborador": _novoAgendamento.idColaborador,
+                "planoVencido": _novoAgendamento.planoVencido
+              });
               Navigator.push(
                   context,
                   MaterialPageRoute(

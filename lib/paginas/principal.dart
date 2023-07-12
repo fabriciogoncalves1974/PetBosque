@@ -301,7 +301,7 @@ class _PrincipalState extends State<Principal> {
                         InkWell(
                           child: Container(
                               height: 110,
-                              width: 320,
+                              width: 380,
                               decoration: BoxDecoration(
                                 border: Border.all(
                                   color: Colors.white,
@@ -383,7 +383,7 @@ class _PrincipalState extends State<Principal> {
                           child: Container(
                               padding: const EdgeInsets.all(2.0),
                               height: 110,
-                              width: 320,
+                              width: 380,
                               decoration: BoxDecoration(
                                 border: Border.all(
                                   color: Colors.white,
@@ -535,7 +535,7 @@ class _PrincipalState extends State<Principal> {
   }
 
   void _obterTodasHospedagens(String dataAgendamento) {
-    infoHospedagem.obterTodasHospedagem(data).then((dynamic list) {
+    infoHospedagem.obterTodasHospedagemDiaFirestore(data).then((dynamic list) {
       setState(() {
         hospedagem = list;
         if (hospedagem.isEmpty) {
@@ -554,7 +554,7 @@ class _PrincipalState extends State<Principal> {
   }
 
   void _obterTodosAgendamentos(String dataAgendamento) {
-    info.obterTodosAgendamentos(data).then((dynamic list) {
+    info.obterTodosAgendamentosFirestore(data).then((dynamic list) {
       setState(() {
         agendamento = list;
         if (agendamento.isEmpty) {

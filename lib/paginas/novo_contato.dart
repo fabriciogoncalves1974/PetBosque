@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/funcoes/info_contato.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
+import 'package:pet_bosque/paginas/inicio.dart';
 import 'package:pet_bosque/paginas/novo_pet.dart';
 import 'package:uuid/uuid.dart';
 
@@ -13,8 +14,11 @@ InfoPet infoPet = InfoPet();
 
 class NovoContato extends StatefulWidget {
   final Contato _contato;
-  NovoContato({super.key, Contato? contato, Agendamento? Agendamento})
-      : _contato = contato ??
+  NovoContato({
+    super.key,
+    Contato? contato,
+    Agendamento? Agendamento,
+  }) : _contato = contato ??
             Contato(
                 bairro: null,
                 cidade: null,
@@ -44,12 +48,16 @@ class _NovoContatoState extends State<NovoContato> {
   late Contato _editarContato;
 
   bool _contatoEditado = false;
+  bool _novoContato = true;
 
   @override
   void initState() {
     super.initState();
 
     _editarContato = Contato.fromMap(widget._contato.toMap());
+    if (_editarContato.id != "") {
+      _novoContato = false;
+    }
 
     _nomeController.text = _editarContato.nome ?? '';
     _emailController.text = _editarContato.email ?? "";
@@ -81,19 +89,28 @@ class _NovoContatoState extends State<NovoContato> {
                   _editarContato.nome!.isNotEmpty) {
                 //await infoPet.atualizarNomeContato(_editarContato.id.toString(),
                 //  _editarContato.nome.toString());
-                String id = Uuid().v1();
-                db.collection("contato").doc(id).set({
-                  "idContato": id,
-                  "nome": _editarContato.nome,
-                  "telefone": _editarContato.telefone,
-                  "email": _editarContato.email,
-                  "endereco": _editarContato.endereco,
-                  "complemento": _editarContato.complemento,
-                  "bairro": _editarContato.bairro,
-                  "cidade": _editarContato.cidade,
-                  "uf": _editarContato.uf
-                });
-                Navigator.pop(context, _editarContato);
+
+                if (_novoContato == true) {
+                  String id = Uuid().v1();
+                  _editarContato.id = id;
+                  db.collection("contato").doc(id).set({
+                    "idContato": id,
+                    "nome": _editarContato.nome,
+                    "telefone": _editarContato.telefone,
+                    "email": _editarContato.email,
+                    "endereco": _editarContato.endereco,
+                    "complemento": _editarContato.complemento,
+                    "bairro": _editarContato.bairro,
+                    "cidade": _editarContato.cidade,
+                    "uf": _editarContato.uf
+                  });
+                }
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => const Inicio(
+                            index: 1,
+                          )),
+                );
                 showDialog(
                     context: context,
                     builder: (context) {
@@ -151,6 +168,25 @@ class _NovoContatoState extends State<NovoContato> {
                         ],
                       );
                     });
+                if (_novoContato == false) {
+                  db.collection("contato").doc(_editarContato.id).set({
+                    "idContato": _editarContato.id,
+                    "nome": _editarContato.nome,
+                    "telefone": _editarContato.telefone,
+                    "email": _editarContato.email,
+                    "endereco": _editarContato.endereco,
+                    "complemento": _editarContato.complemento,
+                    "bairro": _editarContato.bairro,
+                    "cidade": _editarContato.cidade,
+                    "uf": _editarContato.uf
+                  });
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => const Inicio(
+                              index: 1,
+                            )),
+                  );
+                }
               } else {
                 FocusScope.of(context).requestFocus(_nomeFocus);
               }

@@ -424,7 +424,7 @@ class PesquisaTodosPetPage extends SearchDelegate<Pet?> {
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => DetalheContato(
-                                idContato: int.parse(pets[index].idContato!))));
+                                idContato: pets[index].idContato!)));
                       },
                     );
                   },

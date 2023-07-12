@@ -117,6 +117,26 @@ class InfoPlano {
         .toList();
   }
 
+  Future<List> obterPlanosPet2Firestore(id) async {
+    CollectionReference planoCollection =
+        FirebaseFirestore.instance.collection('planos');
+    var result = await planoCollection.where('idPlano', isEqualTo: '$id').get();
+    return result.docs
+        .map((doc) => Plano(
+            nomePlano: doc['nomePlano'],
+            svBanho: doc['svBanho'],
+            svTosa: doc['svTosa'],
+            svCorteUnha: doc['svCorteUnha'],
+            svHidratacao: doc['svHidratacao'],
+            svTosaHigienica: doc['svTosaHigienica'],
+            svPintura: doc['svPintura'],
+            svHospedagem: doc['svHospedagem'],
+            svTransporte: doc['svTransporte'],
+            valor: doc['valor'],
+            id: doc['idPlano']))
+        .toList();
+  }
+
   deletarPlanoFirestore(id) async {
     CollectionReference planoCollection =
         FirebaseFirestore.instance.collection('planos');

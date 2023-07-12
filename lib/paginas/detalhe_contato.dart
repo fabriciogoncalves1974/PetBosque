@@ -14,7 +14,7 @@ class DetalheContato extends StatefulWidget {
     required this.idContato,
   }) : super(key: key);
 
-  final int idContato;
+  final String idContato;
 
   @override
   State<DetalheContato> createState() => _DetalheContatoState();
@@ -24,8 +24,8 @@ class _DetalheContatoState extends State<DetalheContato> {
   List<Contato> contato = [];
 
   late String status;
-  late int idContato;
-  late int contatoId;
+  late String idContato;
+  late String contatoId;
 
   paginaContatos() {
     Navigator.of(context).push(
@@ -260,7 +260,7 @@ class _DetalheContatoState extends State<DetalheContato> {
   }
 
   void _obterContato() {
-    info.obterDadosContato(widget.idContato).then((dynamic list) {
+    info.obterDadosContatosFirestore(widget.idContato).then((dynamic list) {
       setState(() {
         contato = list;
       });

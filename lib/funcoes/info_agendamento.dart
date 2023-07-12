@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
 import 'package:sqflite/sqlite_api.dart';
@@ -213,10 +214,134 @@ class InfoAgendamento {
     Database? dbAgendamento = db;
     dbAgendamento!.close();
   }
+
+  Future<List> obterTodosAgendamentosFirestore(dataAge) async {
+    CollectionReference agendamentoCollection =
+        FirebaseFirestore.instance.collection('agendamentos');
+    var result = await agendamentoCollection
+        .where('data', isEqualTo: '$dataAge')
+        .orderBy('hora')
+        .get();
+    return result.docs
+        .map((doc) => Agendamento(
+            idPet: doc['idPet'],
+            nomeContato: doc['nomeContato'],
+            fotoPet: doc['fotoPet'],
+            nomePet: doc['nomePet'],
+            data: doc['data'],
+            hora: doc['hora'],
+            svBanho: doc['svBanho'],
+            valorBanho: doc['valorBanho'],
+            svTosa: doc['svTosa'],
+            valorTosa: doc['valorTosa'],
+            svCorteUnha: doc['svCorteUnha'],
+            valorCorteUnha: doc['valorCorteUnha'],
+            svHidratacao: doc['svHidratacao'],
+            valorHidratacao: doc['valorHidratacao'],
+            svTosaHigienica: doc['svTosaHigienica'],
+            valorTosaHigienica: doc['valorTosaHigienica'],
+            svPintura: doc['svPintura'],
+            valorPintura: doc['valorPintura'],
+            svHospedagem: doc['svHospedagem'],
+            valorHospedagem: doc['valorHospedagem'],
+            svTransporte: doc['svTransporte'],
+            valorTransporte: doc['valorTransporte'],
+            valorAdicional: doc['valorAdicional'],
+            valorTotal: doc['valorTotal'],
+            observacao: doc['observacao'],
+            status: doc['status'],
+            colaborador: doc['colaborador'],
+            idColaborador: doc['idColaborador'],
+            planoVencido: doc['planoVencido'],
+            id: doc['idAgendamento']))
+        .toList();
+  }
+
+  Future<List> obterTodosAgendamentosPendentesFirestore() async {
+    CollectionReference agendamentoCollection =
+        FirebaseFirestore.instance.collection('agendamentos');
+    var result = await agendamentoCollection
+        .where('status', isEqualTo: 'Pendente')
+        .get();
+    return result.docs
+        .map((doc) => Agendamento(
+            idPet: doc['idPet'],
+            nomeContato: doc['nomeContato'],
+            fotoPet: doc['fotoPet'],
+            nomePet: doc['nomePet'],
+            data: doc['data'],
+            hora: doc['hora'],
+            svBanho: doc['svBanho'],
+            valorBanho: doc['valorBanho'],
+            svTosa: doc['svTosa'],
+            valorTosa: doc['valorTosa'],
+            svCorteUnha: doc['svCorteUnha'],
+            valorCorteUnha: doc['valorCorteUnha'],
+            svHidratacao: doc['svHidratacao'],
+            valorHidratacao: doc['valorHidratacao'],
+            svTosaHigienica: doc['svTosaHigienica'],
+            valorTosaHigienica: doc['valorTosaHigienica'],
+            svPintura: doc['svPintura'],
+            valorPintura: doc['valorPintura'],
+            svHospedagem: doc['svHospedagem'],
+            valorHospedagem: doc['valorHospedagem'],
+            svTransporte: doc['svTransporte'],
+            valorTransporte: doc['valorTransporte'],
+            valorAdicional: doc['valorAdicional'],
+            valorTotal: doc['valorTotal'],
+            observacao: doc['observacao'],
+            status: doc['status'],
+            colaborador: doc['colaborador'],
+            idColaborador: doc['idColaborador'],
+            planoVencido: doc['planoVencido'],
+            id: doc['idAgendamento']))
+        .toList();
+  }
+
+  Future<List> obterAgendamentoDetalheFirestore(id) async {
+    CollectionReference agendamentoCollection =
+        FirebaseFirestore.instance.collection('agendamentos');
+    var result = await agendamentoCollection
+        .where('idAgendamento', isEqualTo: '$id')
+        .get();
+    return result.docs
+        .map((doc) => Agendamento(
+            idPet: doc['idPet'],
+            nomeContato: doc['nomeContato'],
+            fotoPet: doc['fotoPet'],
+            nomePet: doc['nomePet'],
+            data: doc['data'],
+            hora: doc['hora'],
+            svBanho: doc['svBanho'],
+            valorBanho: doc['valorBanho'],
+            svTosa: doc['svTosa'],
+            valorTosa: doc['valorTosa'],
+            svCorteUnha: doc['svCorteUnha'],
+            valorCorteUnha: doc['valorCorteUnha'],
+            svHidratacao: doc['svHidratacao'],
+            valorHidratacao: doc['valorHidratacao'],
+            svTosaHigienica: doc['svTosaHigienica'],
+            valorTosaHigienica: doc['valorTosaHigienica'],
+            svPintura: doc['svPintura'],
+            valorPintura: doc['valorPintura'],
+            svHospedagem: doc['svHospedagem'],
+            valorHospedagem: doc['valorHospedagem'],
+            svTransporte: doc['svTransporte'],
+            valorTransporte: doc['valorTransporte'],
+            valorAdicional: doc['valorAdicional'],
+            valorTotal: doc['valorTotal'],
+            observacao: doc['observacao'],
+            status: doc['status'],
+            colaborador: doc['colaborador'],
+            idColaborador: doc['idColaborador'],
+            planoVencido: doc['planoVencido'],
+            id: doc['idAgendamento']))
+        .toList();
+  }
 }
 
 class Agendamento {
-  int? id;
+  dynamic id;
   String? idPet;
   String? nomeContato;
   String? fotoPet;
@@ -247,7 +372,37 @@ class Agendamento {
   String? idColaborador;
   String? planoVencido;
 
-  Agendamento();
+  Agendamento(
+      {this.idPet,
+      this.colaborador,
+      this.data,
+      this.fotoPet,
+      this.hora,
+      this.id,
+      this.idColaborador,
+      this.nomeContato,
+      this.nomePet,
+      this.observacao,
+      this.planoVencido,
+      this.status,
+      this.svBanho,
+      this.svCorteUnha,
+      this.svHidratacao,
+      this.svHospedagem,
+      this.svPintura,
+      this.svTosa,
+      this.svTosaHigienica,
+      this.svTransporte,
+      this.valorAdicional,
+      this.valorBanho,
+      this.valorCorteUnha,
+      this.valorHidratacao,
+      this.valorHospedagem,
+      this.valorPintura,
+      this.valorTosa,
+      this.valorTosaHigienica,
+      this.valorTotal,
+      this.valorTransporte});
 
   Agendamento.fromMap(Map map) {
     id = map[idColuna];

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
 import 'package:sqflite/sqlite_api.dart';
@@ -184,10 +185,70 @@ class InfoHospedagem {
     Database? dbHospedagem = db;
     dbHospedagem!.close();
   }
+
+  Future<List> obterTodasHospedagemDiaFirestore(dataAge) async {
+    CollectionReference hospedagemCollection =
+        FirebaseFirestore.instance.collection('hospedagem');
+    var result = await hospedagemCollection
+        .where('dataCheckIn', isEqualTo: '$dataAge')
+        .get();
+    return result.docs
+        .map((doc) => Hospedagem(
+            idPet: doc['idPet'],
+            nomeContato: doc['nomeContato'],
+            fotoPet: doc['fotoPet'],
+            nomePet: doc['nomePet'],
+            dataCheckIn: doc['dataCheckIn'],
+            horaCheckIn: doc['horaCheckIn'],
+            dataCheckOut: doc['dataCheckOut'],
+            horaCheckOut: doc['horaCheckOut'],
+            dia: doc['dia'],
+            valorDia: doc['valorDia'],
+            adicional: doc['adicional'],
+            valorTotal: doc['valorTotal'],
+            observacao: doc['observacao'],
+            status: doc['status'],
+            colaborador: doc['colaborador'],
+            idColaborador: doc['idColaborador'],
+            porte: doc['porte'],
+            genero: doc['genero'],
+            id: doc['idHospedagem']))
+        .toList();
+  }
+
+  Future<List> obterTodasHospedagemDetalheFirestore(id) async {
+    CollectionReference hospedagemCollection =
+        FirebaseFirestore.instance.collection('hospedagem');
+    var result = await hospedagemCollection
+        .where('idHospedagem', isEqualTo: '$id')
+        .get();
+    return result.docs
+        .map((doc) => Hospedagem(
+            idPet: doc['idPet'],
+            nomeContato: doc['nomeContato'],
+            fotoPet: doc['fotoPet'],
+            nomePet: doc['nomePet'],
+            dataCheckIn: doc['dataCheckIn'],
+            horaCheckIn: doc['horaCheckIn'],
+            dataCheckOut: doc['dataCheckOut'],
+            horaCheckOut: doc['horaCheckOut'],
+            dia: doc['dia'],
+            valorDia: doc['valorDia'],
+            adicional: doc['adicional'],
+            valorTotal: doc['valorTotal'],
+            observacao: doc['observacao'],
+            status: doc['status'],
+            colaborador: doc['colaborador'],
+            idColaborador: doc['idColaborador'],
+            porte: doc['porte'],
+            genero: doc['genero'],
+            id: doc['idHospedagem']))
+        .toList();
+  }
 }
 
 class Hospedagem {
-  int? id;
+  dynamic id;
   String? idPet;
   String? nomeContato;
   String? fotoPet;
@@ -196,7 +257,7 @@ class Hospedagem {
   String? horaCheckIn;
   String? dataCheckOut;
   String? horaCheckOut;
-  int? dia;
+  dynamic dia;
   double? valorDia;
   double? adicional;
   double? valorTotal;
@@ -207,7 +268,26 @@ class Hospedagem {
   String? porte;
   String? genero;
 
-  Hospedagem();
+  Hospedagem(
+      {this.idPet,
+      this.adicional,
+      this.colaborador,
+      this.dataCheckIn,
+      this.dataCheckOut,
+      this.dia,
+      this.fotoPet,
+      this.genero,
+      this.horaCheckIn,
+      this.horaCheckOut,
+      this.id,
+      this.idColaborador,
+      this.nomeContato,
+      this.nomePet,
+      this.observacao,
+      this.porte,
+      this.status,
+      this.valorDia,
+      this.valorTotal});
 
   Hospedagem.fromMap(Map map) {
     id = map[idColuna];

@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_hospedagem.dart';
 import 'package:pet_bosque/paginas/lista_hospedagem.dart';
 import 'package:pet_bosque/paginas/lista_petHospedagem.dart';
+import 'package:uuid/uuid.dart';
 
 class NovaHospedagem extends StatefulWidget {
   final Hospedagem _hospedagem;
@@ -53,7 +54,7 @@ class _NovaHospedagemState extends State<NovaHospedagem> {
   bool _hospedagemEditada = false;
   late int diaria;
   double totalHospedagem = 0;
-
+  FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
@@ -287,7 +288,30 @@ class _NovaHospedagemState extends State<NovaHospedagem> {
                       });
                 } else {
                   _totalHospedagem();
-                  info.salvarHospedagem(_novaHospedagem);
+                  // info.salvarHospedagem(_novaHospedagem);
+                  String id = Uuid().v1();
+                  db.collection("hospedagem").doc(id).set({
+                    "idHospedagem": id,
+                    "idPet": _novaHospedagem.idPet,
+                    "nomeContato": _novaHospedagem.nomeContato,
+                    "fotoPet": _novaHospedagem.fotoPet,
+                    "nomePet": _novaHospedagem.nomePet,
+                    "dataCheckIn": _novaHospedagem.dataCheckIn,
+                    "horaCheckIn": _novaHospedagem.horaCheckIn,
+                    "dataCheckOut": _novaHospedagem.dataCheckOut,
+                    "horaCheckOut": _novaHospedagem.horaCheckOut,
+                    "dia": _novaHospedagem.dia,
+                    "valorDia": _novaHospedagem.valorDia,
+                    "adicional": _novaHospedagem.adicional,
+                    "valorTotal": totalHospedagem,
+                    "observacao": _novaHospedagem.observacao,
+                    "status": _novaHospedagem.status,
+                    "colaborador": _novaHospedagem.colaborador,
+                    "idColaborador": _novaHospedagem.idColaborador,
+                    "genero": _novaHospedagem.genero,
+                    "porte": _novaHospedagem.porte
+                  });
+
                   _limpaCampos();
                   Navigator.push(
                       context,

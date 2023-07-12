@@ -23,10 +23,7 @@ class ListaContatos extends StatefulWidget {
 
 class _ListaContatosState extends State<ListaContatos> {
   List<Contato> contatos = [];
-//  late CollectionReference contactCollection;
-  // ContactDAOFirestore() {
-  //   contactCollection = FirebaseFirestore.instance.collection('contact');
-  // }
+  bool loading = true;
 
   paginaPet() {
     Navigator.of(context).push(
@@ -55,6 +52,7 @@ class _ListaContatosState extends State<ListaContatos> {
       (event) {
         setState(() {
           _obterTodosContatos();
+          loading = false;
         });
       },
     );
@@ -111,12 +109,19 @@ class _ListaContatosState extends State<ListaContatos> {
           },
           child: const Icon(Icons.add),
         ),
-        body: ListView.builder(
-            padding: const EdgeInsets.all(10.0),
-            itemCount: contatos.length,
-            itemBuilder: (context, index) {
-              return _cartaoContato(context, index);
-            }),
+        body: !loading
+            ? ListView.builder(
+                padding: const EdgeInsets.all(10.0),
+                itemCount: contatos.length,
+                itemBuilder: (context, index) {
+                  return _cartaoContato(context, index);
+                })
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Colors.greenAccent,
+                  backgroundColor: Colors.grey,
+                ),
+              ),
       ),
     );
   }
@@ -135,7 +140,7 @@ class _ListaContatosState extends State<ListaContatos> {
               caption: 'Editar',
               onTap: () {
                 Navigator.pop(context);
-                //_ExibirNovoContato(contato: contatos[index]);
+                _ExibirNovoContato(contato: contatos[index]);
               },
             ),
             IconSlideAction(
@@ -218,7 +223,7 @@ class _ListaContatosState extends State<ListaContatos> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
-              color: Colors.grey[200],
+              color: const Color.fromRGBO(204, 236, 247, 100),
             ),
             padding: const EdgeInsets.all(16),
             child: Column(
