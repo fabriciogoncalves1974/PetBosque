@@ -5,10 +5,10 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
 import 'package:pet_bosque/funcoes/pesquisa_pet.dart';
+import 'package:pet_bosque/paginas/inicio.dart';
 import 'package:pet_bosque/paginas/lista_agendamentos.dart';
 import 'package:pet_bosque/paginas/novo_agendamento.dart';
 import 'package:pet_bosque/paginas/novo_agendamentoPlano.dart';
-import 'package:pet_bosque/paginas/principal.dart';
 
 enum OrderOption { orderaz, orderza }
 
@@ -40,7 +40,10 @@ class _ListaPetState extends State<ListaPet> {
 
   paginaInicial() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const Principal()),
+      MaterialPageRoute(
+          builder: (context) => const Inicio(
+                index: 0,
+              )),
     );
   }
 

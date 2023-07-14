@@ -113,7 +113,7 @@ class _NovoPetState extends State<NovoPet> {
               _retornaPop(context);
             }),
           ),
-          floatingActionButton: FloatingActionButton(
+          floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
               if (_editarPet.nomePet != null &&
                   _editarPet.nomePet!.isNotEmpty) {
@@ -149,7 +149,11 @@ class _NovoPetState extends State<NovoPet> {
                 FocusScope.of(context).requestFocus(_nomeFocus);
               }
             },
-            child: const Icon(Icons.save),
+            icon: const Icon(Icons.save),
+            backgroundColor: Color.fromRGBO(35, 151, 166, 1),
+            hoverColor: Color.fromRGBO(35, 151, 166, 50),
+            foregroundColor: Colors.white,
+            label: Text("Salvar"),
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(10.0),
@@ -218,6 +222,7 @@ class _NovoPetState extends State<NovoPet> {
                 TextFormField(
                   controller: _nomePetController,
                   focusNode: _nomeFocus,
+                  textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "Nome do Pet",
@@ -307,6 +312,7 @@ class _NovoPetState extends State<NovoPet> {
                   height: 20,
                 ),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       //Fundo do textfield branco
@@ -369,6 +375,7 @@ class _NovoPetState extends State<NovoPet> {
                   height: 20,
                 ),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "Cor",
@@ -427,6 +434,7 @@ class _NovoPetState extends State<NovoPet> {
                   ),
                 ),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "Especie",

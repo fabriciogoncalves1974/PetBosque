@@ -218,10 +218,8 @@ class InfoAgendamento {
   Future<List> obterTodosAgendamentosFirestore(dataAge) async {
     CollectionReference agendamentoCollection =
         FirebaseFirestore.instance.collection('agendamentos');
-    var result = await agendamentoCollection
-        .where('data', isEqualTo: '$dataAge')
-        .orderBy('hora')
-        .get();
+    var result =
+        await agendamentoCollection.where('data', isEqualTo: '$dataAge').get();
     return result.docs
         .map((doc) => Agendamento(
             idPet: doc['idPet'],
@@ -303,6 +301,47 @@ class InfoAgendamento {
         FirebaseFirestore.instance.collection('agendamentos');
     var result = await agendamentoCollection
         .where('idAgendamento', isEqualTo: '$id')
+        .get();
+    return result.docs
+        .map((doc) => Agendamento(
+            idPet: doc['idPet'],
+            nomeContato: doc['nomeContato'],
+            fotoPet: doc['fotoPet'],
+            nomePet: doc['nomePet'],
+            data: doc['data'],
+            hora: doc['hora'],
+            svBanho: doc['svBanho'],
+            valorBanho: doc['valorBanho'],
+            svTosa: doc['svTosa'],
+            valorTosa: doc['valorTosa'],
+            svCorteUnha: doc['svCorteUnha'],
+            valorCorteUnha: doc['valorCorteUnha'],
+            svHidratacao: doc['svHidratacao'],
+            valorHidratacao: doc['valorHidratacao'],
+            svTosaHigienica: doc['svTosaHigienica'],
+            valorTosaHigienica: doc['valorTosaHigienica'],
+            svPintura: doc['svPintura'],
+            valorPintura: doc['valorPintura'],
+            svHospedagem: doc['svHospedagem'],
+            valorHospedagem: doc['valorHospedagem'],
+            svTransporte: doc['svTransporte'],
+            valorTransporte: doc['valorTransporte'],
+            valorAdicional: doc['valorAdicional'],
+            valorTotal: doc['valorTotal'],
+            observacao: doc['observacao'],
+            status: doc['status'],
+            colaborador: doc['colaborador'],
+            idColaborador: doc['idColaborador'],
+            planoVencido: doc['planoVencido'],
+            id: doc['idAgendamento']))
+        .toList();
+  }
+
+  Future<List> obterTodosAgendamentosColaboradorFirestore(id) async {
+    CollectionReference agendamentoCollection =
+        FirebaseFirestore.instance.collection('agendamentos');
+    var result = await agendamentoCollection
+        .where('idColaborador', isEqualTo: '$id')
         .get();
     return result.docs
         .map((doc) => Agendamento(

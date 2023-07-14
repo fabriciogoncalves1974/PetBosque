@@ -93,7 +93,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
           actionPane: const SlidableDrawerActionPane(),
           secondaryActions: [
             IconSlideAction(
-              color: Colors.red,
+              color: Colors.redAccent,
               icon: Icons.add,
               caption: 'Excluir',
               onTap: () {

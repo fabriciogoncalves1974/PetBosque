@@ -2,7 +2,6 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/paginas/agendamentos.dart';
-import 'package:pet_bosque/paginas/lista.dart';
 import 'package:pet_bosque/paginas/lista_agendamentos.dart';
 import 'package:pet_bosque/paginas/lista_agendamentosPendentes.dart';
 import 'package:pet_bosque/paginas/lista_colaborador.dart';
@@ -75,7 +74,10 @@ class _InicioState extends State<Inicio> {
 
   paginaPlanos() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const Lista()),
+      MaterialPageRoute(
+          builder: (context) => const Inicio(
+                index: 4,
+              )),
     );
   }
 
@@ -143,7 +145,7 @@ class _InicioState extends State<Inicio> {
                     borderRadius: BorderRadius.circular(10), //<-- SEE HERE
                   ),
                   child: Image.asset(
-                    "assets/imagens/pet.png",
+                    "assets/imagens/petBosque.png",
                     alignment: Alignment.bottomCenter,
                     fit: BoxFit.fitHeight,
                   )),
@@ -154,7 +156,7 @@ class _InicioState extends State<Inicio> {
                   const DrawerHeader(
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage("assets/imagens/pet.png"),
+                            image: AssetImage("assets/imagens/petBosque.png"),
                             fit: BoxFit.cover)),
                     child: null,
                   ),

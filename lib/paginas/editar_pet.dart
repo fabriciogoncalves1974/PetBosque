@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,7 +44,7 @@ class _EditarPetState extends State<EditarPet> {
 
   final _nomeFocus = FocusNode();
   DateTime _dateTime = DateTime.now();
-
+  FirebaseFirestore db = FirebaseFirestore.instance;
   late Pet _editarPet;
 
   bool _petEditado = false;
@@ -127,7 +128,27 @@ class _EditarPetState extends State<EditarPet> {
                   _editarPet.nomePet!.isNotEmpty) {
                 await info.atualizarFotoPet(
                     _editarPet.id.toString(), _editarPet.foto.toString());
-                info.atualizarPet(_editarPet);
+                // info.atualizarPet(_editarPet);
+                db.collection("pet").doc(_editarPet.id).set({
+                  "idPet": _editarPet.id,
+                  "idContato": _editarPet.idContato,
+                  "nomePet": _editarPet.nomePet,
+                  "raca": _editarPet.raca,
+                  "peso": _editarPet.peso,
+                  "genero": _editarPet.genero,
+                  "dtNasc": _editarPet.dtNasc,
+                  "especie": _editarPet.especie,
+                  "cor": _editarPet.cor,
+                  "foto": _editarPet.foto,
+                  "nomeContato": _editarPet.nomeContato,
+                  "contaPlano": _editarPet.contaPlano,
+                  "nomePlano": _editarPet.nomePlano,
+                  "idPlano": _editarPet.idPlano,
+                  "valorPlano": _editarPet.valorPlano,
+                  "porte": _editarPet.porte,
+                  "dataContrato": _editarPet.dataContrato,
+                  "planoVencido": _editarPet.planoVencido,
+                });
 
                 Navigator.push(
                     context,
@@ -213,6 +234,7 @@ class _EditarPetState extends State<EditarPet> {
                 TextFormField(
                   controller: _nomePetController,
                   focusNode: _nomeFocus,
+                  textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "Nome do Pet",
@@ -374,6 +396,7 @@ class _EditarPetState extends State<EditarPet> {
                   height: 20,
                 ),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   controller: _racaPetController,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
@@ -464,6 +487,7 @@ class _EditarPetState extends State<EditarPet> {
                   height: 20,
                 ),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   controller: _corPetController,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
@@ -523,6 +547,7 @@ class _EditarPetState extends State<EditarPet> {
                   ),
                 ),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   controller: _especiePetController,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),

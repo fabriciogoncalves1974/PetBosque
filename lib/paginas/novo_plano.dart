@@ -68,6 +68,8 @@ class _NovoPlanoState extends State<NovoPlano> {
       id: null);
   bool _planoEditado = false;
   late Plano _editarPlano;
+  bool loading = false;
+
   FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
@@ -111,6 +113,15 @@ class _NovoPlanoState extends State<NovoPlano> {
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
+              loading = true;
+              if (loading = true) {
+                Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.greenAccent,
+                    backgroundColor: Colors.grey,
+                  ),
+                );
+              }
               if (_editarPlano.nomePlano != null &&
                   _editarPlano.nomePlano!.isNotEmpty) {
                 // info.salvarPlano(_editarPlano);
@@ -129,6 +140,7 @@ class _NovoPlanoState extends State<NovoPlano> {
                   "valor": _editarPlano.valor,
                 });
                 _limpaCheck();
+                loading = false;
                 Navigator.of(context).push(
                   MaterialPageRoute(
                       builder: (context) => const Inicio(

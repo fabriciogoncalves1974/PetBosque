@@ -241,6 +241,42 @@ class InfoPet {
               planoVencido: doc['planoVencido'],
             ))
         .toList();
+    FirebaseFirestore.instance.collection('pet');
+    petCollection.doc(id).delete();
+  }
+
+  deletarPetFirestore(id) async {
+    CollectionReference planoCollection =
+        FirebaseFirestore.instance.collection('pet');
+    planoCollection.doc(id).delete();
+  }
+
+  Future<List> deletarPetContatoFirestore(String id) async {
+    CollectionReference petCollection =
+        FirebaseFirestore.instance.collection('pet');
+    var result = await petCollection.where('idContato', isEqualTo: '$id').get();
+    return result.docs
+        .map((doc) => Pet(
+              id: doc['idPet'],
+              idContato: doc['idContato'],
+              nomePet: doc['nomePet'],
+              raca: doc['raca'],
+              peso: doc['peso'],
+              genero: doc['genero'],
+              dtNasc: doc['dtNasc'],
+              especie: doc['especie'],
+              cor: doc['cor'],
+              foto: doc['foto'],
+              nomeContato: doc['nomeContato'],
+              contaPlano: doc['contaPlano'],
+              nomePlano: doc['nomePlano'],
+              idPlano: doc['idPlano'],
+              dataContrato: doc['dataContrato'],
+              valorPlano: doc['valorPlano'],
+              porte: doc['porte'],
+              planoVencido: doc['planoVencido'],
+            ))
+        .toList();
   }
 }
 

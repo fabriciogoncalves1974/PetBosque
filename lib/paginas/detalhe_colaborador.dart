@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_bosque/funcoes/info_coloborador.dart';
@@ -40,7 +41,7 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
   double valorComissaoAvulso = 0;
   late double porcentComissao;
   late int mes;
-
+  FirebaseFirestore db = FirebaseFirestore.instance;
   String? mesSelecionado;
 
   var meses = [
@@ -106,7 +107,7 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
       default:
         print('choose a different number!');
     }
-    //_obterColaboradores();
+    _obterColaboradores();
     //_obterQuantidadeAgendamentos(int);
     //_totalAgendamentosColaborador(int);
     //_totalAgendamentosAvulso(int);
@@ -389,17 +390,19 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
       });
     }));
   }
+*/
+  void _totalAgendamentosColaborador(int) {}
 
   void _obterColaboradores() {
     infoColaborador
-        .obterDadosColaborador(widget.idColaborador)
+        .obterDadosColaboradorFirestore(widget.idColaborador)
         .then((dynamic listaColaborador) {
       setState(() {
         colaborador = listaColaborador;
         porcentComissao = colaborador[0].porcenComissao as double;
       });
     });
-  }*/
+  }
 }
 
 //Customizar ListTile do menu

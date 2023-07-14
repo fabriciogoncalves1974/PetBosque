@@ -174,6 +174,12 @@ class InfoContato {
             uf: doc['uf']))
         .toList();
   }
+
+  deletarContatoFirestore(id) async {
+    CollectionReference planoCollection =
+        FirebaseFirestore.instance.collection('contato');
+    planoCollection.doc(id).delete();
+  }
 }
 
 class Contato {

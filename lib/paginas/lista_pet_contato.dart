@@ -164,7 +164,7 @@ class _ListaPetContatoState extends State<ListaPetContato> {
                                   borderRadius: BorderRadius.circular(10)),
                             ),
                             onPressed: () {
-                              info.deletarPet(pet[index].id!);
+                              info.deletarPetFirestore(pet[index].id!);
                               setState(() {
                                 pet.removeAt(index);
 

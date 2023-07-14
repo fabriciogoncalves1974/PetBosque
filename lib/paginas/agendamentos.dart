@@ -43,7 +43,7 @@ class _AgendamentosState extends State<Agendamentos> {
                         child: Container(
                           height: 100,
                           width: 371,
-                          color: Colors.black,
+                          color: Color.fromRGBO(35, 151, 166, 1),
                           /*decoration: BoxDecoration(
                             image: const DecorationImage(
                                 image: AssetImage("assets/imagens/botao.png"),
@@ -90,7 +90,7 @@ class _AgendamentosState extends State<Agendamentos> {
                         child: Container(
                           height: 100,
                           width: 371,
-                          color: Colors.black,
+                          color: Color.fromRGBO(35, 151, 166, 1),
                           /*decoration: BoxDecoration(
                             image: const DecorationImage(
                                 image: AssetImage("assets/imagens/botao.png"),
@@ -138,7 +138,7 @@ class _AgendamentosState extends State<Agendamentos> {
                         child: Container(
                           height: 100,
                           width: 371,
-                          color: Colors.black,
+                          color: Color.fromRGBO(35, 151, 166, 1),
                           /*decoration: BoxDecoration(
                             image: const DecorationImage(
                                 image: AssetImage("assets/imagens/botao.png"),
@@ -169,10 +169,7 @@ class _AgendamentosState extends State<Agendamentos> {
                             ),
                           ]),
                         ),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const ListaPet()));
-                        },
+                        onTap: () {},
                       ),
                     ],
                   ),

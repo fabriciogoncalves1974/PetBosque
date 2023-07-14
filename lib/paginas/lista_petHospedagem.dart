@@ -52,12 +52,12 @@ class _ListaPetHospedagem extends State<ListaPetHospedagem> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: const Text("Pets"),
-          leading: BackButton(onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const Inicio(
-                      index: 0,
-                    )));
-          }),
+          leading: IconButton(
+            onPressed: () {
+              paginaInicial();
+            },
+            icon: const Icon(Icons.home_outlined),
+          ),
           centerTitle: true,
           actions: <Widget>[
             IconButton(

@@ -73,21 +73,15 @@ class _ListaContatosState extends State<ListaContatos> {
           title: const Text("Contatos"),
           leading: IconButton(
             onPressed: () {
-              paginaInicial();
+              showSearch(
+                context: context,
+                delegate: PesquisaPage(),
+              );
             },
-            icon: const Icon(Icons.home_outlined),
+            icon: const Icon(Icons.search),
           ),
           centerTitle: true,
           actions: <Widget>[
-            IconButton(
-              onPressed: () {
-                showSearch(
-                  context: context,
-                  delegate: PesquisaPage(),
-                );
-              },
-              icon: const Icon(Icons.search),
-            ),
             PopupMenuButton<OrderOption>(
               itemBuilder: (context) => <PopupMenuEntry<OrderOption>>[
                 const PopupMenuItem<OrderOption>(
@@ -103,11 +97,15 @@ class _ListaContatosState extends State<ListaContatos> {
             )
           ],
         ),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             _ExibirNovoContato();
           },
-          child: const Icon(Icons.add),
+          icon: const Icon(Icons.add),
+          backgroundColor: Color.fromRGBO(35, 151, 166, 1),
+          hoverColor: Color.fromRGBO(35, 151, 166, 50),
+          foregroundColor: Colors.white,
+          label: Text("Novo"),
         ),
         body: !loading
             ? ListView.builder(
@@ -188,8 +186,9 @@ class _ListaContatosState extends State<ListaContatos> {
                                   borderRadius: BorderRadius.circular(10)),
                             ),
                             onPressed: () {
-                              info.deletarContato(contatos[index].id!);
-                              infoPet.deletarPetContato(contatos[index].id!);
+                              info.deletarContatoFirestore(contatos[index].id!);
+                              infoPet.deletarPetContatoFirestore(
+                                  contatos[index].id!);
 
                               setState(() {
                                 contatos.removeAt(index);
@@ -339,7 +338,7 @@ class _ListaContatosState extends State<ListaContatos> {
                     const SizedBox(
                       width: 25,
                     ),
-                    const Text(
+                    /*const Text(
                       "UF: ",
                       style: TextStyle(
                         color: Color.fromARGB(255, 73, 66, 2),
@@ -352,7 +351,7 @@ class _ListaContatosState extends State<ListaContatos> {
                       style: const TextStyle(
                         fontSize: 12,
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
                 Row(

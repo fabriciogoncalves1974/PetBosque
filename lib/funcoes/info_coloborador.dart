@@ -159,6 +159,23 @@ class InfoColaborador {
         .toList();
   }
 
+  Future<List> obterDadosColaboradorFirestore(idColaborador) async {
+    CollectionReference colaboradorCollection =
+        FirebaseFirestore.instance.collection('colaborador');
+    var result = await colaboradorCollection
+        .where('idColaborador', isEqualTo: idColaborador)
+        .get();
+    return result.docs
+        .map((doc) => Colaborador(
+            nomeColaborador: doc['nomeColaborador'],
+            funcao: doc['funcao'],
+            porcenComissao: doc['porcenComissao'],
+            metaComissao: doc['metaComissao'],
+            status: doc['status'],
+            id: doc['idColaborador']))
+        .toList();
+  }
+
   deletarColaboradorFirestore(id) async {
     CollectionReference planoCollection =
         FirebaseFirestore.instance.collection('planos');

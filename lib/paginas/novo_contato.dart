@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/funcoes/info_contato.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
@@ -42,6 +43,9 @@ class _NovoContatoState extends State<NovoContato> {
   final _telefoneController = TextEditingController();
   final _enderecoController = TextEditingController();
   final _idContatoController = TextEditingController();
+  final _complementoController = TextEditingController();
+  final _bairroController = TextEditingController();
+  final _cidadeController = TextEditingController();
 
   final _nomeFocus = FocusNode();
 
@@ -49,7 +53,7 @@ class _NovoContatoState extends State<NovoContato> {
 
   bool _contatoEditado = false;
   bool _novoContato = true;
-
+  var mascaraFone = MaskTextInputFormatter(mask: '(##) # ####-####');
   @override
   void initState() {
     super.initState();
@@ -64,6 +68,9 @@ class _NovoContatoState extends State<NovoContato> {
     _telefoneController.text = _editarContato.telefone ?? "";
     _enderecoController.text = _editarContato.endereco ?? "";
     _idContatoController.text = _editarContato.id.toString();
+    _complementoController.text = _editarContato.complemento ?? "";
+    _bairroController.text = _editarContato.bairro ?? "";
+    _cidadeController.text = _editarContato.cidade ?? "";
   }
 
   @override
@@ -81,9 +88,15 @@ class _NovoContatoState extends State<NovoContato> {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
+            leading: BackButton(onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => Inicio(
+                        index: 1,
+                      )));
+            }),
             title: Text(_editarContato.nome ?? "Novo Contato"),
           ),
-          floatingActionButton: FloatingActionButton(
+          floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
               if (_editarContato.nome != null &&
                   _editarContato.nome!.isNotEmpty) {
@@ -191,7 +204,11 @@ class _NovoContatoState extends State<NovoContato> {
                 FocusScope.of(context).requestFocus(_nomeFocus);
               }
             },
-            child: const Icon(Icons.save),
+            icon: const Icon(Icons.save),
+            backgroundColor: Color.fromRGBO(35, 151, 166, 1),
+            hoverColor: Color.fromRGBO(35, 151, 166, 50),
+            foregroundColor: Colors.white,
+            label: Text("Salvar"),
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(10.0),
@@ -260,12 +277,12 @@ class _NovoContatoState extends State<NovoContato> {
                 TextFormField(
                   controller: _nomeController,
                   focusNode: _nomeFocus,
+                  textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(gapPadding: 2.0),
                       labelText: "Nome",
                       prefixIcon: Padding(
                         padding: EdgeInsets.all(10),
-                        child: Icon(Icons.person_add),
                       )),
                   onChanged: (text) {
                     _contatoEditado = true;
@@ -286,13 +303,13 @@ class _NovoContatoState extends State<NovoContato> {
                   height: 20,
                 ),
                 TextFormField(
+                  inputFormatters: [mascaraFone],
                   controller: _telefoneController,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "Telefone",
                       prefixIcon: Padding(
                         padding: EdgeInsets.all(10),
-                        child: Icon(Icons.phone),
                       )),
                   onChanged: (text) {
                     _contatoEditado = true;
@@ -305,13 +322,13 @@ class _NovoContatoState extends State<NovoContato> {
                   height: 20,
                 ),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   controller: _enderecoController,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "Endereço",
                       prefixIcon: Padding(
                         padding: EdgeInsets.all(10),
-                        child: Icon(Icons.location_on),
                       )),
                   onChanged: (text) {
                     _contatoEditado = true;
@@ -323,12 +340,13 @@ class _NovoContatoState extends State<NovoContato> {
                   height: 20,
                 ),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
+                  controller: _complementoController,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "Complemento",
                       prefixIcon: Padding(
                         padding: EdgeInsets.all(10),
-                        child: Icon(Icons.note),
                       )),
                   onChanged: (text) {
                     _contatoEditado = true;
@@ -343,6 +361,8 @@ class _NovoContatoState extends State<NovoContato> {
                   children: <Widget>[
                     Expanded(
                         child: TextFormField(
+                      textCapitalization: TextCapitalization.words,
+                      controller: _bairroController,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Bairro",
@@ -364,6 +384,8 @@ class _NovoContatoState extends State<NovoContato> {
                     ),
                     Expanded(
                         child: TextFormField(
+                      textCapitalization: TextCapitalization.words,
+                      controller: _cidadeController,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Cidade",
@@ -389,18 +411,10 @@ class _NovoContatoState extends State<NovoContato> {
                       hintText: "email@email.com",
                       prefixIcon: Padding(
                         padding: EdgeInsets.all(10),
-                        child: Icon(Icons.email),
                       )),
                   onChanged: (text) {
                     _contatoEditado = true;
                     _editarContato.email = text;
-                  },
-                  validator: (valor) {
-                    if (valor == null ||
-                        !valor.contains("@") && !valor.contains(".com")) {
-                      return "EMail inválido";
-                    }
-                    return null;
                   },
                   keyboardType: TextInputType.emailAddress,
                 ),

@@ -406,7 +406,7 @@ class _ListaAgendamentosColabordorState
 
   void _obterTodosAgendamentos() {
     info
-        .obterTodosAgendamentosColaborador(widget.idColaborador)
+        .obterTodosAgendamentosColaboradorFirestore(widget.idColaborador)
         .then((dynamic list) {
       setState(() {
         agendamento = list;
