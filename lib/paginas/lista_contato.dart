@@ -8,6 +8,8 @@ import 'package:pet_bosque/paginas/lista_pet.dart';
 import 'package:pet_bosque/paginas/lista_pet_contato.dart';
 import 'package:pet_bosque/paginas/novo_contato.dart';
 import 'package:pet_bosque/paginas/principal.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 enum OrderOption { orderaz, orderza }
 
@@ -377,11 +379,13 @@ class _ListaContatosState extends State<ListaContatos> {
           ),
         ),
       ),
-      onTap: () {},
+      onTap: () {
+        _exibirOpcoes(context, index);
+      },
     );
   }
 
-  /* void _exibirOpcoes(BuildContext context, int index) {
+  void _exibirOpcoes(BuildContext context, int index) {
     showBottomSheet(
         context: context,
         builder: (context) {
@@ -401,9 +405,8 @@ class _ListaContatosState extends State<ListaContatos> {
                         label: const Text("Ligar"),
                         icon: const Icon(Icons.call),
                         style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.green,
-                          backgroundColor:
-                              const Color.fromARGB(255, 229, 228, 220),
+                          foregroundColor: Colors.white,
+                          backgroundColor: Color.fromRGBO(35, 151, 166, 50),
                         ),
                         onPressed: () {
                           launchUrlString("tel:${contatos[index].telefone}");
@@ -414,54 +417,16 @@ class _ListaContatosState extends State<ListaContatos> {
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: ElevatedButton.icon(
-                        label: const Text("Pet"),
-                        icon: const Icon(Icons.pets),
+                        label: const Text("WhatsApp"),
+                        icon: const Icon(Icons.mail),
                         style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.blueAccent,
-                          backgroundColor:
-                              const Color.fromARGB(255, 229, 228, 220),
+                          foregroundColor: Colors.white,
+                          backgroundColor: Color.fromRGBO(35, 151, 166, 50),
                         ),
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ListaPetContato(
-                                    idContato: contatos[index].id.toString(),
-                                    nomeContato:
-                                        contatos[index].nome.toString(),
-                                  )));
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: ElevatedButton.icon(
-                          label: const Text("Editar"),
-                          icon: const Icon(Icons.edit),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.orange,
-                            backgroundColor:
-                                const Color.fromARGB(255, 229, 228, 220),
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            _ExibirNovoContato(contato: contatos[index]);
-                          }),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: ElevatedButton.icon(
-                        label: const Text("Excluir"),
-                        icon: const Icon(Icons.delete),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.red,
-                          backgroundColor:
-                              const Color.fromARGB(255, 229, 228, 220),
-                        ),
-                        onPressed: () {
-                          info.deletarContato(contatos[index].id!);
-                          setState(() {
-                            contatos.removeAt(index);
-                            Navigator.pop(context);
-                          });
+                          abrirWhatsApp(contatos[index].telefone.toString(),
+                              contatos[index].nome.toString());
+                          Navigator.pop(context);
                         },
                       ),
                     ),
@@ -471,7 +436,18 @@ class _ListaContatosState extends State<ListaContatos> {
             },
           );
         });
-  }*/
+  }
+
+  void abrirWhatsApp(String fone, String nome) async {
+    var whatsappUrl =
+        "whatsapp://send?phone=${fone}&text=Olá ${nome}, tudo bem ?";
+
+    if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
+      await launchUrl(Uri.parse(whatsappUrl));
+    } else {
+      throw 'Could not launch $whatsappUrl';
+    }
+  }
 
   void _ExibirNovoContato({Contato? contato}) async {
     final gravaContato = await Navigator.push(

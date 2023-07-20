@@ -159,7 +159,10 @@ class InfoContato {
         FirebaseFirestore.instance.collection('contato');
 
     var result = await contatoCollection
-        .where('nome', isEqualTo: teclado, isLessThanOrEqualTo: teclado)
+        .orderBy('nome')
+        //.startAt([teclado]).endAt([teclado + '\uf8ff'])
+        .where('nome', isGreaterThanOrEqualTo: teclado)
+        .where('nome', isLessThan: teclado + 'z')
         .get();
     return result.docs
         .map((doc) => Contato(

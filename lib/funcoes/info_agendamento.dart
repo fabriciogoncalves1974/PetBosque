@@ -377,6 +377,12 @@ class InfoAgendamento {
             id: doc['idAgendamento']))
         .toList();
   }
+
+  deletarAgendamentoFirestore(id) async {
+    CollectionReference planoCollection =
+        FirebaseFirestore.instance.collection('agendamentos');
+    planoCollection.doc(id).delete();
+  }
 }
 
 class Agendamento {

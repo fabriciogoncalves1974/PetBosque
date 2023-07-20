@@ -164,7 +164,7 @@ class _ListaAgendamentosPendentesState
                 icon: Icons.delete,
                 caption: 'Excluir',
                 onTap: () {
-                  info.deletarAgendamento(agendamento[index].id!);
+                  info.deletarAgendamentoFirestore(agendamento[index].id!);
                   setState(() {
                     agendamento.removeAt(index);
                   });

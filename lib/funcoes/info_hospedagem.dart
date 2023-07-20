@@ -186,11 +186,43 @@ class InfoHospedagem {
     dbHospedagem!.close();
   }
 
-  Future<List> obterTodasHospedagemDiaFirestore(dataAge) async {
+  Future<List> obterTodasHospedagemDiaFirestore(data) async {
     CollectionReference hospedagemCollection =
         FirebaseFirestore.instance.collection('hospedagem');
     var result = await hospedagemCollection
-        .where('dataCheckIn', isEqualTo: '$dataAge')
+        .where('dataCheckIn', isEqualTo: '$data')
+        .orderBy('horaCheckIn', descending: true)
+        .get();
+    return result.docs
+        .map((doc) => Hospedagem(
+            idPet: doc['idPet'],
+            nomeContato: doc['nomeContato'],
+            fotoPet: doc['fotoPet'],
+            nomePet: doc['nomePet'],
+            dataCheckIn: doc['dataCheckIn'],
+            horaCheckIn: doc['horaCheckIn'],
+            dataCheckOut: doc['dataCheckOut'],
+            horaCheckOut: doc['horaCheckOut'],
+            dia: doc['dia'],
+            valorDia: doc['valorDia'],
+            adicional: doc['adicional'],
+            valorTotal: doc['valorTotal'],
+            observacao: doc['observacao'],
+            status: doc['status'],
+            colaborador: doc['colaborador'],
+            idColaborador: doc['idColaborador'],
+            porte: doc['porte'],
+            genero: doc['genero'],
+            id: doc['idHospedagem']))
+        .toList();
+  }
+
+  Future<List> obterTodasHospedagemFirestore(status) async {
+    CollectionReference hospedagemCollection =
+        FirebaseFirestore.instance.collection('hospedagem');
+    var result = await hospedagemCollection
+        .where('status', isEqualTo: '$status')
+        .orderBy('dataCheckIn', descending: true)
         .get();
     return result.docs
         .map((doc) => Hospedagem(
@@ -244,6 +276,12 @@ class InfoHospedagem {
             genero: doc['genero'],
             id: doc['idHospedagem']))
         .toList();
+  }
+
+  deletarHospedagemFirestore(id) async {
+    CollectionReference planoCollection =
+        FirebaseFirestore.instance.collection('hospedagem');
+    planoCollection.doc(id).delete();
   }
 }
 

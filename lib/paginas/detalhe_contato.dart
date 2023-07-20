@@ -3,6 +3,8 @@ import 'package:pet_bosque/funcoes/info_coloborador.dart';
 import 'package:pet_bosque/funcoes/info_contato.dart';
 import 'package:pet_bosque/paginas/lista_contato.dart';
 import 'package:pet_bosque/paginas/lista_pet.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 enum OrderOption { orderaz, orderza }
 
@@ -86,177 +88,233 @@ class _DetalheContatoState extends State<DetalheContato> {
   }
 
   Widget _detalhes(BuildContext context, int index) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          color: const Color.fromRGBO(204, 236, 247, 100),
-        ),
+    return GestureDetector(
+      child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                const Text(
-                  "Cliente: ",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 73, 66, 2),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            color: const Color.fromRGBO(204, 236, 247, 100),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  const Text(
+                    "Cliente: ",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 73, 66, 2),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Text(
-                  contato[index].nome ?? "",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    contato[index].nome ?? "",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Telefone: ",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 73, 66, 2),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Telefone: ",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 73, 66, 2),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Text(
-                  contato[index].telefone ?? "",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    contato[index].telefone ?? "",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Email: ",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 73, 66, 2),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Email: ",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 73, 66, 2),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Text(
-                  contato[index].email ?? "",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    contato[index].email ?? "",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Endereço: ",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 73, 66, 2),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Endereço: ",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 73, 66, 2),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Text(
-                  contato[index].endereco ?? "",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    contato[index].endereco ?? "",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Complemento: ",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 73, 66, 2),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Complemento: ",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 73, 66, 2),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Text(
-                  contato[index].complemento ?? "",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    contato[index].complemento ?? "",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Bairro: ",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 73, 66, 2),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Bairro: ",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 73, 66, 2),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Text(
-                  contato[index].bairro ?? "",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    contato[index].bairro ?? "",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Cidade: ",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 73, 66, 2),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Cidade: ",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 73, 66, 2),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Text(
-                  contato[index].cidade ?? "",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    contato[index].cidade ?? "",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-          ],
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+            ],
+          ),
         ),
       ),
+      onTap: () {
+        _exibirOpcoes(context, index);
+      },
     );
-    onTap:
-    () {};
+  }
+
+  void _exibirOpcoes(BuildContext context, int index) {
+    showBottomSheet(
+        context: context,
+        builder: (context) {
+          return BottomSheet(
+            onClosing: () {},
+            builder: (context) {
+              return Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ElevatedButton.icon(
+                        label: const Text("Ligar"),
+                        icon: const Icon(Icons.call),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Color.fromRGBO(35, 151, 166, 50),
+                        ),
+                        onPressed: () {
+                          launchUrlString("tel:${contato[index].telefone}");
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ElevatedButton.icon(
+                        label: const Text("WhatsApp"),
+                        icon: const Icon(Icons.mail),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Color.fromRGBO(35, 151, 166, 50),
+                        ),
+                        onPressed: () {
+                          abrirWhatsApp(contato[index].telefone.toString(),
+                              contato[index].nome.toString());
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        });
   }
 
   void _obterContato() {
@@ -265,6 +323,17 @@ class _DetalheContatoState extends State<DetalheContato> {
         contato = list;
       });
     });
+  }
+}
+
+void abrirWhatsApp(String fone, String nome) async {
+  var whatsappUrl =
+      "whatsapp://send?phone=${fone}&text=Olá ${nome}, tudo bem ?";
+
+  if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
+    await launchUrl(Uri.parse(whatsappUrl));
+  } else {
+    throw 'Could not launch $whatsappUrl';
   }
 }
 

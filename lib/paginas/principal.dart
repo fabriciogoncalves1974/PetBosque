@@ -8,6 +8,7 @@ import 'package:pet_bosque/paginas/lista_agendamentosPendentes.dart';
 import 'package:pet_bosque/paginas/lista_colaborador.dart';
 import 'package:pet_bosque/paginas/lista_contato.dart';
 import 'package:pet_bosque/paginas/lista_hospedagem.dart';
+import 'package:pet_bosque/paginas/lista_hospedagemDia.dart';
 import 'package:pet_bosque/paginas/lista_pet.dart';
 import 'package:pet_bosque/paginas/lista_planos.dart';
 
@@ -30,6 +31,7 @@ class _PrincipalState extends State<Principal> {
   String contatoPrimeiroHospedagem = "";
   String petPrimeiroHospedagem = "";
   String horaPrimeiroHospedagem = "";
+  String statusHospedagem = 'Pendente';
   final String data = DateFormat("dd/MM/yyyy").format(DateTime.now());
   String dataAgendamento = DateFormat("dd/MM/yyyy").format(DateTime.now());
   int qtdAgendamentos = 0;
@@ -43,7 +45,7 @@ class _PrincipalState extends State<Principal> {
     _obterTodosAgendamentos(data);
     _obterQuantidadeAgendamentos();
     _obterQuantidadeHospedagem();
-    _obterTodasHospedagens(data);
+    _obterTodasHospedagens(statusHospedagem);
   }
 
   paginaInicial() {
@@ -157,7 +159,7 @@ class _PrincipalState extends State<Principal> {
                           "Banho e tosa possui ",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 16.0,
+                            fontSize: 14.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
@@ -175,7 +177,7 @@ class _PrincipalState extends State<Principal> {
                           " agendamentos para hoje!",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 16.0,
+                            fontSize: 14.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
@@ -191,7 +193,7 @@ class _PrincipalState extends State<Principal> {
                         InkWell(
                           child: Container(
                               padding: const EdgeInsets.all(2.0),
-                              height: 110,
+                              height: 115,
                               width: 380,
                               decoration: BoxDecoration(
                                 border: Border.all(
@@ -206,7 +208,7 @@ class _PrincipalState extends State<Principal> {
                                 ),
                                 Row(children: [
                                   const Text(
-                                    "Primeiro agendamento do dia para  ",
+                                    "1° Agendamento do dia para  ",
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
                                       fontSize: 16.0,
@@ -300,7 +302,7 @@ class _PrincipalState extends State<Principal> {
                       children: [
                         InkWell(
                           child: Container(
-                              height: 110,
+                              height: 115,
                               width: 380,
                               decoration: BoxDecoration(
                                 border: Border.all(
@@ -318,7 +320,7 @@ class _PrincipalState extends State<Principal> {
                                     "Sem agendamentos para hoje!  ",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: 16.0,
+                                      fontSize: 14.0,
                                       color: Colors.black,
                                     ),
                                   ),
@@ -348,7 +350,7 @@ class _PrincipalState extends State<Principal> {
                           "Hospedagem possui ",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 16.0,
+                            fontSize: 14.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
@@ -366,7 +368,7 @@ class _PrincipalState extends State<Principal> {
                           " agendamentos para hoje!",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 16.0,
+                            fontSize: 14.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
@@ -382,7 +384,7 @@ class _PrincipalState extends State<Principal> {
                         InkWell(
                           child: Container(
                               padding: const EdgeInsets.all(2.0),
-                              height: 110,
+                              height: 115,
                               width: 380,
                               decoration: BoxDecoration(
                                 border: Border.all(
@@ -397,7 +399,7 @@ class _PrincipalState extends State<Principal> {
                                 ),
                                 Row(children: [
                                   const Text(
-                                    "Primeira hospedagem check in para  ",
+                                    "1° Hospedagem check in para  ",
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
                                       fontSize: 16.0,
@@ -472,7 +474,7 @@ class _PrincipalState extends State<Principal> {
                                       Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  ListaHospedagem()));
+                                                  ListaHospedagemDia()));
                                     },
                                     child: Text('ver todos...'),
                                   )
@@ -487,7 +489,7 @@ class _PrincipalState extends State<Principal> {
                       children: [
                         InkWell(
                           child: Container(
-                              height: 110,
+                              height: 120,
                               width: 380,
                               decoration: BoxDecoration(
                                 border: Border.all(
@@ -534,8 +536,10 @@ class _PrincipalState extends State<Principal> {
     });
   }
 
-  void _obterTodasHospedagens(String dataAgendamento) {
-    infoHospedagem.obterTodasHospedagemDiaFirestore(data).then((dynamic list) {
+  void _obterTodasHospedagens(String data) {
+    infoHospedagem
+        .obterTodasHospedagemDiaFirestore(dataAgendamento)
+        .then((dynamic list) {
       setState(() {
         hospedagem = list;
         if (hospedagem.isEmpty) {

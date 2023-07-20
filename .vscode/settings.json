@@ -4,5 +4,6 @@
         "Contato",
         "teclado"
     ],
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "cmake.sourceDirectory": "C:/Users/Suporte/Documents/Projetos_Flutter/pet_bosque/build/windows/extracted/firebase_cpp_sdk"
 }

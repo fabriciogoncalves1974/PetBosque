@@ -244,7 +244,8 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
                                     borderRadius: BorderRadius.circular(10)),
                               ),
                               onPressed: () {
-                                info.deletarAgendamento(agendamento[index].id!);
+                                info.deletarAgendamentoFirestore(
+                                    agendamento[index].id!);
                                 setState(() {
                                   agendamento.removeAt(index);
                                 });

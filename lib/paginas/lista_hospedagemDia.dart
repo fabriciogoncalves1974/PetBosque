@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -18,14 +17,14 @@ enum OrderOption { orderaz, orderza }
 
 InfoHospedagem info = InfoHospedagem();
 
-class ListaHospedagem extends StatefulWidget {
-  const ListaHospedagem({Key? key}) : super(key: key);
+class ListaHospedagemDia extends StatefulWidget {
+  const ListaHospedagemDia({Key? key}) : super(key: key);
 
   @override
-  State<ListaHospedagem> createState() => _ListaHospedagemState();
+  State<ListaHospedagemDia> createState() => _ListaHospedagemDiaState();
 }
 
-class _ListaHospedagemState extends State<ListaHospedagem> {
+class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
   List<Hospedagem> hospedagen = [];
   late String _dataAgendamento;
   DateTime _dateTime = DateTime.now();
@@ -99,7 +98,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
       setState(() {
         _dataAgendamento = DateFormat("dd/MM/yyyy").format(value!);
         _dateTime = value;
-        _obterTodasHospedagem(statusSelecionado);
+        _obterTodasHospedagem(_dataAgendamento);
         loading = false;
       });
     });
@@ -113,7 +112,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
       (event) {
         setState(() {
           _dataAgendamento = DateFormat("dd/MM/yyyy").format(_dateTime);
-          _obterTodasHospedagem(statusSelecionado);
+          _obterTodasHospedagem(_dataAgendamento);
           loading = false;
         });
       },
@@ -132,8 +131,8 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text(
-            "Hospedagens",
+          title: Text(
+            "Hospedagens " + DateFormat("dd/MM/yyyy").format(_dateTime),
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.w600,
@@ -147,13 +146,13 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
             icon: const Icon(Icons.home_outlined),
           ),
           actions: <Widget>[
-            /* IconButton(
+            IconButton(
               onPressed: () {
                 _showDatePicker(context);
               },
               icon: const Icon(Icons.calendar_month),
-            ),*/
-            DropdownButtonHideUnderline(
+            ),
+            /* DropdownButtonHideUnderline(
               child: DropdownButton2(
                 value: statusSelecionado,
                 hint: Text(
@@ -180,7 +179,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                   });
                 },
               ),
-            )
+            )*/
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
@@ -438,8 +437,8 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
         });
   }
 
-  void _obterTodasHospedagem(String status) {
-    info.obterTodasHospedagemFirestore(status).then((dynamic list) {
+  void _obterTodasHospedagem(String data) {
+    info.obterTodasHospedagemDiaFirestore(data).then((dynamic list) {
       setState(() {
         hospedagen = list;
       });
