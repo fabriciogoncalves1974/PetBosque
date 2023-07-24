@@ -608,11 +608,13 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
               ),
             ]),
             Row(children: [
-              Text(
-                observacao ?? "",
-                textAlign: TextAlign.center,
-                style: const TextStyle(height: 2, fontSize: 15),
-              ),
+              Flexible(
+                child: Text(
+                  observacao ?? "",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(height: 2, fontSize: 15),
+                ),
+              )
             ]),
             if (agendamento[index].planoVencido == "S" && status == "Pendente")
               Container(

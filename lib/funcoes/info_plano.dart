@@ -17,6 +17,7 @@ const String svPinturaColuna = "svPintura";
 const String svHospedagemColuna = "svHospedagem";
 const String svTransporteColuna = "svTransporte";
 const String valorColuna = "valor";
+const String contaPlanoColuna = "contaPlano";
 
 class InfoPlano {
   static final InfoPlano _instance = InfoPlano.internal();
@@ -62,6 +63,7 @@ class InfoPlano {
           svHospedagemColuna,
           svTransporteColuna,
           valorColuna,
+          contaPlanoColuna,
         ],
         where: "$idColuna = ?",
         whereArgs: [id]);
@@ -113,6 +115,7 @@ class InfoPlano {
             svHospedagem: doc['svHospedagem'],
             svTransporte: doc['svTransporte'],
             valor: doc['valor'],
+            contaPlano: doc['contaPlano'],
             id: doc['idPlano']))
         .toList();
   }
@@ -133,6 +136,7 @@ class InfoPlano {
             svHospedagem: doc['svHospedagem'],
             svTransporte: doc['svTransporte'],
             valor: doc['valor'],
+            contaPlano: doc['contaPlano'],
             id: doc['idPlano']))
         .toList();
   }
@@ -158,6 +162,7 @@ class InfoPlano {
               svHospedagem: doc['svHospedagem'],
               svTransporte: doc['svTransporte'],
               valor: doc['valor'],
+              contaPlano: doc['contaPlano'],
               id: doc['idPlano']))
           .toList();
       var a = query.docs;
@@ -209,7 +214,8 @@ class Plano {
   String? svPintura;
   String? svHospedagem;
   String? svTransporte;
-  dynamic? valor;
+  dynamic contaPlano;
+  dynamic valor;
 
   Plano(
       {this.nomePlano,
@@ -222,6 +228,7 @@ class Plano {
       this.svHospedagem,
       this.svTransporte,
       this.valor,
+      this.contaPlano,
       this.id});
 
   Plano.fromMap(Map map) {
@@ -236,6 +243,7 @@ class Plano {
     svHospedagem = map[svHospedagemColuna];
     svTransporte = map[svTransporteColuna];
     valor = map[valorColuna];
+    contaPlano = map[contaPlanoColuna];
   }
 
   Map<String, dynamic> toMap() {
@@ -250,6 +258,7 @@ class Plano {
       svHospedagemColuna: svHospedagem,
       svTransporteColuna: svTransporte,
       valorColuna: valor,
+      contaPlanoColuna: contaPlano,
     };
 
     if (id != null) {
@@ -260,6 +269,6 @@ class Plano {
 
   @override
   String toString() {
-    return "Planos(id: $id,nomePlano: $nomePlano,svBanho: $svBanho,svTosa: $svTosa,svCorteUnha: $svCorteUnha,svHidratacao: $svHidratacao,svTosaHigienica: $svTosaHigienica,svPintura: $svPintura,svHospedagem: $svHospedagem,svTransporte: $svTransporte, valor: $valor)";
+    return "Planos(id: $id,nomePlano: $nomePlano,svBanho: $svBanho,svTosa: $svTosa,svCorteUnha: $svCorteUnha,svHidratacao: $svHidratacao,svTosaHigienica: $svTosaHigienica,svPintura: $svPintura,svHospedagem: $svHospedagem,svTransporte: $svTransporte, valor: $valor, contaPlano: $contaPlano)";
   }
 }

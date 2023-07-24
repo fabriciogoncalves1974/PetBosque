@@ -453,7 +453,7 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
               height: 5,
             ),
             const Row(children: [
-              Expanded(
+              Flexible(
                 child: Text(
                   "Observação:",
                   style: TextStyle(
@@ -468,11 +468,13 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
               ),
             ]),
             Row(children: [
-              Text(
-                observacao ?? "",
-                textAlign: TextAlign.center,
-                style: const TextStyle(height: 2, fontSize: 15),
-              ),
+              Flexible(
+                child: Text(
+                  observacao ?? "",
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(height: 2, fontSize: 15),
+                ),
+              )
             ]),
             if (status == "Pendente")
               Row(

@@ -277,6 +277,24 @@ class _ListaPlanosState extends State<ListaPlanos> {
                 Row(
                   children: [
                     const Text(
+                      "Nº de Banhos ",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      plano[index].contaPlano.toString() ?? "",
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
                       "Valor: ",
                       style: TextStyle(
                         color: Color.fromARGB(255, 73, 66, 2),

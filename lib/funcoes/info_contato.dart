@@ -157,11 +157,14 @@ class InfoContato {
   Future<List<Contato>> pesquisarTodosContatosFirestore(teclado) async {
     CollectionReference contatoCollection =
         FirebaseFirestore.instance.collection('contato');
-
+    // List lst = [];
+    //lst.add('$teclado');
     var result = await contatoCollection
         .orderBy('nome')
-        //.startAt([teclado]).endAt([teclado + '\uf8ff'])
-        .where('nome', isGreaterThanOrEqualTo: teclado)
+        .startAt([teclado])
+        .endAt([teclado + '\uf8ff'])
+        //.where('nome', arrayContains: teclado)
+        //.where('nome', arrayContainsAny: lst)
         .where('nome', isLessThan: teclado + 'z')
         .get();
     return result.docs

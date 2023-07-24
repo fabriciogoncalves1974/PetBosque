@@ -194,7 +194,7 @@ class PesquisaPetPage extends SearchDelegate<Pet?> {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
-                              color: Colors.grey[200],
+                              color: const Color.fromRGBO(204, 236, 247, 100),
                             ),
                             padding: const EdgeInsets.all(16),
                             child: Column(
@@ -237,6 +237,25 @@ class PesquisaPetPage extends SearchDelegate<Pet?> {
                                     ),
                                   ],
                                 ),
+                                if (pets[index].nomePlano != 'N')
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        "Plano: ",
+                                        style: TextStyle(
+                                          color: Color.fromARGB(255, 73, 66, 2),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      Text(
+                                        pets[index].nomePlano ?? "",
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                               ],
                             ),
                           ),
@@ -260,6 +279,6 @@ class PesquisaPetPage extends SearchDelegate<Pet?> {
   }
 
   Future<List<Pet>> _pesquisarTodosPets() {
-    return infoPet.pesquisarTodosPets(query);
+    return infoPet.pesquisarTodosPetFirestore(query);
   }
 }

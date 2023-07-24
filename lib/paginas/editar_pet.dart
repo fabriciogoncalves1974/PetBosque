@@ -113,6 +113,13 @@ class _EditarPetState extends State<EditarPet> {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
+            leading: BackButton(onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ListaPetContato(
+                        idContato: _editarPet.idContato.toString(),
+                        nomeContato: _editarPet.nomeContato.toString(),
+                      )));
+            }),
             title: Text(
               _editarPet.nomePet ?? "",
               style: TextStyle(
@@ -261,7 +268,7 @@ class _EditarPetState extends State<EditarPet> {
                   height: 20,
                 ),
                 // ignore: unrelated_type_equality_checks
-                if (int.parse(_editarPet.idPlano!) == 0)
+                if (_editarPet.idPlano == '0')
                   Row(children: [
                     const SizedBox(
                       width: 35,
@@ -305,10 +312,10 @@ class _EditarPetState extends State<EditarPet> {
                               _editarPet.nomePlano = selectedValue!.nomePlano;
                               _editarPet.planoVencido = "N";
                               _editarPet.idPlano = selectedValue!.id.toString();
-                              _editarPet.contaPlano = 4;
+                              //_editarPet.contaPlano = 4;
                               _editarPet.dataContrato = dataContrato;
-                              // _editarPet.valorPlano =
-                              //selectedValue!.valor.toString();
+                              _editarPet.valorPlano =
+                                  selectedValue!.valor.toString();
                             });
                           });
                         },
@@ -322,8 +329,7 @@ class _EditarPetState extends State<EditarPet> {
                       ),
                     ),
                   ]),
-                if (int.parse(_editarPet.idPlano!) != 0 &&
-                    planoExcluido == false)
+                if (_editarPet.idPlano != '0' && planoExcluido == false)
                   Row(children: [
                     const SizedBox(
                       width: 35,
@@ -362,17 +368,52 @@ class _EditarPetState extends State<EditarPet> {
                                     "Ao clicar em excluir o Pet perderá todos os agendamentos restantes."),
                                 actions: <Widget>[
                                   ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      fixedSize: const Size(120, 50),
+                                      backgroundColor: Colors.redAccent,
+                                      side: const BorderSide(
+                                          width: 3, color: Colors.redAccent),
+                                      elevation: 3,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                    ),
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: const Text("Cancelar"),
+                                    child: const Text(
+                                      "Não",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
                                   ),
                                   ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      fixedSize: const Size(120, 50),
+                                      backgroundColor: Colors.blueAccent,
+                                      side: const BorderSide(
+                                          width: 3, color: Colors.blueAccent),
+                                      elevation: 3,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                    ),
                                     onPressed: () {
                                       setState(() {
                                         _editarPet.idPlano = '0';
                                         planoExcluido = true;
-                                        _excluirPetPlano(_editarPet.id!);
+                                        db
+                                            .collection('pet')
+                                            .doc(_editarPet.id)
+                                            .update({
+                                          'idPlano': '0',
+                                          'nomePlano': 'N',
+                                          'planoVencido': 'P',
+                                          'contaPlano': '0'
+                                        });
+                                        //_excluirPetPlano(_editarPet.id!);
                                       });
                                       Navigator.push(
                                           context,
@@ -383,6 +424,7 @@ class _EditarPetState extends State<EditarPet> {
                                     },
                                     child: const Text(
                                       "Sim",
+                                      style: TextStyle(color: Colors.white),
                                     ),
                                   ),
                                 ],
@@ -644,7 +686,7 @@ class _EditarPetState extends State<EditarPet> {
   }
 
   void _obterPlanos() {
-    infoPlano.obterTodosPlanos().then((dynamic listaPlano) {
+    infoPlano.obterTodosPlanosFirestore().then((dynamic listaPlano) {
       setState(() {
         itens = listaPlano;
       });

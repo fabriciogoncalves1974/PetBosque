@@ -443,6 +443,6 @@ class PesquisaTodosPetPage extends SearchDelegate<Pet?> {
   }
 
   Future<List<Pet>> _pesquisarTodosPets() {
-    return infoPet.pesquisarTodosPets(query);
+    return infoPet.pesquisarTodosPetFirestore(query);
   }
 }

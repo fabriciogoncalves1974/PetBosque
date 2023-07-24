@@ -175,6 +175,25 @@ class _ListaPetHospedagem extends State<ListaPetHospedagem> {
                     ),
                   ],
                 ),
+                if (pet[index].nomePlano != 'N')
+                  Row(
+                    children: [
+                      const Text(
+                        "Plano: ",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 73, 66, 2),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        pet[index].nomePlano ?? "",
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),

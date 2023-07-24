@@ -52,6 +52,7 @@ class _NovoPlanoState extends State<NovoPlano> {
   TextEditingController svrHospedagemController = TextEditingController();
   TextEditingController svTransporteController = TextEditingController();
   TextEditingController valorController = TextEditingController();
+  TextEditingController numeroBanhoController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   final Plano _novoPlano = Plano(
@@ -137,6 +138,7 @@ class _NovoPlanoState extends State<NovoPlano> {
                   "svPintura": _editarPlano.svPintura,
                   "svHospedagem": _editarPlano.svHospedagem,
                   "svTransporte": _editarPlano.svTransporte,
+                  "contaPlano": _editarPlano.contaPlano,
                   "valor": _editarPlano.valor,
                 });
                 _limpaCheck();
@@ -310,6 +312,35 @@ class _NovoPlanoState extends State<NovoPlano> {
                     "Transporte",
                     textAlign: TextAlign.center,
                     style: TextStyle(height: 2, fontSize: 15),
+                  ),
+                ]),
+                const SizedBox(
+                  //Use of SizedBox
+                  height: 20,
+                ),
+                Row(children: [
+                  ConstrainedBox(
+                    constraints: const BoxConstraints.tightFor(
+                      width: 150,
+                    ),
+                    child: TextFormField(
+                      keyboardType: const TextInputType.numberWithOptions(),
+                      controller: numeroBanhoController,
+                      decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(vertical: 15.0),
+                          border: OutlineInputBorder(),
+                          labelText: "N° Banhos",
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(2),
+                          )),
+                      onChanged: (text) {
+                        setState(() {
+                          _planoEditado = true;
+                          _editarPlano.contaPlano =
+                              int.parse(numeroBanhoController.text) ?? 0;
+                        });
+                      },
+                    ),
                   ),
                 ]),
                 const SizedBox(

@@ -440,7 +440,7 @@ class _ListaContatosState extends State<ListaContatos> {
 
   void abrirWhatsApp(String fone, String nome) async {
     var whatsappUrl =
-        "whatsapp://send?phone=${fone}&text=Olá ${nome}, tudo bem ?";
+        "whatsapp://send?phone= +55${fone}&text=Olá ${nome}, tudo bem ?";
 
     if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
       await launchUrl(Uri.parse(whatsappUrl));

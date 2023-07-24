@@ -27,6 +27,8 @@ InfoPet info = InfoPet();
 InfoPlano infoPlano = InfoPlano();
 List<Pet> pet = [];
 List<Plano> itens = [];
+List itensContaPlano = [];
+bool temPlano = false;
 
 enum Genero {
   Macho,
@@ -52,6 +54,7 @@ class _NovoPetState extends State<NovoPet> {
   Plano? selectedValue;
 
   String? porteSelecionado;
+  dynamic contaPlano;
 
   var itemsPorte = [
     'Pequeno',
@@ -104,6 +107,7 @@ class _NovoPetState extends State<NovoPet> {
             title: Text(_editarPet.nomePet ?? "Novo Pet"),
             leading: BackButton(onPressed: () {
               if (_petEditado != true) {
+                temPlano = false;
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => ListaPetContato(
                           idContato: widget.idContato.toString(),
@@ -286,15 +290,20 @@ class _NovoPetState extends State<NovoPet> {
                           .toList(),
                       value: selectedValue,
                       onChanged: (value) {
+                        itensContaPlano = [];
+
                         setState(() {
                           selectedValue = value as Plano;
                           _editarPet.nomePlano = selectedValue!.nomePlano;
                           _editarPet.planoVencido = "N";
                           _editarPet.idPlano = selectedValue!.id.toString();
-                          _editarPet.contaPlano = 4;
                           _editarPet.dataContrato = dataContrato;
+                          temPlano = true;
                           _editarPet.valorPlano =
                               selectedValue!.valor.toString();
+                          for (int n = 0; n <= selectedValue!.contaPlano; n++) {
+                            itensContaPlano.add('$n');
+                          }
                         });
                       },
                       buttonStyleData: const ButtonStyleData(
@@ -307,6 +316,55 @@ class _NovoPetState extends State<NovoPet> {
                     ),
                   ),
                 ]),
+                const SizedBox(
+                  //Use of SizedBox
+                  height: 10,
+                ),
+                if (temPlano == true)
+                  Row(children: [
+                    const SizedBox(
+                      width: 35,
+                    ),
+                    const Text(
+                      "Nº de Banhos:",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton2(
+                        value: contaPlano,
+                        hint: Text(
+                          'Selecione',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Theme.of(context).hintColor,
+                          ),
+                        ),
+                        items: itensContaPlano.map((item2) {
+                          return DropdownMenuItem(
+                              value: item2.toString(),
+                              child: Text(
+                                item2.toString(),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ));
+                        }).toList(),
+                        onChanged: (contaPlanoValue) {
+                          setState(() {
+                            contaPlano = contaPlanoValue!;
+                            _editarPet.contaPlano = contaPlano;
+                          });
+                        },
+                      ),
+                    )
+                  ]),
                 const SizedBox(
                   //Use of SizedBox
                   height: 20,

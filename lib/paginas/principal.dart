@@ -190,111 +190,116 @@ class _PrincipalState extends State<Principal> {
                   if (contatoPrimeiroAgendamento != "")
                     Row(
                       children: [
-                        InkWell(
-                          child: Container(
-                              padding: const EdgeInsets.all(2.0),
-                              height: 115,
-                              width: 380,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.white,
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: InkWell(
+                            child: Container(
+                                padding: const EdgeInsets.all(2.0),
+                                height: 115,
+                                width: 360,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.white,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color:
+                                      const Color.fromRGBO(204, 236, 247, 100),
                                 ),
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color.fromRGBO(204, 236, 247, 100),
-                              ),
-                              child: Column(children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(children: [
-                                  const Text(
-                                    "1° Agendamento do dia para  ",
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Text(
-                                    horaPrimeiroAgendamento.toString() ?? "",
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  ),
-                                  const Text(
-                                    " Horas",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ]),
-                                Row(children: [
-                                  const Text(
-                                    "Pet: ",
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Text(
-                                    petPrimeiroAgendamento.toString() ?? "",
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  ),
+                                child: Column(children: [
                                   const SizedBox(
-                                    width: 5,
+                                    height: 10,
                                   ),
-                                  const Text(
-                                    "contato: ",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      //fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+                                  Row(children: [
+                                    const Text(
+                                      "1° Agendamento do dia para  ",
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    contatoPrimeiroAgendamento.toString() ?? "",
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blueAccent,
+                                    Text(
+                                      horaPrimeiroAgendamento.toString() ?? "",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blueAccent,
+                                      ),
                                     ),
-                                  ),
-                                ]),
-                                Row(children: [
-                                  const SizedBox(
-                                    width: 270,
-                                  ),
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: Colors.blueAccent,
+                                    const Text(
+                                      " Horas",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ListaAgendamentos(
-                                                    data: dataAgendamento,
-                                                  )));
-                                    },
-                                    child: Text('ver todos...'),
-                                  )
-                                ]),
-                              ])),
-                          onTap: () {},
-                        ),
+                                  ]),
+                                  Row(children: [
+                                    const Text(
+                                      "Pet: ",
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      petPrimeiroAgendamento.toString() ?? "",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blueAccent,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    const Text(
+                                      "contato: ",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        //fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      contatoPrimeiroAgendamento.toString() ??
+                                          "",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blueAccent,
+                                      ),
+                                    ),
+                                  ]),
+                                  Row(children: [
+                                    const SizedBox(
+                                      width: 250,
+                                    ),
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.blueAccent,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ListaAgendamentos(
+                                                      data: dataAgendamento,
+                                                    )));
+                                      },
+                                      child: Text('ver todos...'),
+                                    )
+                                  ]),
+                                ])),
+                            onTap: () {},
+                          ),
+                        )
                       ],
                     ),
                   if (contatoPrimeiroAgendamento == "")
@@ -381,106 +386,111 @@ class _PrincipalState extends State<Principal> {
                   if (contatoPrimeiroHospedagem != "")
                     Row(
                       children: [
-                        InkWell(
-                          child: Container(
-                              padding: const EdgeInsets.all(2.0),
-                              height: 115,
-                              width: 380,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.white,
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: InkWell(
+                            child: Container(
+                                padding: const EdgeInsets.all(2.0),
+                                height: 115,
+                                width: 360,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.white,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color:
+                                      const Color.fromRGBO(204, 236, 247, 100),
                                 ),
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color.fromRGBO(204, 236, 247, 100),
-                              ),
-                              child: Column(children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(children: [
-                                  const Text(
-                                    "1° Hospedagem check in para  ",
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Text(
-                                    horaPrimeiroHospedagem.toString() ?? "",
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  ),
-                                  const Text(
-                                    " Horas",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ]),
-                                Row(children: [
-                                  const Text(
-                                    "Pet: ",
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                    ),
-                                  ),
-                                  Text(
-                                    petPrimeiroHospedagem.toString() ?? "",
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  ),
+                                child: Column(children: [
                                   const SizedBox(
-                                    width: 5,
+                                    height: 10,
                                   ),
-                                  const Text(
-                                    "contato: ",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.black,
+                                  Row(children: [
+                                    const Text(
+                                      "1° Hospedagem check in para  ",
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    contatoPrimeiroHospedagem.toString() ?? "",
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blueAccent,
+                                    Text(
+                                      horaPrimeiroHospedagem.toString() ?? "",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blueAccent,
+                                      ),
                                     ),
-                                  ),
-                                ]),
-                                Row(children: [
-                                  const SizedBox(
-                                    width: 270,
-                                  ),
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: Colors.blueAccent,
+                                    const Text(
+                                      " Horas",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ListaHospedagemDia()));
-                                    },
-                                    child: Text('ver todos...'),
-                                  )
-                                ]),
-                              ])),
-                          onTap: () {},
+                                  ]),
+                                  Row(children: [
+                                    const Text(
+                                      "Pet: ",
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                    Text(
+                                      petPrimeiroHospedagem.toString() ?? "",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blueAccent,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    const Text(
+                                      "contato: ",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      contatoPrimeiroHospedagem.toString() ??
+                                          "",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blueAccent,
+                                      ),
+                                    ),
+                                  ]),
+                                  Row(children: [
+                                    const SizedBox(
+                                      width: 250,
+                                    ),
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.blueAccent,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ListaHospedagemDia()));
+                                      },
+                                      child: Text('ver todos...'),
+                                    )
+                                  ]),
+                                ])),
+                            onTap: () {},
+                          ),
                         ),
                       ],
                     ),
