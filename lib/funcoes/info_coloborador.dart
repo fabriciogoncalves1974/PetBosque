@@ -10,6 +10,7 @@ const String idColuna = "id";
 const String nomeColaboradorColuna = "nomeColaborador";
 const String funcaoColuna = "funcao";
 const String porcenComissaoColuna = "porcenComissao";
+const String porcenParticipanteColuna = "porcenParticipante";
 const String metaComissaoColuna = "metaComissao";
 const String statusColuna = "status";
 
@@ -66,6 +67,7 @@ class InfoColaborador {
           funcaoColuna,
           porcenComissaoColuna,
           metaComissaoColuna,
+          porcenParticipanteColuna,
           statusColuna,
         ],
         where: "$idColuna = ?",
@@ -137,6 +139,7 @@ class InfoColaborador {
             nomeColaborador: doc['nomeColaborador'],
             funcao: doc['funcao'],
             porcenComissao: doc['porcenComissao'],
+            porcenParticipante: doc['porcenParticipante'],
             metaComissao: doc['metaComissao'],
             status: doc['status'],
             id: doc['idColaborador']))
@@ -153,6 +156,7 @@ class InfoColaborador {
             nomeColaborador: doc['nomeColaborador'],
             funcao: doc['funcao'],
             porcenComissao: doc['porcenComissao'],
+            porcenParticipante: doc['porcenParticipante'],
             metaComissao: doc['metaComissao'],
             status: doc['status'],
             id: doc['idColaborador']))
@@ -170,6 +174,7 @@ class InfoColaborador {
             nomeColaborador: doc['nomeColaborador'],
             funcao: doc['funcao'],
             porcenComissao: doc['porcenComissao'],
+            porcenParticipante: doc['porcenParticipante'],
             metaComissao: doc['metaComissao'],
             status: doc['status'],
             id: doc['idColaborador']))
@@ -188,6 +193,7 @@ class Colaborador {
   String? nomeColaborador;
   String? funcao;
   dynamic porcenComissao;
+  dynamic porcenParticipante;
   dynamic metaComissao;
   String? status;
 
@@ -195,6 +201,7 @@ class Colaborador {
       {this.nomeColaborador,
       this.funcao,
       this.porcenComissao,
+      this.porcenParticipante,
       this.metaComissao,
       this.status,
       this.id});
@@ -204,6 +211,7 @@ class Colaborador {
     nomeColaborador = map[nomeColaboradorColuna];
     funcao = map[funcaoColuna];
     porcenComissao = map[porcenComissaoColuna];
+    porcenParticipante = map[porcenParticipanteColuna];
     metaComissao = map[metaComissaoColuna];
     status = map[statusColuna];
   }
@@ -213,6 +221,7 @@ class Colaborador {
       nomeColaboradorColuna: nomeColaborador,
       funcaoColuna: funcao,
       porcenComissaoColuna: porcenComissao,
+      porcenParticipanteColuna: porcenParticipante,
       metaComissaoColuna: metaComissao,
       statusColuna: status,
     };
@@ -225,6 +234,6 @@ class Colaborador {
 
   @override
   String toString() {
-    return "Colaborador(id: $id,nomeColaborador: $nomeColaborador,funcao: $funcao,porcenComissao: $porcenComissao,metaComissao: $metaComissao,status: $status)";
+    return "Colaborador(id: $id,nomeColaborador: $nomeColaborador,funcao: $funcao,porcenComissao: $porcenComissao,porcenParticipante: $porcenParticipante, metaComissao: $metaComissao,status: $status)";
   }
 }

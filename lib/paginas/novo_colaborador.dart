@@ -24,6 +24,7 @@ class _NovoColaboradorState extends State<NovoColaborador> {
   final _nomeColaboradorFocus = FocusNode();
   TextEditingController nomeColaboradorController = TextEditingController();
   TextEditingController porcenComissaoController = TextEditingController();
+  TextEditingController porcenParticipanteController = TextEditingController();
   TextEditingController metaComissaoController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -64,6 +65,7 @@ class _NovoColaboradorState extends State<NovoColaborador> {
             onPressed: () async {
               _editarColaborador.status ??= "Ativo";
               _editarColaborador.porcenComissao ??= 0;
+              _editarColaborador.porcenParticipante ??= 0;
               _editarColaborador.funcao ??= "Colaborador";
               _editarColaborador.metaComissao ??= 0;
               if (_editarColaborador.nomeColaborador != null &&
@@ -75,6 +77,7 @@ class _NovoColaboradorState extends State<NovoColaborador> {
                   "nomeColaborador": _editarColaborador.nomeColaborador,
                   "funcao": _editarColaborador.funcao,
                   "porcenComissao": _editarColaborador.porcenComissao,
+                  "porcenParticipante": _editarColaborador.porcenParticipante,
                   "metaComissao": _editarColaborador.metaComissao,
                   "status": _editarColaborador.status
                 });
@@ -148,6 +151,27 @@ class _NovoColaboradorState extends State<NovoColaborador> {
                     setState(() {
                       _editarColaborador.porcenComissao =
                           double.tryParse(porcenComissaoController.text) ?? 0;
+                    });
+                  },
+                ),
+                const SizedBox(
+                  //Use of SizedBox
+                  height: 20,
+                ),
+                TextFormField(
+                  keyboardType: const TextInputType.numberWithOptions(),
+                  controller: porcenParticipanteController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "% Participante",
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.all(10),
+                      )),
+                  onChanged: (text) {
+                    setState(() {
+                      _editarColaborador.porcenParticipante =
+                          double.tryParse(porcenParticipanteController.text) ??
+                              0;
                     });
                   },
                 ),

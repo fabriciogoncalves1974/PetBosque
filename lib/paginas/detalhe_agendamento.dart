@@ -31,6 +31,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
   List<Agendamento> agendamento = [];
   List<Colaborador> colaborador = [];
   List<Colaborador> itens = [];
+  List<Colaborador> itens2 = [];
   DateTime data = DateTime.now();
 
   late String status;
@@ -38,6 +39,8 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
   late String agendamentoId;
   String nomeColaborador = "Geral";
   String idColaborador = "1";
+  String nomeParticipante = "Geral";
+  String idParticipante = "1";
   late String valorBanho;
   late String valoradicional;
   late String observacao;
@@ -89,6 +92,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
   }
 
   Colaborador? selectedValue;
+  Colaborador? selectedValue2;
 
   @override
   Widget build(BuildContext context) {
@@ -704,6 +708,62 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                   ),
                 ),
             ]),
+            Row(children: [
+              const Text(
+                "Participante:",
+                style: TextStyle(
+                  color: Color.fromARGB(255, 73, 66, 2),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Text(
+                agendamento[index].participante ?? "",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              if (status == "Pendente")
+                DropdownButtonHideUnderline(
+                  child: DropdownButton2(
+                    hint: Text(
+                      '  Selecione',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).hintColor,
+                      ),
+                    ),
+                    items: itens2
+                        .map((item) => DropdownMenuItem<Colaborador>(
+                              value: item,
+                              child: Text(
+                                item.nomeColaborador.toString(),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                    value: selectedValue2,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedValue2 = value as Colaborador;
+                      });
+                    },
+                    buttonStyleData: const ButtonStyleData(
+                      height: 40,
+                      width: 140,
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(
+                      height: 40,
+                    ),
+                  ),
+                ),
+            ]),
             if (status == "Pendente")
               Row(
                 children: [
@@ -766,8 +826,8 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                                     onPressed: () {
                                       status = "Cancelado";
                                       idAgendamento = agendamentoId;
-                                      _alterarStatus(
-                                          idAgendamento, status, "0", "0");
+                                      _alterarStatus(idAgendamento, status, "0",
+                                          "0", "0", "0");
                                       if (widget.pendente == false) {
                                         Navigator.of(context).push(
                                             MaterialPageRoute(
@@ -869,14 +929,26 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                                           _alteraPlanoVencidoAgendamento(
                                               idAgendamento, "N");
                                         }
-                                        _alterarStatus(idAgendamento, status,
-                                            nomeColaborador, idColaborador);
+                                        _alterarStatus(
+                                            idAgendamento,
+                                            status,
+                                            nomeColaborador,
+                                            idColaborador,
+                                            nomeParticipante,
+                                            idParticipante);
                                         if (selectedValue != null) {
                                           nomeColaborador = selectedValue!
                                               .nomeColaborador
                                               .toString();
                                           idColaborador =
                                               selectedValue!.id.toString();
+                                        }
+                                        if (selectedValue2 != null) {
+                                          nomeParticipante = selectedValue2!
+                                              .nomeColaborador
+                                              .toString();
+                                          idParticipante =
+                                              selectedValue2!.id.toString();
                                         }
 
                                         if (widget.pendente == false) {
@@ -944,17 +1016,23 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
     () {};
   }
 
-  void _alterarStatus(
-      String id, String status, String colaborador, String idColaborador) {
+  void _alterarStatus(String id, String status, String colaborador,
+      String idColaborador, String nomeParticipante, String idParticipante) {
     if (selectedValue != null) {
       nomeColaborador = selectedValue!.nomeColaborador.toString();
       idColaborador = selectedValue!.id.toString();
+    }
+    if (selectedValue2 != null) {
+      nomeParticipante = selectedValue2!.nomeColaborador.toString();
+      idParticipante = selectedValue2!.id.toString();
     }
     //info.atualizarStatus(idAgendamento, status, nomeColaborador, idColaborador);
     db.collection('agendamentos').doc(idAgendamento).update({
       'status': status,
       'colaborador': nomeColaborador,
-      'idColaborador': idColaborador
+      'idColaborador': idColaborador,
+      'participante': nomeParticipante,
+      'idParticipante': idParticipante
     });
     Navigator.pop(context);
   }
@@ -975,6 +1053,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
         .then((dynamic listaColaborador) {
       setState(() {
         itens = listaColaborador;
+        itens2 = listaColaborador;
       });
     });
   }

@@ -128,6 +128,7 @@ class _ListaColaboradorState extends State<ListaColaborador> {
                     "nomeColaborador": colaborador[index].nomeColaborador,
                     "funcao": colaborador[index].funcao,
                     "porcenComissao": colaborador[index].porcenComissao,
+                    "porcenParticipante": colaborador[index].porcenParticipante,
                     "metaComissao": colaborador[index].metaComissao,
                     "status": "Inativo"
                   });
@@ -148,6 +149,7 @@ class _ListaColaboradorState extends State<ListaColaborador> {
                     "nomeColaborador": colaborador[index].nomeColaborador,
                     "funcao": colaborador[index].funcao,
                     "porcenComissao": colaborador[index].porcenComissao,
+                    "porcenParticipante": colaborador[index].porcenParticipante,
                     "metaComissao": colaborador[index].metaComissao,
                     "status": "Ativo"
                   });
@@ -226,6 +228,23 @@ class _ListaColaboradorState extends State<ListaColaborador> {
                   ),
                   Text(
                     colaborador[index].porcenComissao.toString() ?? "",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ]),
+                Row(children: [
+                  const Text(
+                    "Taxa Participação % : ",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 73, 66, 2),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    colaborador[index].porcenParticipante.toString() ?? "",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

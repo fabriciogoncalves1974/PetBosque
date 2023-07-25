@@ -35,6 +35,8 @@ const String observacaoColuna = "observacao";
 const String statusColuna = "status";
 const String colaboradorColuna = "colaborador";
 const String idColaboradorColuna = "idColaborador";
+const String idParticipanteColuna = "idParticipante";
+const String participanteColuna = "participante";
 const String planoVencidoColuna = "planoVencido";
 
 class InfoAgendamento {
@@ -98,6 +100,8 @@ class InfoAgendamento {
           statusColuna,
           colaboradorColuna,
           idColaboradorColuna,
+          idParticipanteColuna,
+          participanteColuna,
           planoVencidoColuna
         ],
         where: "$idColuna = ?",
@@ -250,6 +254,8 @@ class InfoAgendamento {
             status: doc['status'],
             colaborador: doc['colaborador'],
             idColaborador: doc['idColaborador'],
+            idParticipante: doc['idParticipante'],
+            participante: doc['participante'],
             planoVencido: doc['planoVencido'],
             id: doc['idAgendamento']))
         .toList();
@@ -291,6 +297,8 @@ class InfoAgendamento {
             status: doc['status'],
             colaborador: doc['colaborador'],
             idColaborador: doc['idColaborador'],
+            idParticipante: doc['idParticipante'],
+            participante: doc['participante'],
             planoVencido: doc['planoVencido'],
             id: doc['idAgendamento']))
         .toList();
@@ -332,6 +340,8 @@ class InfoAgendamento {
             status: doc['status'],
             colaborador: doc['colaborador'],
             idColaborador: doc['idColaborador'],
+            idParticipante: doc['idParticipante'],
+            participante: doc['participante'],
             planoVencido: doc['planoVencido'],
             id: doc['idAgendamento']))
         .toList();
@@ -373,6 +383,8 @@ class InfoAgendamento {
             status: doc['status'],
             colaborador: doc['colaborador'],
             idColaborador: doc['idColaborador'],
+            idParticipante: doc['idParticipante'],
+            participante: doc['participante'],
             planoVencido: doc['planoVencido'],
             id: doc['idAgendamento']))
         .toList();
@@ -415,6 +427,8 @@ class Agendamento {
   String? status;
   String? colaborador;
   String? idColaborador;
+  String? idParticipante;
+  String? participante;
   String? planoVencido;
 
   Agendamento(
@@ -425,6 +439,8 @@ class Agendamento {
       this.hora,
       this.id,
       this.idColaborador,
+      this.idParticipante,
+      this.participante,
       this.nomeContato,
       this.nomePet,
       this.observacao,
@@ -479,6 +495,8 @@ class Agendamento {
     status = map[statusColuna];
     colaborador = map[colaboradorColuna];
     idColaborador = map[idColaboradorColuna];
+    idParticipante = map[idParticipanteColuna];
+    participante = map[participanteColuna];
     planoVencido = map[planoVencidoColuna];
   }
 
@@ -512,6 +530,8 @@ class Agendamento {
       statusColuna: status,
       colaboradorColuna: colaborador,
       idColaboradorColuna: idColaborador,
+      idParticipanteColuna: idParticipante,
+      participanteColuna: participante,
       planoVencidoColuna: planoVencido,
     };
 
@@ -523,6 +543,6 @@ class Agendamento {
 
   @override
   String toString() {
-    return "Agendamento(id: $id,idPet: $idPet,fotoPet: $fotoPet,nomeContato: $nomeContato,nomePet: $nomePet,data: $data,hora: $hora,svBanho: $svBanho,valorBanho: $valorBanho,svTosa: $svTosa,valorTosa: $valorTosa,svCorteUnha: $svCorteUnha,valorCorteUnha: $valorCorteUnha,svHidratacao: $svHidratacao,valorHidratacao: $valorHidratacao,svTosaHigienica: $svTosaHigienica,valorTosaHigienica: $valorTosaHigienica,svPintura: $svPintura,valorPintura: $valorPintura,svHospedagem: $svHospedagem,valorHospedagem: $valorHospedagem,svTransporte: $svTransporte,valorTransporte: $valorTransporte,valorTotal: $valorTotal,valorAdicional: $valorAdicional,observacao: $observacao, status: $status,colaborador: $colaborador, idColaborador: $idColaborador, planoVencido: $planoVencido)";
+    return "Agendamento(id: $id,idPet: $idPet,fotoPet: $fotoPet,nomeContato: $nomeContato,nomePet: $nomePet,data: $data,hora: $hora,svBanho: $svBanho,valorBanho: $valorBanho,svTosa: $svTosa,valorTosa: $valorTosa,svCorteUnha: $svCorteUnha,valorCorteUnha: $valorCorteUnha,svHidratacao: $svHidratacao,valorHidratacao: $valorHidratacao,svTosaHigienica: $svTosaHigienica,valorTosaHigienica: $valorTosaHigienica,svPintura: $svPintura,valorPintura: $valorPintura,svHospedagem: $svHospedagem,valorHospedagem: $valorHospedagem,svTransporte: $svTransporte,valorTransporte: $valorTransporte,valorTotal: $valorTotal,valorAdicional: $valorAdicional,observacao: $observacao, status: $status,colaborador: $colaborador, idColaborador: $idColaborador,idParticipante: $idParticipante, participante: $participante, planoVencido: $planoVencido)";
   }
 }

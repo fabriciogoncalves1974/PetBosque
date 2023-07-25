@@ -21,6 +21,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
   final _nomeColaboradorFocus = FocusNode();
   TextEditingController nomeColaboradorController = TextEditingController();
   TextEditingController porcenComissaoController = TextEditingController();
+  TextEditingController porcenParticipanteController = TextEditingController();
   TextEditingController metaComissaoController = TextEditingController();
   TextEditingController funcaoColaboradorController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -38,6 +39,8 @@ class _EditarColaboradorState extends State<EditarColaborador> {
     funcaoColaboradorController.text = _editarColaborador.funcao ?? "";
     porcenComissaoController.text =
         _editarColaborador.porcenComissao.toString() ?? "";
+    porcenParticipanteController.text =
+        _editarColaborador.porcenParticipante.toString() ?? "";
     metaComissaoController.text =
         _editarColaborador.metaComissao.toString() ?? "";
   }
@@ -72,10 +75,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
               _retornaPop(context);
             }),
           ),
-          floatingActionButton: FloatingActionButton(
+          floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
               _editarColaborador.status ??= "Ativo";
               _editarColaborador.porcenComissao ??= 0;
+              _editarColaborador.porcenParticipante ??= 0;
               _editarColaborador.metaComissao ??= 0;
               if (_editarColaborador.nomeColaborador != null &&
                   _editarColaborador.nomeColaborador!.isNotEmpty) {
@@ -85,6 +89,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                   "nomeColaborador": _editarColaborador.nomeColaborador,
                   "funcao": _editarColaborador.funcao,
                   "porcenComissao": _editarColaborador.porcenComissao,
+                  "porcenParticipante": _editarColaborador.porcenParticipante,
                   "metaComissao": _editarColaborador.metaComissao,
                   "status": _editarColaborador.status
                 });
@@ -94,7 +99,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 FocusScope.of(context).requestFocus(_nomeColaboradorFocus);
               }
             },
-            child: const Icon(Icons.save),
+            icon: const Icon(Icons.save),
+            backgroundColor: Color.fromRGBO(35, 151, 166, 1),
+            hoverColor: Color.fromRGBO(35, 151, 166, 50),
+            foregroundColor: Colors.white,
+            label: Text("Salvar"),
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(10.0),
@@ -153,6 +162,27 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                     setState(() {
                       _editarColaborador.porcenComissao =
                           double.tryParse(porcenComissaoController.text) ?? 0;
+                    });
+                  },
+                ),
+                const SizedBox(
+                  //Use of SizedBox
+                  height: 20,
+                ),
+                TextFormField(
+                  keyboardType: const TextInputType.numberWithOptions(),
+                  controller: porcenParticipanteController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "% Participante",
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.all(10),
+                      )),
+                  onChanged: (text) {
+                    setState(() {
+                      _editarColaborador.porcenParticipante =
+                          double.tryParse(porcenParticipanteController.text) ??
+                              0;
                     });
                   },
                 ),

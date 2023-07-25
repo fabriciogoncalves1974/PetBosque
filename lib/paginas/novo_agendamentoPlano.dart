@@ -258,6 +258,8 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                     "status": _novoAgendamento.status,
                     "colaborador": _novoAgendamento.colaborador,
                     "idColaborador": _novoAgendamento.idColaborador,
+                    "idParticipante": _novoAgendamento.id,
+                    "participante": _novoAgendamento.participante,
                     "planoVencido": _novoAgendamento.planoVencido
                   });
                   loading = false;
