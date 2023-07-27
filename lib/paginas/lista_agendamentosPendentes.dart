@@ -348,7 +348,8 @@ class _ListaAgendamentosPendentesState
                         ),
                       ),
                       Text(
-                        agendamento[index].valorTotal.toString() ?? "",
+                        "R\$ ${agendamento[index].valorTotal!.toStringAsFixed(2)}" ??
+                            "",
                         style: const TextStyle(
                           fontSize: 12,
                         ),

@@ -354,7 +354,7 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
                   ),
                 ),
                 Text(
-                  "R\$ " + hospedagem[index].valorDia!.toStringAsFixed(2) ?? "",
+                  "R\$ ${hospedagem[index].valorDia!.toStringAsFixed(2)}" ?? "",
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -380,7 +380,7 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
                         width: 150,
                       ),
                       child: Text(
-                        "R\$ " + totalDiarias!.toStringAsFixed(2) ?? "",
+                        "R\$ ${totalDiarias!.toStringAsFixed(2)}" ?? "",
                         textAlign: TextAlign.center,
                         style: const TextStyle(height: 2, fontSize: 20),
                       ),
@@ -406,10 +406,7 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
                         width: 150,
                       ),
                       child: Text(
-                        "R\$ " +
-                                hospedagem[index]
-                                    .adicional!
-                                    .toStringAsFixed(2) ??
+                        "R\$ ${hospedagem[index].adicional!.toStringAsFixed(2)}" ??
                             "",
                         textAlign: TextAlign.center,
                         style: const TextStyle(height: 2, fontSize: 20),
@@ -420,35 +417,28 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
             const SizedBox(
               height: 10,
             ),
-            Container(
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Row(
-                      children: [
-                        Text(
-                          "Total",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(height: 2, fontSize: 20),
-                        ),
-                      ],
-                    ),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints.tightFor(
-                        width: 150,
-                      ),
-                      child: Text(
-                        "R\$ " +
-                                hospedagem[index]
-                                    .valorTotal!
-                                    .toStringAsFixed(2) ??
-                            "",
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(height: 2, fontSize: 20),
-                      ),
-                    ),
-                  ]),
-            ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              const Row(
+                children: [
+                  Text(
+                    "Total",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(height: 2, fontSize: 20),
+                  ),
+                ],
+              ),
+              ConstrainedBox(
+                constraints: const BoxConstraints.tightFor(
+                  width: 150,
+                ),
+                child: Text(
+                  "R\$ ${hospedagem[index].valorTotal!.toStringAsFixed(2)}" ??
+                      "",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(height: 2, fontSize: 20),
+                ),
+              ),
+            ]),
             const SizedBox(
               height: 5,
             ),
@@ -665,8 +655,6 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
         ),
       ),
     );
-    onTap:
-    () {};
   }
 
   void _alterarStatus(

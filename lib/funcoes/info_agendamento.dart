@@ -390,6 +390,13 @@ class InfoAgendamento {
         .toList();
   }
 
+  Future<int?> quantidadeAgendamentosColaboradorFirestore(id) async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    var qtd = db.collection("contato").count().get();
+    print('hhhh $qtd');
+    return null;
+  }
+
   deletarAgendamentoFirestore(id) async {
     CollectionReference planoCollection =
         FirebaseFirestore.instance.collection('agendamentos');

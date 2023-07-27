@@ -191,7 +191,7 @@ class _PrincipalState extends State<Principal> {
                     Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.all(5),
+                          padding: const EdgeInsets.all(5),
                           child: InkWell(
                             child: Container(
                                 padding: const EdgeInsets.all(2.0),
@@ -293,7 +293,7 @@ class _PrincipalState extends State<Principal> {
                                                       data: dataAgendamento,
                                                     )));
                                       },
-                                      child: Text('ver todos...'),
+                                      child: const Text('ver todos...'),
                                     )
                                   ]),
                                 ])),
@@ -316,12 +316,12 @@ class _PrincipalState extends State<Principal> {
                                 borderRadius: BorderRadius.circular(10.0),
                                 color: const Color.fromRGBO(204, 236, 247, 100),
                               ),
-                              child: Column(children: [
-                                const SizedBox(
+                              child: const Column(children: [
+                                SizedBox(
                                   height: 10,
                                 ),
                                 Row(children: [
-                                  const Text(
+                                  Text(
                                     "Sem agendamentos para hoje!  ",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
@@ -387,7 +387,7 @@ class _PrincipalState extends State<Principal> {
                     Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.all(5),
+                          padding: const EdgeInsets.all(5),
                           child: InkWell(
                             child: Container(
                                 padding: const EdgeInsets.all(2.0),
@@ -485,7 +485,7 @@ class _PrincipalState extends State<Principal> {
                                                 builder: (context) =>
                                                     ListaHospedagemDia()));
                                       },
-                                      child: Text('ver todos...'),
+                                      child: const Text('ver todos...'),
                                     )
                                   ]),
                                 ])),
@@ -508,12 +508,12 @@ class _PrincipalState extends State<Principal> {
                                 borderRadius: BorderRadius.circular(10.0),
                                 color: const Color.fromRGBO(204, 236, 247, 100),
                               ),
-                              child: Column(children: [
-                                const SizedBox(
+                              child: const Column(children: [
+                                SizedBox(
                                   height: 10,
                                 ),
                                 Row(children: [
-                                  const Text(
+                                  Text(
                                     "Sem hospedagem para hoje!  ",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(

@@ -191,7 +191,17 @@ class _NovoPetState extends State<NovoPet> {
                               title: const Text("Atualizar imagem"),
                               content: const Text("Selecione a opção."),
                               actions: <Widget>[
-                                TextButton(
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    fixedSize: const Size(300, 50),
+                                    backgroundColor: Colors.redAccent,
+                                    side: const BorderSide(
+                                        width: 3, color: Colors.redAccent),
+                                    elevation: 3,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                  ),
                                   onPressed: () {
                                     ImagePicker.platform
                                         .pickImage(source: ImageSource.gallery)
@@ -203,9 +213,29 @@ class _NovoPetState extends State<NovoPet> {
                                     });
                                     Navigator.pop(context);
                                   },
-                                  child: const Text("Galeria"),
+                                  child: const Text(
+                                    "Galeria",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                    ),
+                                  ),
                                 ),
-                                TextButton(
+                                const SizedBox(
+                                  //Use of SizedBox
+                                  height: 20,
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    fixedSize: const Size(300, 50),
+                                    backgroundColor: Colors.blueAccent,
+                                    side: const BorderSide(
+                                        width: 3, color: Colors.blueAccent),
+                                    elevation: 3,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                  ),
                                   onPressed: () {
                                     ImagePicker.platform
                                         .pickImage(source: ImageSource.camera)
@@ -217,7 +247,11 @@ class _NovoPetState extends State<NovoPet> {
                                     });
                                     Navigator.pop(context);
                                   },
-                                  child: const Text("Camera"),
+                                  child: const Text("Camera",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                      )),
                                 ),
                               ]);
                         });

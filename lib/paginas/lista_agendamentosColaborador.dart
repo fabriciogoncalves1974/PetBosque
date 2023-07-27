@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/paginas/detalhe_agendamento.dart';
+import 'package:pet_bosque/paginas/detalhe_colaborador.dart';
 import 'package:pet_bosque/paginas/lista_colaborador.dart';
 import 'package:pet_bosque/paginas/lista_contato.dart';
 import 'package:pet_bosque/paginas/lista_pet.dart';
@@ -94,6 +95,11 @@ class _ListaAgendamentosColabordorState
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          leading: BackButton(onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => DetalheColaborador(
+                    idColaborador: widget.idColaborador, nome: '')));
+          }),
           title: const Text("Lista de Agendamentos"),
           centerTitle: true,
         ),
@@ -104,7 +110,7 @@ class _ListaAgendamentosColabordorState
                 itemBuilder: (context, index) {
                   return _cartaoContato(context, index);
                 })
-            : Center(
+            : const Center(
                 child: CircularProgressIndicator(
                   color: Colors.greenAccent,
                   backgroundColor: Colors.grey,
@@ -363,7 +369,7 @@ class _ListaAgendamentosColabordorState
                           ),
                         ),
                         Text(
-                          agendamento[index].valorTotal!.toStringAsFixed(2) ??
+                          "R\$ ${agendamento[index].valorTotal!.toStringAsFixed(2)}" ??
                               "",
                           style: const TextStyle(
                             fontSize: 12,
@@ -383,7 +389,7 @@ class _ListaAgendamentosColabordorState
                           ),
                         ),
                         Text(
-                          valorComissao!.toStringAsFixed(2) ?? "",
+                          "R\$ ${valorComissao.toStringAsFixed(2)}" ?? "",
                           style: const TextStyle(
                             fontSize: 12,
                           ),

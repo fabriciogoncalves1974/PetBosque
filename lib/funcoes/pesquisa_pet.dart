@@ -43,7 +43,6 @@ class PesquisaPetPage extends SearchDelegate<Pet?> {
 
   @override
   Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
     return Container();
   }
 

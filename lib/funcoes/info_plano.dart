@@ -102,7 +102,7 @@ class InfoPlano {
   Future<List> obterTodosPlanosFirestore() async {
     CollectionReference planoCollection =
         FirebaseFirestore.instance.collection('planos');
-    var result = await planoCollection.get();
+    var result = await planoCollection.orderBy('nomePlano').get();
     return result.docs
         .map((doc) => Plano(
             nomePlano: doc['nomePlano'],

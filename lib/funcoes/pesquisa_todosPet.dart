@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
 import 'package:pet_bosque/paginas/detalhe_contato.dart';
-import 'package:pet_bosque/paginas/novo_agendamento.dart';
-import 'package:pet_bosque/paginas/novo_agendamentoPlano.dart';
+import 'package:pet_bosque/paginas/editar_pet.dart';
+import 'package:pet_bosque/paginas/inicio.dart';
 
 class PesquisaTodosPetPage extends SearchDelegate<Pet?> {
   InfoPet infoPet = InfoPet();
@@ -68,113 +68,89 @@ class PesquisaTodosPetPage extends SearchDelegate<Pet?> {
                           actionPane: const SlidableDrawerActionPane(),
                           secondaryActions: [
                             IconSlideAction(
-                              color: Colors.green,
-                              icon: Icons.add,
-                              caption: 'Agendar',
+                              color: Colors.blueAccent,
+                              icon: Icons.edit,
+                              caption: 'Editar',
                               onTap: () {
-                                if (pets[index].idPlano != "0") {
-                                  contadorPlano =
-                                      pets[index].contaPlano.toString();
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: Text(
-                                              "Esse pet possui $contadorPlano agendamentos restantes! "),
-                                          actions: <Widget>[
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                fixedSize: const Size(120, 50),
-                                                backgroundColor:
-                                                    Colors.redAccent,
-                                                side: const BorderSide(
-                                                    width: 3,
-                                                    color: Colors.redAccent),
-                                                elevation: 3,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text(
-                                                "Cancelar",
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditarPet(
+                                              pet: pets[index],
+                                            )));
+                              },
+                            ),
+                            IconSlideAction(
+                              color: Colors.redAccent,
+                              icon: Icons.delete,
+                              caption: 'Excluir',
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text(
+                                            "Deseja realmente excluir o Pet  ${pets[index].nomePet}?"),
+                                        actions: <Widget>[
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              fixedSize: const Size(120, 50),
+                                              backgroundColor: Colors.redAccent,
+                                              side: const BorderSide(
+                                                  width: 3,
+                                                  color: Colors.redAccent),
+                                              elevation: 3,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
                                             ),
-                                            const SizedBox(
-                                              width: 20,
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text(
+                                              "Não",
+                                              style: TextStyle(
+                                                  color: Colors.white),
                                             ),
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                fixedSize: const Size(120, 50),
-                                                backgroundColor:
-                                                    Colors.blueAccent,
-                                                side: const BorderSide(
-                                                    width: 3,
-                                                    color: Colors.blueAccent),
-                                                elevation: 3,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.of(context).push(MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        NovoAgendamentoPlano(
-                                                            fotoPet: pets[index]
-                                                                .foto
-                                                                .toString(),
-                                                            nomeContato:
-                                                                pets[index]
-                                                                    .nomeContato
-                                                                    .toString(),
-                                                            nomePet: pets[index]
-                                                                .nomePet
-                                                                .toString(),
-                                                            idPet: pets[index]
-                                                                .id
-                                                                .toString(),
-                                                            contaPlano:
-                                                                pets[index]
-                                                                    .contaPlano
-                                                                    .toString(),
-                                                            renovaPlano:
-                                                                renovaPlanoNao,
-                                                            idPlano: pets[index]
-                                                                .idPlano
-                                                                .toString())));
-                                              },
-                                              child: const Text(
-                                                "Continuar",
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
+                                          ),
+                                          const SizedBox(
+                                            width: 20,
+                                          ),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              fixedSize: const Size(120, 50),
+                                              backgroundColor:
+                                                  Colors.blueAccent,
+                                              side: const BorderSide(
+                                                  width: 3,
+                                                  color: Colors.blueAccent),
+                                              elevation: 3,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
                                             ),
-                                          ],
-                                        );
-                                      });
-                                }
-                                if (pets[index].idPlano == "0") {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => NovoAgendamento(
-                                            fotoPet:
-                                                pets[index].foto.toString(),
-                                            nomeContato: pets[index]
-                                                .nomeContato
-                                                .toString(),
-                                            nomePet:
-                                                pets[index].nomePet.toString(),
-                                            idPet: pets[index].id.toString(),
-                                            contaPlano: pets[index]
-                                                .contaPlano
-                                                .toString(),
-                                          )));
-                                }
+                                            onPressed: () {
+                                              infoPet.deletarPetFirestore(
+                                                  pets[index].id!);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const Inicio(
+                                                            index: 3,
+                                                          )));
+                                            },
+                                            child: const Text(
+                                              "Sim",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    });
                               },
                             ),
                           ],

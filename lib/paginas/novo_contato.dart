@@ -231,7 +231,7 @@ class _NovoContatoState extends State<NovoContato> {
                     ),
                     child: Image.file(File("$imagemPet"),
                         errorBuilder: (context, error, stackTrace) =>
-                            Image.asset("assets/imagens/pet.png"),
+                            Image.asset("assets/imagens/contato.png"),
                         fit: BoxFit.cover),
                   ),
                   onTap: () {
@@ -243,6 +243,16 @@ class _NovoContatoState extends State<NovoContato> {
                               content: const Text("Selecione a opção."),
                               actions: <Widget>[
                                 ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    fixedSize: const Size(300, 50),
+                                    backgroundColor: Colors.redAccent,
+                                    side: const BorderSide(
+                                        width: 3, color: Colors.redAccent),
+                                    elevation: 3,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                  ),
                                   onPressed: () {
                                     ImagePicker.platform
                                         .pickImage(source: ImageSource.gallery)
@@ -254,9 +264,29 @@ class _NovoContatoState extends State<NovoContato> {
                                     });
                                     Navigator.pop(context);
                                   },
-                                  child: const Text("Galeria"),
+                                  child: const Text(
+                                    "Galeria",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  //Use of SizedBox
+                                  height: 20,
                                 ),
                                 ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    fixedSize: const Size(300, 50),
+                                    backgroundColor: Colors.blueAccent,
+                                    side: const BorderSide(
+                                        width: 3, color: Colors.blueAccent),
+                                    elevation: 3,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                  ),
                                   onPressed: () {
                                     ImagePicker.platform
                                         .pickImage(source: ImageSource.camera)
@@ -268,11 +298,19 @@ class _NovoContatoState extends State<NovoContato> {
                                     });
                                     Navigator.pop(context);
                                   },
-                                  child: const Text("Camera"),
+                                  child: const Text("Camera",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                      )),
                                 ),
                               ]);
                         });
                   },
+                ),
+                const SizedBox(
+                  //Use of SizedBox
+                  height: 20,
                 ),
                 TextFormField(
                   controller: _nomeController,

@@ -180,12 +180,6 @@ class InfoColaborador {
             id: doc['idColaborador']))
         .toList();
   }
-
-  deletarColaboradorFirestore(id) async {
-    CollectionReference planoCollection =
-        FirebaseFirestore.instance.collection('planos');
-    planoCollection.doc(id).delete();
-  }
 }
 
 class Colaborador {

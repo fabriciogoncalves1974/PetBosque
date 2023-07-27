@@ -3,6 +3,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_bosque/funcoes/info_coloborador.dart';
 import 'package:pet_bosque/paginas/lista_agendamentosColaborador.dart';
+import 'package:pet_bosque/paginas/lista_colaborador.dart';
 import 'package:pet_bosque/paginas/lista_contato.dart';
 import 'package:pet_bosque/paginas/lista_pet.dart';
 
@@ -39,10 +40,11 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
   double valorAgendamentosAvulso = 0;
   double valorComissao = 0;
   double valorComissaoAvulso = 0;
-  late double porcentComissao;
+  double porcentComissao = 0;
   late int mes;
   FirebaseFirestore db = FirebaseFirestore.instance;
   String? mesSelecionado;
+  List listaTotal = [];
 
   var meses = [
     'Janeiro',
@@ -79,6 +81,7 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
   @override
   void initState() {
     super.initState();
+    _excutaFuncoes();
     final dataAtual = DateTime.now();
 
     dataInicio = DateTime(dataAtual.year, dataAtual.month, 01);
@@ -107,10 +110,14 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
       default:
         print('choose a different number!');
     }
+  }
+
+  void _excutaFuncoes() {
     _obterColaboradores();
-    //_obterQuantidadeAgendamentos(int);
-    //_totalAgendamentosColaborador(int);
-    //_totalAgendamentosAvulso(int);
+    _obterQuantidadeAgendamentos(widget.idColaborador);
+    _totalAgendamentosAvulso(widget.idColaborador);
+    _totalAgendamentosColaborador(widget.idColaborador);
+    _totalAgendamentosAvulso(widget.idColaborador);
   }
 
   Colaborador? selectedValue;
@@ -127,6 +134,10 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+            leading: BackButton(onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => ListaColaborador()));
+            }),
             title: Text(
               widget.nome ?? "",
               style: TextStyle(
@@ -182,6 +193,7 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
   }
 
   Widget _detalhes(BuildContext context, int index) {
+    //qtdAgendamentos = int.parse(colaborador.length.toString());
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Container(
@@ -193,6 +205,28 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Row(
+              children: [
+                const Text(
+                  "Nome: ",
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 73, 66, 2),
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  colaborador[index].nomeColaborador ?? "",
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 5,
+            ),
             Row(
               children: [
                 const Text(
@@ -356,17 +390,31 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
     );
   }
 
-  /*void _obterQuantidadeAgendamentos(int) {
-    info.quantidadeAgendamentosColaborador(
-        int.parse(widget.idColaborador).then((dynamic result) {
-      setState(() {
-        qtdAgendamentos = result;
-      });
-    }));
+  void _obterQuantidadeAgendamentos(String id) async {
+    await db
+        .collection("agendamentos")
+        .where('idColaborador', isEqualTo: id)
+        .count()
+        .get()
+        .then(
+          (res) => qtdAgendamentos = res.count,
+        );
   }
 
-  void _totalAgendamentosColaborador(int) {
-    info.totalAgendamentosColaborador(
+  void _totalAgendamentosColaborador(String id) async {
+    QuerySnapshot query = (await db
+        .collection("agendamentos")
+        .where('idColaborador', isEqualTo: id)
+        .where('planoVencido', isEqualTo: 'N')
+        .get());
+    valorAgendamentosPlano = 0;
+    query.docs.forEach((doc) {
+      valorAgendamentosPlano =
+          (doc.get("valorTotal") * 25 / 100) + valorAgendamentosPlano;
+    });
+    valorComissao = (valorAgendamentosPlano * porcentComissao / 100);
+    valorAgendamentos = (valorAgendamentosPlano + valorAgendamentosAvulso);
+    /*info.totalAgendamentosColaborador(
         int.parse(widget.idColaborador).then((dynamic result2) {
       setState(() {
         if (result2[0]['total'] != null) {
@@ -375,10 +423,22 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
         valorComissao = (valorAgendamentosPlano * porcentComissao / 100);
         valorAgendamentos = (valorComissao + valorComissaoAvulso);
       });
-    }));
+    }));*/
   }
 
-  void _totalAgendamentosAvulso(int) {
+  void _totalAgendamentosAvulso(String id) async {
+    QuerySnapshot query = (await db
+        .collection("agendamentos")
+        .where('idColaborador', isEqualTo: id)
+        .where('planoVencido', isEqualTo: 'P')
+        .get());
+    valorAgendamentosAvulso = 0;
+    query.docs.forEach((doc) {
+      valorAgendamentosAvulso = doc.get("valorTotal") + valorAgendamentosAvulso;
+    });
+    valorComissaoAvulso = (valorAgendamentosAvulso * porcentComissao / 100);
+    valorAgendamentos = (valorAgendamentosPlano + valorAgendamentosAvulso);
+/*
     info.totalAgendamentosColaboradorAvulso(
         int.parse(widget.idColaborador).then((dynamic result2) {
       setState(() {
@@ -388,13 +448,11 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
         valorComissaoAvulso = (valorAgendamentosAvulso * porcentComissao / 100);
         valorAgendamentos = (valorComissao + valorComissaoAvulso);
       });
-    }));
+    }));*/
   }
-*/
-  void _totalAgendamentosColaborador(int) {}
 
-  void _obterColaboradores() {
-    infoColaborador
+  void _obterColaboradores() async {
+    await infoColaborador
         .obterDadosColaboradorFirestore(widget.idColaborador)
         .then((dynamic listaColaborador) {
       setState(() {
