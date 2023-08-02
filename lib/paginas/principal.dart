@@ -42,9 +42,10 @@ class _PrincipalState extends State<Principal> {
   @override
   void initState() {
     super.initState();
+
     _obterTodosAgendamentos(data);
-    _obterQuantidadeAgendamentos();
-    _obterQuantidadeHospedagem();
+    //_obterQuantidadeAgendamentos();
+    //_obterQuantidadeHospedagem();
     _obterTodasHospedagens(statusHospedagem);
   }
 
@@ -538,13 +539,13 @@ class _PrincipalState extends State<Principal> {
     return Future.value(false);
   }
 
-  void _obterQuantidadeAgendamentos() {
+  /* void _obterQuantidadeAgendamentos() {
     info.quantidadeAgendamentosDia(data).then((dynamic result) {
       setState(() {
         qtdAgendamentos = result;
       });
     });
-  }
+  }*/
 
   void _obterTodasHospedagens(String data) {
     infoHospedagem
@@ -587,11 +588,11 @@ class _PrincipalState extends State<Principal> {
     });
   }
 
-  void _obterQuantidadeHospedagem() {
+  /* void _obterQuantidadeHospedagem() {
     infoHospedagem.quantidadeHospedagemDia(data).then((dynamic result) {
       setState(() {
         qtdHospedagem = result;
       });
     });
-  }
+  }*/
 }

@@ -36,11 +36,17 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
   int ultimoDia = 0;
   int qtdAgendamentos = 0;
   double valorAgendamentos = 0;
+  double valorAgendamentosParticipante = 0;
   double valorAgendamentosPlano = 0;
+  double valorAgendamentosParticipantePlano = 0;
   double valorAgendamentosAvulso = 0;
+  double valorAgendamentosParticipanteAvulso = 0;
   double valorComissao = 0;
   double valorComissaoAvulso = 0;
+  double totalPagar = 0;
+  double valorComissaoParticipanteAvulso = 0;
   double porcentComissao = 0;
+  double porcentComissaoParticipante = 0;
   late int mes;
   FirebaseFirestore db = FirebaseFirestore.instance;
   String? mesSelecionado;
@@ -88,9 +94,7 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
     mes = dataAtual.month;
     ultimoDia = DateTime(dataAtual.year, dataAtual.month + 1, 0).day;
     dataFinal = DateTime(dataAtual.year, dataAtual.month, ultimoDia);
-    print(dataInicio);
-    print(ultimoDia);
-    print(dataFinal);
+
     switch (mes) {
       case 1:
         mesTexto = 'Janeiro';
@@ -107,6 +111,27 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
       case 5:
         mesTexto = 'Maio';
         break;
+      case 6:
+        mesTexto = 'Junho';
+        break;
+      case 7:
+        mesTexto = 'Julho';
+        break;
+      case 8:
+        mesTexto = 'Agosto';
+        break;
+      case 9:
+        mesTexto = 'Setembro';
+        break;
+      case 10:
+        mesTexto = 'Outubro';
+        break;
+      case 11:
+        mesTexto = 'Novembro';
+        break;
+      case 12:
+        mesTexto = 'Dezembro';
+        break;
       default:
         print('choose a different number!');
     }
@@ -117,7 +142,7 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
     _obterQuantidadeAgendamentos(widget.idColaborador);
     _totalAgendamentosAvulso(widget.idColaborador);
     _totalAgendamentosColaborador(widget.idColaborador);
-    _totalAgendamentosAvulso(widget.idColaborador);
+    _totalAgendamentosParticipanteAvulso(widget.idColaborador);
   }
 
   Colaborador? selectedValue;
@@ -135,12 +160,12 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
             leading: BackButton(onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => ListaColaborador()));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const ListaColaborador()));
             }),
             title: Text(
               widget.nome ?? "",
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color.fromARGB(255, 73, 66, 2),
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
@@ -282,7 +307,7 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
             ]),
             Row(children: [
               const Text(
-                "Valor Total:",
+                "Valor total Agendamentos:",
                 style: TextStyle(
                   color: Color.fromARGB(255, 73, 66, 2),
                   fontSize: 16,
@@ -293,7 +318,28 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
                 width: 5,
               ),
               Text(
-                "R\$ " + valorAgendamentos.toStringAsFixed(2),
+                "R\$ ${valorAgendamentos.toStringAsFixed(2)}",
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ]),
+            Row(children: [
+              const Text(
+                "Valor total Participações:",
+                style: TextStyle(
+                  color: Color.fromARGB(255, 73, 66, 2),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Text(
+                "R\$ ${valorAgendamentosParticipante.toStringAsFixed(2)}",
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.blue,
@@ -323,6 +369,26 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
             ]),
             Row(children: [
               const Text(
+                "Taxa Participante: %",
+                style: TextStyle(
+                  color: Color.fromARGB(255, 73, 66, 2),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Text(
+                colaborador[index].porcenParticipante.toString() ?? "",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ]),
+            Row(children: [
+              const Text(
                 "Meta Comissão: R\$",
                 style: TextStyle(
                   color: Color.fromARGB(255, 73, 66, 2),
@@ -342,55 +408,176 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
                 ),
               ),
             ]),
-            Row(children: [
-              const Text(
-                "Comissão Plano: R\$",
+            const Divider(
+              color: Colors.black,
+              height: 10,
+            ),
+            const Row(children: [
+              Text(
+                "Comissão Plano:",
                 style: TextStyle(
                   color: Color.fromARGB(255, 73, 66, 2),
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                valorComissao!.toStringAsFixed(2),
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.green,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
             ]),
-            Row(children: [
+            Container(
+              color: const Color.fromARGB(255, 228, 222, 222),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Principal:",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints.tightFor(
+                        width: 80,
+                      ),
+                      child: Text(
+                        "R\$ ${valorComissao!.toStringAsFixed(2)}" ?? "",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    )
+                  ]),
+            ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               const Text(
-                "Comissão Avulso: R\$",
+                "Participante:",
                 style: TextStyle(
                   color: Color.fromARGB(255, 73, 66, 2),
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(
-                width: 5,
-              ),
+              ConstrainedBox(
+                constraints: const BoxConstraints.tightFor(
+                  width: 80,
+                ),
+                child: Text(
+                  "R\$ ${valorComissao!.toStringAsFixed(2)}" ?? "",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              )
+            ]),
+            const Divider(
+              color: Colors.black,
+              height: 10,
+            ),
+            const Row(children: [
               Text(
-                valorComissaoAvulso!.toStringAsFixed(2),
-                style: const TextStyle(
+                "Comissão Avulso:",
+                style: TextStyle(
+                  color: Color.fromARGB(255, 73, 66, 2),
                   fontSize: 16,
-                  color: Colors.green,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ]),
+            Container(
+              color: const Color.fromARGB(255, 228, 222, 222),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Principal:",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints.tightFor(
+                        width: 80,
+                      ),
+                      child: Text(
+                        "R\$ ${valorComissaoAvulso!.toStringAsFixed(2)}" ?? "",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    )
+                  ]),
+            ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              const Text(
+                "Participante:",
+                style: TextStyle(
+                  color: Color.fromARGB(255, 73, 66, 2),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              ConstrainedBox(
+                constraints: const BoxConstraints.tightFor(
+                  width: 80,
+                ),
+                child: Text(
+                  "R\$ ${valorComissaoParticipanteAvulso!.toStringAsFixed(2)}" ??
+                      "",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              )
+            ]),
+            const Divider(
+              color: Colors.black,
+              height: 10,
+            ),
+            Container(
+              color: const Color.fromARGB(255, 228, 222, 222),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Total a pagar:",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints.tightFor(
+                        width: 90,
+                      ),
+                      child: Text(
+                        "R\$ ${totalPagar!.toStringAsFixed(2)}" ?? "",
+                        style: const TextStyle(
+                          fontSize: 24,
+                          color: Colors.green,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    )
+                  ]),
+            ),
           ],
         ),
       ),
     );
   }
 
-  void _obterQuantidadeAgendamentos(String id) async {
+  Future _obterQuantidadeAgendamentos(String id) async {
     await db
         .collection("agendamentos")
         .where('idColaborador', isEqualTo: id)
@@ -401,7 +588,7 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
         );
   }
 
-  void _totalAgendamentosColaborador(String id) async {
+  Future _totalAgendamentosColaborador(String id) async {
     QuerySnapshot query = (await db
         .collection("agendamentos")
         .where('idColaborador', isEqualTo: id)
@@ -426,7 +613,7 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
     }));*/
   }
 
-  void _totalAgendamentosAvulso(String id) async {
+  Future _totalAgendamentosAvulso(String id) async {
     QuerySnapshot query = (await db
         .collection("agendamentos")
         .where('idColaborador', isEqualTo: id)
@@ -438,6 +625,7 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
     });
     valorComissaoAvulso = (valorAgendamentosAvulso * porcentComissao / 100);
     valorAgendamentos = (valorAgendamentosPlano + valorAgendamentosAvulso);
+    totalPagar = (valorComissaoAvulso + valorComissaoParticipanteAvulso);
 /*
     info.totalAgendamentosColaboradorAvulso(
         int.parse(widget.idColaborador).then((dynamic result2) {
@@ -451,13 +639,45 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
     }));*/
   }
 
-  void _obterColaboradores() async {
+  Future _totalAgendamentosParticipanteAvulso(String id) async {
+    QuerySnapshot query = (await db
+        .collection("agendamentos")
+        .where('idParticipante', isEqualTo: id)
+        .where('planoVencido', isEqualTo: 'P')
+        .get());
+    valorAgendamentosParticipanteAvulso = 0;
+    query.docs.forEach((doc) {
+      valorAgendamentosParticipanteAvulso =
+          doc.get("valorTotal") + valorAgendamentosParticipanteAvulso;
+    });
+    valorComissaoParticipanteAvulso = (valorAgendamentosParticipanteAvulso *
+        porcentComissaoParticipante /
+        100);
+    valorAgendamentosParticipante = (valorAgendamentosParticipantePlano +
+        valorAgendamentosParticipanteAvulso);
+    totalPagar = (valorComissaoAvulso + valorComissaoParticipanteAvulso);
+/*
+    info.totalAgendamentosColaboradorAvulso(
+        int.parse(widget.idColaborador).then((dynamic result2) {
+      setState(() {
+        if (result2[0]['total'] != null) {
+          valorAgendamentosAvulso = result2[0]['total'];
+        }
+        valorComissaoAvulso = (valorAgendamentosAvulso * porcentComissao / 100);
+        valorAgendamentos = (valorComissao + valorComissaoAvulso);
+      });
+    }));*/
+  }
+
+  Future _obterColaboradores() async {
     await infoColaborador
         .obterDadosColaboradorFirestore(widget.idColaborador)
         .then((dynamic listaColaborador) {
       setState(() {
         colaborador = listaColaborador;
         porcentComissao = colaborador[0].porcenComissao as double;
+        porcentComissaoParticipante =
+            colaborador[0].porcenParticipante as double;
       });
     });
   }

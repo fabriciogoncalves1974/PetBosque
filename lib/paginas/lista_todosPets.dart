@@ -223,6 +223,24 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
                 Row(
                   children: [
                     const Text(
+                      "Data do Cadastro: ",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      pet[index].dataCadastro ?? "",
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
                       "Data Nascimento: ",
                       style: TextStyle(
                         color: Color.fromARGB(255, 73, 66, 2),
@@ -277,7 +295,7 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
                 Row(
                   children: [
                     const Text(
-                      "raça: ",
+                      "Raça: ",
                       style: TextStyle(
                         color: Color.fromARGB(255, 73, 66, 2),
                         fontSize: 12,

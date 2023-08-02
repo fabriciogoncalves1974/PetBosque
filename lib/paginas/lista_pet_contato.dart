@@ -128,9 +128,8 @@ class _ListaPetContatoState extends State<ListaPetContato> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text("Deseja realmente excluir o Pet  " +
-                            pet[index].nomePet.toString() +
-                            "?"),
+                        title: Text(
+                            "Deseja realmente excluir o Pet  ${pet[index].nomePet}?"),
                         actions: <Widget>[
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -224,6 +223,24 @@ class _ListaPetContatoState extends State<ListaPetContato> {
                 Row(
                   children: [
                     const Text(
+                      "Data do Cadastro: ",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      pet[index].dataCadastro ?? "",
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
                       "Data Nascimento: ",
                       style: TextStyle(
                         color: Color.fromARGB(255, 73, 66, 2),
@@ -278,7 +295,7 @@ class _ListaPetContatoState extends State<ListaPetContato> {
                 Row(
                   children: [
                     const Text(
-                      "raça: ",
+                      "Raça: ",
                       style: TextStyle(
                         color: Color.fromARGB(255, 73, 66, 2),
                         fontSize: 12,

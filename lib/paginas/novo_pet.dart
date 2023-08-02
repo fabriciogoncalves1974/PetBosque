@@ -36,6 +36,7 @@ enum Genero {
 }
 
 final String dataContrato = DateFormat("dd/MM/yyyy").format(DateTime.now());
+final String dataCadastro = DateFormat("dd/MM/yyyy").format(DateTime.now());
 
 class _NovoPetState extends State<NovoPet> {
   Genero? _genero = Genero.Macho;
@@ -122,6 +123,7 @@ class _NovoPetState extends State<NovoPet> {
               if (_editarPet.nomePet != null &&
                   _editarPet.nomePet!.isNotEmpty) {
                 _editarPet.dtNasc = DateFormat("dd/MM/yyyy").format(_dateTime);
+                _editarPet.dataCadastro = dataCadastro;
                 // info.salvarPet(_editarPet);
                 String id = Uuid().v1();
                 db.collection("pet").doc(id).set({
@@ -142,6 +144,7 @@ class _NovoPetState extends State<NovoPet> {
                   "valorPlano": _editarPet.valorPlano,
                   "porte": _editarPet.porte,
                   "dataContrato": _editarPet.dataContrato,
+                  "dataCadastro": _editarPet.dataCadastro,
                   "planoVencido": _editarPet.planoVencido,
                 });
                 Navigator.of(context).push(MaterialPageRoute(

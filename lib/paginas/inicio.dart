@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/paginas/agendamentos.dart';
 import 'package:pet_bosque/paginas/lista_agendamentos.dart';
@@ -20,6 +23,11 @@ class Inicio extends StatefulWidget {
 }
 
 class _InicioState extends State<Inicio> {
+  setFullscreen() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top]);
+  }
+
   final String data = DateFormat("dd/MM/yyyy").format(DateTime.now());
   String dataAgendamento = DateFormat("dd/MM/yyyy").format(DateTime.now());
   int qtdAgendamentos = 0;
@@ -43,6 +51,10 @@ class _InicioState extends State<Inicio> {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  void sair() {
+    exit(0);
   }
 
   paginaInicial() {
@@ -135,21 +147,31 @@ class _InicioState extends State<Inicio> {
           child: Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(
-              backgroundColor: const Color.fromRGBO(35, 151, 166, 1),
-              centerTitle: true,
-              title: Container(
-                  height: 60,
-                  width: 200,
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(202, 236, 236, 1),
-                    borderRadius: BorderRadius.circular(10), //<-- SEE HERE
-                  ),
-                  child: Image.asset(
-                    "assets/imagens/petBosque.png",
-                    alignment: Alignment.bottomCenter,
-                    fit: BoxFit.fitHeight,
-                  )),
-            ),
+                backgroundColor: const Color.fromRGBO(35, 151, 166, 1),
+                centerTitle: true,
+                title: Container(
+                    height: 60,
+                    width: 200,
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(202, 236, 236, 1),
+                      borderRadius: BorderRadius.circular(10), //<-- SEE HERE
+                    ),
+                    child: Image.asset(
+                      "assets/imagens/petBosque.png",
+                      alignment: Alignment.bottomCenter,
+                      fit: BoxFit.fitHeight,
+                    )),
+                actions: <Widget>[
+                  IconButton(
+                      onPressed: () {
+                        sair();
+                      },
+                      icon: const Icon(
+                        Icons.exit_to_app_outlined,
+                        size: 40.0,
+                        color: Colors.black54,
+                      )),
+                ]),
             drawer: Drawer(
               child: ListView(
                 children: <Widget>[
@@ -201,7 +223,9 @@ class _InicioState extends State<Inicio> {
                     onTap: paginaAgendamentosPendentes,
                   ),
                   CustomListTile(
-                      icone: Icons.exit_to_app, texto: "Sair", onTap: () {}),
+                      icone: Icons.exit_to_app,
+                      texto: "Sair",
+                      onTap: () => exit(0)),
                 ],
               ),
             ),

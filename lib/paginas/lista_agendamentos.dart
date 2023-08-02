@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/paginas/detalhe_agendamento.dart';
+import 'package:pet_bosque/paginas/editar_agendamento.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
 import 'package:pet_bosque/paginas/lista_colaborador.dart';
 import 'package:pet_bosque/paginas/lista_contato.dart';
@@ -198,6 +199,17 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
             actionExtentRatio: 0.25,
             actionPane: const SlidableDrawerActionPane(),
             secondaryActions: [
+              IconSlideAction(
+                color: Colors.blueAccent,
+                icon: Icons.edit,
+                caption: 'Editar',
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => EditarAgendamento(
+                            agendamento: agendamento[index],
+                          )));
+                },
+              ),
               IconSlideAction(
                 color: Colors.redAccent,
                 icon: Icons.delete,

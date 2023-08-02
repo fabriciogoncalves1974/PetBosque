@@ -2,10 +2,13 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
+      overlays: [SystemUiOverlay.top]);
 
   Platform.isAndroid
       ? await Firebase.initializeApp(

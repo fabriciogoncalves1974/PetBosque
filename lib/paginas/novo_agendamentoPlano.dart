@@ -60,6 +60,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
   @override
   void initState() {
     super.initState();
+    _total();
     _obterPlanos();
     _novoAgendamento.nomeContato = widget.nomeContato;
     _novoAgendamento.nomePet = widget.nomePet;
@@ -388,7 +389,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                       Row(
                         children: [
                           const Text(
-                            "Valor: ",
+                            "Valor do Plano: ",
                             style: TextStyle(
                               color: Color.fromARGB(255, 73, 66, 2),
                               fontSize: 20,
@@ -567,6 +568,40 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                           ),
                         ),
                       ]),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        color: const Color.fromARGB(255, 228, 222, 222),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Row(
+                                children: [
+                                  Text(
+                                    "Total",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 73, 66, 2),
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              ConstrainedBox(
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 150,
+                                ),
+                                child: Text(
+                                  _novoAgendamento.valorTotal.toString(),
+                                  textAlign: TextAlign.center,
+                                  style:
+                                      const TextStyle(height: 2, fontSize: 20),
+                                ),
+                              ),
+                            ]),
+                      ),
                     ])),
               )),
         ));

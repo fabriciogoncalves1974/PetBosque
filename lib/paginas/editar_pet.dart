@@ -133,8 +133,8 @@ class _EditarPetState extends State<EditarPet> {
             onPressed: () async {
               if (_editarPet.nomePet != null &&
                   _editarPet.nomePet!.isNotEmpty) {
-                await info.atualizarFotoPet(
-                    _editarPet.id.toString(), _editarPet.foto.toString());
+                //await info.atualizarFotoPet(
+                //  _editarPet.id.toString(), _editarPet.foto.toString());
                 // info.atualizarPet(_editarPet);
                 db.collection("pet").doc(_editarPet.id).set({
                   "idPet": _editarPet.id,
@@ -153,6 +153,7 @@ class _EditarPetState extends State<EditarPet> {
                   "idPlano": _editarPet.idPlano,
                   "valorPlano": _editarPet.valorPlano,
                   "porte": _editarPet.porte,
+                  "dataCadastro": _editarPet.dataCadastro,
                   "dataContrato": _editarPet.dataContrato,
                   "planoVencido": _editarPet.planoVencido,
                 });

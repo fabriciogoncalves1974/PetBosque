@@ -21,6 +21,7 @@ const String contaPlanoColuna = "contaPlano";
 const String nomePlanoColuna = "nomePlano";
 const String idPlanoColuna = "idPlano";
 const String dataContratoColuna = "dataContrato";
+const String dataCadastroColuna = "dataCadastro";
 const String valorPlanoColuna = "valorPlano";
 const String porteColuna = "porte";
 const String planoVencidoColuna = "planoVencido";
@@ -59,6 +60,7 @@ class InfoPet {
           nomePlanoColuna,
           idPlanoColuna,
           dataContratoColuna,
+          dataCadastroColuna,
           valorPlanoColuna,
           porteColuna,
           planoVencidoColuna,
@@ -191,7 +193,8 @@ class InfoPet {
   Future<List> obterTodosPetFirestore() async {
     CollectionReference petCollection =
         FirebaseFirestore.instance.collection('pet');
-    var result = await petCollection.orderBy('nomePet').get();
+    var result =
+        await petCollection.orderBy('nomePet').orderBy('nomePlano').get();
     return result.docs
         .map((doc) => Pet(
             id: doc['idPet'],
@@ -208,6 +211,7 @@ class InfoPet {
             nomePlano: doc['nomePlano'],
             idPlano: doc['idPlano'],
             dataContrato: doc['dataContrato'],
+            dataCadastro: doc['dataCadastro'],
             valorPlano: doc['valorPlano'],
             porte: doc['porte'],
             planoVencido: doc['planoVencido'],
@@ -218,7 +222,7 @@ class InfoPet {
   Future<List> obterTodosPetContatoFirestore(String id) async {
     CollectionReference petCollection =
         FirebaseFirestore.instance.collection('pet');
-    var result = await petCollection.where('idContato', isEqualTo: '$id').get();
+    var result = await petCollection.where('idContato', isEqualTo: id).get();
     return result.docs
         .map((doc) => Pet(
               id: doc['idPet'],
@@ -236,6 +240,7 @@ class InfoPet {
               nomePlano: doc['nomePlano'],
               idPlano: doc['idPlano'],
               dataContrato: doc['dataContrato'],
+              dataCadastro: doc['dataCadastro'],
               valorPlano: doc['valorPlano'],
               porte: doc['porte'],
               planoVencido: doc['planoVencido'],
@@ -267,6 +272,7 @@ class InfoPet {
             nomePlano: doc['nomePlano'],
             idPlano: doc['idPlano'],
             dataContrato: doc['dataContrato'],
+            dataCadastro: doc['dataCadastro'],
             valorPlano: doc['valorPlano'],
             porte: doc['porte'],
             planoVencido: doc['planoVencido'],
@@ -283,7 +289,7 @@ class InfoPet {
   Future<List> deletarPetContatoFirestore(String id) async {
     CollectionReference petCollection =
         FirebaseFirestore.instance.collection('pet');
-    var result = await petCollection.where('idContato', isEqualTo: '$id').get();
+    var result = await petCollection.where('idContato', isEqualTo: id).get();
     return result.docs
         .map((doc) => Pet(
               id: doc['idPet'],
@@ -301,6 +307,7 @@ class InfoPet {
               nomePlano: doc['nomePlano'],
               idPlano: doc['idPlano'],
               dataContrato: doc['dataContrato'],
+              dataCadastro: doc['dataCadastro'],
               valorPlano: doc['valorPlano'],
               porte: doc['porte'],
               planoVencido: doc['planoVencido'],
@@ -325,6 +332,7 @@ class Pet {
   String? nomePlano;
   String? idPlano;
   String? dataContrato;
+  String? dataCadastro;
   String? valorPlano;
   String? porte;
   String? planoVencido;
@@ -345,6 +353,7 @@ class Pet {
       this.nomePlano,
       this.idPlano,
       this.dataContrato,
+      this.dataCadastro,
       this.planoVencido,
       this.valorPlano,
       this.porte});
@@ -366,6 +375,7 @@ class Pet {
     nomePlano = map[nomePlanoColuna];
     idPlano = map[idPlanoColuna];
     dataContrato = map[dataContratoColuna];
+    dataCadastro = map[dataCadastroColuna];
     valorPlano = map[valorPlanoColuna];
     porte = map[porteColuna];
     planoVencido = map[planoVencidoColuna];
@@ -387,6 +397,7 @@ class Pet {
       nomePlanoColuna: nomePlano,
       idPlanoColuna: idPlano,
       dataContratoColuna: dataContrato,
+      dataCadastroColuna: dataCadastro,
       valorPlanoColuna: valorPlano,
       porteColuna: porte,
       planoVencidoColuna: planoVencido,
@@ -400,6 +411,6 @@ class Pet {
 
   @override
   String toString() {
-    return "Pet(id: $id,idContato: $idContato,nomePet: $nomePet,raca: $raca,cor: $cor,genero: $genero,especie: $especie,peso: $peso,dtNasc: $dtNasc,foto: $foto,nomeContato: $nomeContato, contaPlano: $contaPlano, nomePlano: $nomePlano, idPlano: $idPlano, dataContrato: $dataContrato, valorPlano: $valorPlano,porte: $porte, planoVencido: $planoVencido)";
+    return "Pet(id: $id,idContato: $idContato,nomePet: $nomePet,raca: $raca,cor: $cor,genero: $genero,especie: $especie,peso: $peso,dtNasc: $dtNasc,foto: $foto,nomeContato: $nomeContato, contaPlano: $contaPlano, nomePlano: $nomePlano, idPlano: $idPlano, dataContrato: $dataContrato,dataCadastro: $dataCadastro, valorPlano: $valorPlano,porte: $porte, planoVencido: $planoVencido)";
   }
 }

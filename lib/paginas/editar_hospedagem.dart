@@ -45,10 +45,10 @@ class _EditarHospedagemState extends State<EditarHospedagem> {
           .parse(_editarHospedagem.dataCheckIn.toString()));
       _dataCheckOut = (DateFormat('dd/MM/yyyy')
           .parse(_editarHospedagem.dataCheckOut.toString()));
-      _time = TimeOfDay.fromDateTime(DateTime.parse(
-          '0000-00-00 ' + _editarHospedagem.horaCheckIn.toString() + ':00Z'));
-      _timeCheckOut = TimeOfDay.fromDateTime(DateTime.parse(
-          '0000-00-00 ' + _editarHospedagem.horaCheckOut.toString() + ':00Z'));
+      _time = TimeOfDay.fromDateTime(
+          DateTime.parse('0000-00-00 ${_editarHospedagem.horaCheckIn}:00Z'));
+      _timeCheckOut = TimeOfDay.fromDateTime(
+          DateTime.parse('0000-00-00 ${_editarHospedagem.horaCheckOut}:00Z'));
       diaria = _editarHospedagem.dia;
       valorDiariaController.text = _editarHospedagem.valorDia.toString();
       adicionalController.text = _editarHospedagem.adicional.toString();
