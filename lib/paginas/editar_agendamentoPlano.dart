@@ -4,37 +4,21 @@ import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
 import 'package:pet_bosque/funcoes/info_plano.dart';
+import 'package:pet_bosque/paginas/editar_hospedagem.dart';
 import 'package:pet_bosque/paginas/lista_agendamentos.dart';
-import 'package:pet_bosque/paginas/lista_pet.dart';
 import 'package:pet_bosque/paginas/novo_agendamento.dart';
-import 'package:uuid/uuid.dart';
 
-class NovoAgendamentoPlano extends StatefulWidget {
+class EditarAgendamentoPlano extends StatefulWidget {
   final Agendamento _agendamento;
 
   var contaPlano;
-  NovoAgendamentoPlano(
-      {super.key,
-      Agendamento? agendamento,
-      required this.fotoPet,
-      required this.idPet,
-      required this.nomePet,
-      required this.contaPlano,
-      required this.nomeContato,
-      required this.renovaPlano,
-      required this.idPlano})
-      : _agendamento = agendamento ?? Agendamento();
-
-  late String fotoPet;
-  late String nomeContato;
-  late String nomePet;
-  late String idPet;
-  late String idPlano;
-  late String renovaPlano;
-  String status = "Pendente";
+  EditarAgendamentoPlano({
+    super.key,
+    Agendamento? agendamento,
+  }) : _agendamento = agendamento ?? Agendamento();
 
   @override
-  _NovoAgendamentoPlanoState createState() => _NovoAgendamentoPlanoState();
+  _EditarAgendamentoPlanoState createState() => _EditarAgendamentoPlanoState();
 }
 
 Plano? itens;
@@ -42,16 +26,13 @@ String data = DateFormat("dd/MM/yyyy").format(DateTime.now());
 InfoAgendamento info = InfoAgendamento();
 InfoPlano infoPlano = InfoPlano();
 InfoPet infoPet = InfoPet();
-double? valorPlano = 0;
-double valorAdicional = 0;
-double valorTotal = 0;
 
-class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
+class _EditarAgendamentoPlanoState extends State<EditarAgendamentoPlano> {
   TextEditingController valorAdicionalController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
-  final Agendamento _novoAgendamento = Agendamento();
+  late Agendamento _editarAgendamento;
 
   bool _agendamentoEditado = false;
 
@@ -59,18 +40,22 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
   late int contadorPlano;
   String planoVencido = "N";
   bool loading = false;
+  double valorPlano = 0;
+  double valorAdicional = 0;
+  double valorTotal = 0;
+
   FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _obterPlanos();
-      _novoAgendamento.nomeContato = widget.nomeContato;
-      _novoAgendamento.nomePet = widget.nomePet;
-      _novoAgendamento.fotoPet = widget.fotoPet;
-      _novoAgendamento.idPet = widget.idPet;
-      contadorPlano = int.parse(widget.contaPlano);
-    });
+    _editarAgendamento = Agendamento.fromMap(widget._agendamento.toMap());
+    valorAdicional = _editarAgendamento.valorAdicional ?? 0;
+    valorTotal = _editarAgendamento.valorTotal ?? 0;
+    valorPlano = (valorTotal - valorAdicional);
+    valorAdicionalController.text =
+        _editarAgendamento.valorAdicional.toString() ?? '0';
+
+    observacaoController.text = _editarAgendamento.observacao.toString();
   }
 
   paginaAgendamentos() {
@@ -105,66 +90,50 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
   final String _infoValor = "0,00";
 
   void _executaFuncoes() {
-    _total();
-
-    if (contadorPlano != 0) {
-      _contadorPLano();
-    }
-  }
-
-  void _contadorPLano() {
-    if (widget.renovaPlano == "S") {
-      contadorPlano = 4;
-    }
-    contadorPlano = (contadorPlano - 1);
-    //infoPet.contaPlanoPet(widget.idPet, contadorPlano);
-    db
-        .collection('pet')
-        .doc(widget.idPet)
-        .update({'contaPlano': contadorPlano});
+    //_total();
   }
 
   void _total() {
     setState(() {
       valorAdicional = double.tryParse(valorAdicionalController.text) ?? 0;
-      valorPlano = itens?.valor ?? 0;
+      //valorPlano = _editarAgendamento.valorAdicional ?? 0;
 
-      valorTotal = (valorPlano! + valorAdicional);
+      valorTotal = (valorPlano + valorAdicional);
 
-      _novoAgendamento.valorTotal = valorTotal;
-      _novoAgendamento.data = DateFormat("dd/MM/yyyy").format(_dateTime);
-      _novoAgendamento.hora = _time.format(context);
-      _novoAgendamento.status = status;
+      _editarAgendamento.valorTotal = valorTotal;
+      _editarAgendamento.data = DateFormat("dd/MM/yyyy").format(_dateTime);
+      _editarAgendamento.hora = _time.format(context);
+      _editarAgendamento.status = status;
       if (itens?.svBanho.toString() == "S") {
-        _novoAgendamento.svBanho = "S";
-        _novoAgendamento.valorBanho = 0;
+        _editarAgendamento.svBanho = "S";
+        _editarAgendamento.valorBanho = 0;
       }
       if (itens?.svTosa.toString() == "S") {
-        _novoAgendamento.svTosa = "S";
-        _novoAgendamento.valorTosa = 0;
+        _editarAgendamento.svTosa = "S";
+        _editarAgendamento.valorTosa = 0;
       }
       if (itens?.svTosaHigienica.toString() == "S") {
-        _novoAgendamento.valorTosaHigienica = 0;
+        _editarAgendamento.valorTosaHigienica = 0;
       }
       if (itens?.svHidratacao.toString() == "S") {
-        _novoAgendamento.svHidratacao = "S";
-        _novoAgendamento.valorHidratacao = 0;
+        _editarAgendamento.svHidratacao = "S";
+        _editarAgendamento.valorHidratacao = 0;
       }
       if (itens?.svPintura.toString() == "S") {
-        _novoAgendamento.svPintura = "S";
-        _novoAgendamento.valorPintura = 0;
+        _editarAgendamento.svPintura = "S";
+        _editarAgendamento.valorPintura = 0;
       }
       if (itens?.svCorteUnha.toString() == "S") {
-        _novoAgendamento.svCorteUnha = "S";
-        _novoAgendamento.valorCorteUnha = 0;
+        _editarAgendamento.svCorteUnha = "S";
+        _editarAgendamento.valorCorteUnha = 0;
       }
       if (itens?.svTransporte.toString() == "S") {
-        _novoAgendamento.svTransporte = "S";
-        _novoAgendamento.valorTransporte = 0;
+        _editarAgendamento.svTransporte = "S";
+        _editarAgendamento.valorTransporte = 0;
       }
       if (itens?.svHospedagem.toString() == "S") {
-        _novoAgendamento.svHospedagem = "S";
-        _novoAgendamento.valorHospedagem = 0;
+        _editarAgendamento.svHospedagem = "S";
+        _editarAgendamento.valorHospedagem = 0;
       }
     });
   }
@@ -197,7 +166,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                 leading: BackButton(onPressed: () {
                   if (_agendamentoEditado != true) {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const ListaPet()));
+                        builder: (context) => ListaAgendamentos(data: data)));
                   }
                   _retornaPop(context);
                 }),
@@ -206,70 +175,53 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                 onPressed: () {
                   loading = true;
                   if (loading = true) {
-                    const Center(
+                    Center(
                       child: CircularProgressIndicator(
                         color: Colors.greenAccent,
                         backgroundColor: Colors.grey,
                       ),
                     );
                   }
-                  String idPet = widget.idPet;
-                  _novoAgendamento.planoVencido = planoVencido;
-                  if (widget.idPlano != "" &&
-                      contadorPlano == 0 &&
-                      widget.renovaPlano == "N") {
-                    planoVencido = "S";
-                    _novoAgendamento.planoVencido = planoVencido;
-                    _alteraPlanoVencido(idPet, planoVencido);
-                  }
-                  if (widget.renovaPlano == "S") {
-                    planoVencido = "N";
-                    _contadorPLano();
-                    _renovaPlano(widget.idPet, contadorPlano);
-                    _alteraPlanoVencido(idPet, planoVencido);
-                  }
-                  //info.salvarAgendamento(_novoAgendamento);
+
+                  //info.salvarAgendamento(_editarAgendamento);
                   _executaFuncoes();
-                  if (_novoAgendamento.valorAdicional == null) {
-                    _novoAgendamento.valorAdicional = 0;
+                  if (_editarAgendamento.valorAdicional == null) {
+                    _editarAgendamento.valorAdicional = 0;
                   }
-                  if (_novoAgendamento.observacao == null) {
-                    _novoAgendamento.observacao = "";
-                  }
-                  String id = Uuid().v1();
-                  db.collection("agendamentos").doc(id).set({
-                    "idAgendamento": id,
-                    "idPet": _novoAgendamento.idPet,
-                    "nomeContato": _novoAgendamento.nomeContato,
-                    "fotoPet": _novoAgendamento.fotoPet,
-                    "nomePet": _novoAgendamento.nomePet,
-                    "data": _novoAgendamento.data,
-                    "hora": _novoAgendamento.hora,
-                    "svBanho": _novoAgendamento.svBanho,
-                    "valorBanho": _novoAgendamento.valorBanho,
-                    "svTosa": _novoAgendamento.svTosa,
-                    "valorTosa": _novoAgendamento.valorTosa,
-                    "svCorteUnha": _novoAgendamento.svCorteUnha,
-                    "valorCorteUnha": _novoAgendamento.valorCorteUnha,
-                    "svHidratacao": _novoAgendamento.svHidratacao,
-                    "valorHidratacao": _novoAgendamento.valorHidratacao,
-                    "svTosaHigienica": _novoAgendamento.svTosaHigienica,
-                    "valorTosaHigienica": _novoAgendamento.valorTosaHigienica,
-                    "svPintura": _novoAgendamento.svPintura,
-                    "valorPintura": _novoAgendamento.valorPintura,
-                    "svHospedagem": _novoAgendamento.svHospedagem,
-                    "valorHospedagem": _novoAgendamento.valorHospedagem,
-                    "svTransporte": _novoAgendamento.svTransporte,
-                    "valorTransporte": _novoAgendamento.valorTransporte,
-                    "valorAdicional": _novoAgendamento.valorAdicional,
-                    "valorTotal": _novoAgendamento.valorTotal,
-                    "observacao": _novoAgendamento.observacao,
-                    "status": _novoAgendamento.status,
-                    "colaborador": _novoAgendamento.colaborador,
-                    "idColaborador": _novoAgendamento.idColaborador,
-                    "idParticipante": _novoAgendamento.id,
-                    "participante": _novoAgendamento.participante,
-                    "planoVencido": _novoAgendamento.planoVencido
+
+                  db.collection("agendamentos").doc(_editarAgendamento.id).set({
+                    "idAgendamento": _editarAgendamento.id,
+                    "idPet": _editarAgendamento.idPet,
+                    "nomeContato": _editarAgendamento.nomeContato,
+                    "fotoPet": _editarAgendamento.fotoPet,
+                    "nomePet": _editarAgendamento.nomePet,
+                    "data": _editarAgendamento.data,
+                    "hora": _editarAgendamento.hora,
+                    "svBanho": _editarAgendamento.svBanho,
+                    "valorBanho": _editarAgendamento.valorBanho,
+                    "svTosa": _editarAgendamento.svTosa,
+                    "valorTosa": _editarAgendamento.valorTosa,
+                    "svCorteUnha": _editarAgendamento.svCorteUnha,
+                    "valorCorteUnha": _editarAgendamento.valorCorteUnha,
+                    "svHidratacao": _editarAgendamento.svHidratacao,
+                    "valorHidratacao": _editarAgendamento.valorHidratacao,
+                    "svTosaHigienica": _editarAgendamento.svTosaHigienica,
+                    "valorTosaHigienica": _editarAgendamento.valorTosaHigienica,
+                    "svPintura": _editarAgendamento.svPintura,
+                    "valorPintura": _editarAgendamento.valorPintura,
+                    "svHospedagem": _editarAgendamento.svHospedagem,
+                    "valorHospedagem": _editarAgendamento.valorHospedagem,
+                    "svTransporte": _editarAgendamento.svTransporte,
+                    "valorTransporte": _editarAgendamento.valorTransporte,
+                    "valorAdicional": _editarAgendamento.valorAdicional,
+                    "valorTotal": _editarAgendamento.valorTotal,
+                    "observacao": _editarAgendamento.observacao,
+                    "status": _editarAgendamento.status,
+                    "colaborador": _editarAgendamento.colaborador,
+                    "idColaborador": _editarAgendamento.idColaborador,
+                    "idParticipante": _editarAgendamento.id,
+                    "participante": _editarAgendamento.participante,
+                    "planoVencido": _editarAgendamento.planoVencido
                   });
                   loading = false;
                   Navigator.push(
@@ -283,7 +235,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                 backgroundColor: Color.fromRGBO(35, 151, 166, 1),
                 hoverColor: Color.fromRGBO(35, 151, 166, 50),
                 foregroundColor: Colors.white,
-                label: Text("Salvar"),
+                label: Text("Alterar"),
               ),
               body: SingleChildScrollView(
                 padding: const EdgeInsets.all(10.0),
@@ -347,7 +299,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                             width: 10,
                           ),
                           Text(
-                            widget.nomeContato,
+                            _editarAgendamento.nomeContato.toString(),
                             textAlign: TextAlign.center,
                             style: const TextStyle(height: 2, fontSize: 15),
                           ),
@@ -367,32 +319,13 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                           width: 5,
                         ),
                         Text(
-                          widget.nomePet,
+                          _editarAgendamento.nomePet.toString(),
                           textAlign: TextAlign.center,
                           style: const TextStyle(height: 2, fontSize: 15),
                         ),
                       ])),
                       const SizedBox(
                         height: 20,
-                      ),
-                      Row(
-                        children: [
-                          const Text(
-                            "Plano: ",
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 73, 66, 2),
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            itens?.nomePlano.toString() ?? "",
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
                       ),
                       Row(
                         children: [
@@ -405,7 +338,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                             ),
                           ),
                           Text(
-                            itens?.valor.toString() ?? "",
+                            valorPlano.toString() ?? "",
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 20,
@@ -424,12 +357,12 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                         ),
                       ]),
                       Row(children: [
-                        if (itens?.svBanho.toString() == "S")
+                        if (_editarAgendamento.svBanho.toString() == "S")
                           const Icon(
                             Icons.check,
                             color: Colors.green,
                           ),
-                        if (itens?.svBanho.toString() == "S")
+                        if (_editarAgendamento.svBanho.toString() == "S")
                           const Text(
                             "Banho",
                             style: TextStyle(
@@ -438,9 +371,9 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                           ),
                       ]),
                       Row(children: [
-                        if (itens?.svTosa.toString() == "S")
+                        if (_editarAgendamento.svTosa.toString() == "S")
                           const Icon(color: Colors.green, Icons.check),
-                        if (itens?.svTosa == "S")
+                        if (_editarAgendamento.svTosa == "S")
                           const Text(
                             "Tosa",
                             style: TextStyle(
@@ -449,9 +382,10 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                           ),
                       ]),
                       Row(children: [
-                        if (itens?.svTosaHigienica.toString() == "S")
+                        if (_editarAgendamento.svTosaHigienica.toString() ==
+                            "S")
                           const Icon(color: Colors.green, Icons.check),
-                        if (itens?.svTosaHigienica == "S")
+                        if (_editarAgendamento.svTosaHigienica == "S")
                           const Text(
                             "Tosa Higienica",
                             style: TextStyle(
@@ -460,9 +394,9 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                           ),
                       ]),
                       Row(children: [
-                        if (itens?.svHidratacao.toString() == "S")
+                        if (_editarAgendamento.svHidratacao == "S")
                           const Icon(color: Colors.green, Icons.check),
-                        if (itens?.svHidratacao == "S")
+                        if (_editarAgendamento.svHidratacao == "S")
                           const Text(
                             "Hidratação",
                             style: TextStyle(
@@ -471,9 +405,9 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                           ),
                       ]),
                       Row(children: [
-                        if (itens?.svPintura.toString() == "S")
+                        if (_editarAgendamento.svPintura == "S")
                           const Icon(color: Colors.green, Icons.check),
-                        if (itens?.svPintura == "S")
+                        if (_editarAgendamento.svPintura == "S")
                           const Text(
                             "Pintura",
                             style: TextStyle(
@@ -482,9 +416,9 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                           ),
                       ]),
                       Row(children: [
-                        if (itens?.svCorteUnha.toString() == "S")
+                        if (_editarAgendamento.svCorteUnha == "S")
                           const Icon(color: Colors.green, Icons.check),
-                        if (itens?.svCorteUnha.toString() == "S")
+                        if (_editarAgendamento.svCorteUnha == "S")
                           const Text(
                             "Corte Unha",
                             style: TextStyle(
@@ -493,12 +427,12 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                           ),
                       ]),
                       Row(children: [
-                        if (itens?.svHospedagem.toString() == "S")
+                        if (_editarAgendamento.svHospedagem == "S")
                           const Icon(
                             Icons.check,
                             color: Colors.green,
                           ),
-                        if (itens?.svHospedagem.toString() == "S")
+                        if (_editarAgendamento.svHospedagem == "S")
                           const Text(
                             "Hospedagem",
                             style: TextStyle(
@@ -507,9 +441,9 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                           ),
                       ]),
                       Row(children: [
-                        if (itens?.svTransporte.toString() == "S")
+                        if (_editarAgendamento.svTransporte == "S")
                           const Icon(color: Colors.green, Icons.check),
-                        if (itens?.svTransporte.toString() == "S")
+                        if (_editarAgendamento.svTransporte == "S")
                           const Text(
                             "Transporte",
                             style: TextStyle(
@@ -527,6 +461,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                           ),
                           child: TextFormField(
                             autofocus: false,
+                            controller: observacaoController,
                             textInputAction: TextInputAction.newline,
                             minLines: 4,
                             maxLines: 10,
@@ -541,7 +476,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                             ),
                             onChanged: (text) {
                               _agendamentoEditado = true;
-                              _novoAgendamento.observacao = text;
+                              _editarAgendamento.observacao = text;
                             },
                           ),
                         ),
@@ -570,7 +505,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                             ),
                             onChanged: (text) {
                               _agendamentoEditado = true;
-                              _novoAgendamento.valorAdicional =
+                              _editarAgendamento.valorAdicional =
                                   double.tryParse(text) ?? 0;
                               _total();
                             },
@@ -603,7 +538,8 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                                   width: 150,
                                 ),
                                 child: Text(
-                                  valorTotal.toString(),
+                                  "R\$ ${_editarAgendamento.valorTotal!.toStringAsFixed(2)}" ??
+                                      "",
                                   textAlign: TextAlign.center,
                                   style:
                                       const TextStyle(height: 2, fontSize: 20),
@@ -654,7 +590,9 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                   ),
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const ListaPet()));
+                        builder: (context) => ListaAgendamentos(
+                              data: data,
+                            )));
                   },
                   child: const Text(
                     "Continuar",
@@ -674,35 +612,8 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
   }
 
   void _SalvarAgendamento() async {
-    final gravaAgendamento = _novoAgendamento;
+    final gravaAgendamento = _editarAgendamento;
     await info.salvarAgendamento(gravaAgendamento);
     paginaAgendamentos();
-  }
-
-  void _alteraPlanoVencido(String id, String planoVencido) {
-    //infoPet.atualizaPlanoVencido(id, planoVencido);
-    db
-        .collection('pet')
-        .doc(widget.idPet)
-        .update({'planoVencido': planoVencido});
-  }
-
-  void _renovaPlano(id, contadorPlano) {
-    //infoPet.renovaPlano(id, contadorPlano);
-    db
-        .collection('pet')
-        .doc(widget.idPet)
-        .update({'contaPlano': contadorPlano});
-  }
-
-  void _obterPlanos() async {
-    infoPlano
-        .obterPlanosPet2Firestore(widget.idPlano)
-        .then((dynamic listaPlano) {
-      setState(() {
-        itens = listaPlano[0]!;
-        valorTotal = itens!.valor;
-      });
-    });
   }
 }

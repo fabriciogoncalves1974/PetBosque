@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/paginas/detalhe_agendamento.dart';
 import 'package:pet_bosque/paginas/editar_agendamento.dart';
+import 'package:pet_bosque/paginas/editar_agendamentoPlano.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
 import 'package:pet_bosque/paginas/lista_colaborador.dart';
 import 'package:pet_bosque/paginas/lista_contato.dart';
@@ -204,10 +205,16 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
                 icon: Icons.edit,
                 caption: 'Editar',
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => EditarAgendamento(
-                            agendamento: agendamento[index],
-                          )));
+                  if (agendamento[index].planoVencido == "P")
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => EditarAgendamento(
+                              agendamento: agendamento[index],
+                            )));
+                  if (agendamento[index].planoVencido == "N")
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => EditarAgendamentoPlano(
+                              agendamento: agendamento[index],
+                            )));
                 },
               ),
               IconSlideAction(

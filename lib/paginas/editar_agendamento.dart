@@ -73,6 +73,7 @@ class _EditarAgendamentoState extends State<EditarAgendamento> {
   @override
   void initState() {
     super.initState();
+
     _editarAgendamento = Agendamento.fromMap(widget._agendamento.toMap());
     _habilitaCheck();
     infoValor = _editarAgendamento.valorTotal.toString();
@@ -918,6 +919,7 @@ class _EditarAgendamentoState extends State<EditarAgendamento> {
                   height: 10,
                 ),
                 Container(
+                  color: const Color.fromARGB(255, 228, 222, 222),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -926,7 +928,11 @@ class _EditarAgendamentoState extends State<EditarAgendamento> {
                             Text(
                               "Total",
                               textAlign: TextAlign.center,
-                              style: TextStyle(height: 2, fontSize: 20),
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 73, 66, 2),
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
@@ -935,7 +941,7 @@ class _EditarAgendamentoState extends State<EditarAgendamento> {
                             width: 150,
                           ),
                           child: Text(
-                            infoValor,
+                            "R\$ ${_editarAgendamento.valorTotal!.toStringAsFixed(2)}",
                             textAlign: TextAlign.center,
                             style: const TextStyle(height: 2, fontSize: 20),
                           ),
