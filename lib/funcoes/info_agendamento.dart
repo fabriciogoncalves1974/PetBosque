@@ -222,8 +222,10 @@ class InfoAgendamento {
   Future<List> obterTodosAgendamentosFirestore(dataAge) async {
     CollectionReference agendamentoCollection =
         FirebaseFirestore.instance.collection('agendamentos');
-    var result =
-        await agendamentoCollection.where('data', isEqualTo: '$dataAge').get();
+    var result = await agendamentoCollection
+        .where('data', isEqualTo: '$dataAge')
+        .where('status', isEqualTo: 'Pendente')
+        .get();
     return result.docs
         .map((doc) => Agendamento(
             idPet: doc['idPet'],

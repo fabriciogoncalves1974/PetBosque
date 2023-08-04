@@ -87,54 +87,57 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
   @override
   void initState() {
     super.initState();
-    _excutaFuncoes();
-    final dataAtual = DateTime.now();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _excutaFuncoes();
 
-    dataInicio = DateTime(dataAtual.year, dataAtual.month, 01);
-    mes = dataAtual.month;
-    ultimoDia = DateTime(dataAtual.year, dataAtual.month + 1, 0).day;
-    dataFinal = DateTime(dataAtual.year, dataAtual.month, ultimoDia);
+      final dataAtual = DateTime.now();
 
-    switch (mes) {
-      case 1:
-        mesTexto = 'Janeiro';
-        break;
-      case 2:
-        mesTexto = 'Fevereiro';
-        break;
-      case 3:
-        mesTexto = 'Março';
-        break;
-      case 4:
-        mesTexto = 'Abril';
-        break;
-      case 5:
-        mesTexto = 'Maio';
-        break;
-      case 6:
-        mesTexto = 'Junho';
-        break;
-      case 7:
-        mesTexto = 'Julho';
-        break;
-      case 8:
-        mesTexto = 'Agosto';
-        break;
-      case 9:
-        mesTexto = 'Setembro';
-        break;
-      case 10:
-        mesTexto = 'Outubro';
-        break;
-      case 11:
-        mesTexto = 'Novembro';
-        break;
-      case 12:
-        mesTexto = 'Dezembro';
-        break;
-      default:
-        print('choose a different number!');
-    }
+      dataInicio = DateTime(dataAtual.year, dataAtual.month, 01);
+      mes = dataAtual.month;
+      ultimoDia = DateTime(dataAtual.year, dataAtual.month + 1, 0).day;
+      dataFinal = DateTime(dataAtual.year, dataAtual.month, ultimoDia);
+
+      switch (mes) {
+        case 1:
+          mesTexto = 'Janeiro';
+          break;
+        case 2:
+          mesTexto = 'Fevereiro';
+          break;
+        case 3:
+          mesTexto = 'Março';
+          break;
+        case 4:
+          mesTexto = 'Abril';
+          break;
+        case 5:
+          mesTexto = 'Maio';
+          break;
+        case 6:
+          mesTexto = 'Junho';
+          break;
+        case 7:
+          mesTexto = 'Julho';
+          break;
+        case 8:
+          mesTexto = 'Agosto';
+          break;
+        case 9:
+          mesTexto = 'Setembro';
+          break;
+        case 10:
+          mesTexto = 'Outubro';
+          break;
+        case 11:
+          mesTexto = 'Novembro';
+          break;
+        case 12:
+          mesTexto = 'Dezembro';
+          break;
+        default:
+          print('choose a different number!');
+      }
+    });
   }
 
   void _excutaFuncoes() {

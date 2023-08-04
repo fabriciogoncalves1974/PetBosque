@@ -25,6 +25,8 @@ InfoPet info = InfoPet();
 InfoPlano infoPlano = InfoPlano();
 List<Plano> itens = [];
 List<Pet> pet = [];
+List itensContaPlano = [];
+dynamic contaPlano;
 
 enum Genero {
   Macho,
@@ -49,6 +51,7 @@ class _EditarPetState extends State<EditarPet> {
 
   bool _petEditado = false;
   bool planoExcluido = false;
+  bool temPlano = false;
 
   get formatado => null;
 
@@ -64,8 +67,8 @@ class _EditarPetState extends State<EditarPet> {
   @override
   void initState() {
     super.initState();
-
     _obterPlanos();
+
     _editarPet = Pet.fromMap(widget._pet.toMap());
 
     if (_editarPet.genero == "Macho") {
@@ -157,7 +160,7 @@ class _EditarPetState extends State<EditarPet> {
                   "dataContrato": _editarPet.dataContrato,
                   "planoVencido": _editarPet.planoVencido,
                 });
-
+                itensContaPlano = [];
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -173,7 +176,7 @@ class _EditarPetState extends State<EditarPet> {
             backgroundColor: Color.fromRGBO(35, 151, 166, 1),
             hoverColor: Color.fromRGBO(35, 151, 166, 50),
             foregroundColor: Colors.white,
-            label: Text("Salvar"),
+            label: Text("Alterar"),
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(10.0),
@@ -342,16 +345,22 @@ class _EditarPetState extends State<EditarPet> {
                         value: selectedValue,
                         onChanged: (value) {
                           setState(() {
-                            setState(() {
-                              selectedValue = value as Plano;
-                              _editarPet.nomePlano = selectedValue!.nomePlano;
-                              _editarPet.planoVencido = "N";
-                              _editarPet.idPlano = selectedValue!.id.toString();
-                              //_editarPet.contaPlano = 4;
-                              _editarPet.dataContrato = dataContrato;
-                              _editarPet.valorPlano =
-                                  selectedValue!.valor.toString();
-                            });
+                            itensContaPlano = [];
+
+                            selectedValue = value as Plano;
+                            _editarPet.nomePlano = selectedValue!.nomePlano;
+                            _editarPet.planoVencido = "N";
+                            _editarPet.idPlano = selectedValue!.id.toString();
+                            //_editarPet.contaPlano = 4;
+                            _editarPet.dataContrato = dataContrato;
+                            _editarPet.valorPlano =
+                                selectedValue!.valor.toString();
+                            for (int n = 0;
+                                n <= selectedValue!.contaPlano;
+                                n++) {
+                              itensContaPlano.add('$n');
+                            }
+                            temPlano = true;
                           });
                         },
                         buttonStyleData: const ButtonStyleData(
@@ -438,6 +447,7 @@ class _EditarPetState extends State<EditarPet> {
                                     onPressed: () {
                                       setState(() {
                                         _editarPet.idPlano = '0';
+                                        itensContaPlano = [];
                                         planoExcluido = true;
                                         db
                                             .collection('pet')
@@ -467,6 +477,53 @@ class _EditarPetState extends State<EditarPet> {
                             });
                       },
                     ),
+                  ]),
+                if (temPlano == true && planoExcluido == false)
+                  Row(children: [
+                    const SizedBox(
+                      width: 35,
+                    ),
+                    const Text(
+                      "Nº de Banhos:",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton2(
+                        hint: Text(
+                          'Selecione',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Theme.of(context).hintColor,
+                          ),
+                        ),
+                        items: itensContaPlano
+                            .map(
+                              (item2) => DropdownMenuItem(
+                                  value: item2.toString(),
+                                  child: Text(
+                                    item2.toString(),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  )),
+                            )
+                            .toList(),
+                        value: contaPlano,
+                        onChanged: (contaPlanoValue) {
+                          setState(() {
+                            contaPlano = contaPlanoValue!;
+                            _editarPet.contaPlano = contaPlano;
+                          });
+                        },
+                      ),
+                    )
                   ]),
                 const SizedBox(
                   //Use of SizedBox
