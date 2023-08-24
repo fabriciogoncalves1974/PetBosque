@@ -222,12 +222,10 @@ class _EditarHospedagemState extends State<EditarHospedagem> {
             ),
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () {
-                _editarHospedagem.dataCheckIn =
-                    DateFormat("dd/MM/yyyy").format(_dateTime);
+                _editarHospedagem.dataCheckIn = _dateTime;
                 _editarHospedagem.horaCheckIn = _time.format(context);
                 _editarHospedagem.horaCheckOut = _timeCheckOut.format(context);
-                _editarHospedagem.dataCheckOut =
-                    DateFormat("dd/MM/yyyy").format(_dataCheckOut);
+                _editarHospedagem.dataCheckOut = _dataCheckOut;
 
                 _editarHospedagem.fotoPet = _editarHospedagem.fotoPet;
                 if (_dataCheckOut.compareTo(_dateTime) < 0) {

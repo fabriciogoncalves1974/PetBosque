@@ -1,4 +1,5 @@
 //import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_bosque/funcoes/info_contato.dart';
@@ -46,18 +47,22 @@ class _ListaContatosState extends State<ListaContatos> {
     );
   }
 */
-  late String nomeContato;
+  String menssagem = "";
   @override
   void initState() {
     super.initState();
-    db.collection('contato').snapshots().listen(
+    setState(() {
+      _obterTodosClientesApi();
+      loading = false;
+    });
+    /* db.collection('contato').snapshots().listen(
       (event) {
         setState(() {
           _obterTodosContatos();
           loading = false;
         });
       },
-    );
+    );*/
   }
 
   @override
@@ -116,7 +121,7 @@ class _ListaContatosState extends State<ListaContatos> {
                 itemBuilder: (context, index) {
                   return _cartaoContato(context, index);
                 })
-            : Center(
+            : const Center(
                 child: CircularProgressIndicator(
                   color: Colors.greenAccent,
                   backgroundColor: Colors.grey,
@@ -152,9 +157,8 @@ class _ListaContatosState extends State<ListaContatos> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text("Deseja realmente excluir o contato  " +
-                            contatos[index].nome.toString() +
-                            "?"),
+                        title: Text(
+                            "Deseja realmente excluir o contato  ${contatos[index].nome}?"),
                         actions: <Widget>[
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -187,14 +191,22 @@ class _ListaContatosState extends State<ListaContatos> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                             ),
-                            onPressed: () {
-                              info.deletarContatoFirestore(contatos[index].id!);
-                              infoPet.deletarPetContatoFirestore(
-                                  contatos[index].id!);
+                            onPressed: () async {
+                              await info
+                                  .excluirClienteApi(contatos[index].id!)
+                                  .then((value) {
+                                menssagem = value;
+                              });
+                              await infoPet.excluirPetClienteApi(
+                                  contatos[index].idContato!);
+                              //infoPet.deletarPetContatoFirestore(
+                              //  contatos[index].id!);
+
+                              // ignore: use_build_context_synchronously
 
                               setState(() {
-                                contatos.removeAt(index);
                                 Navigator.pop(context);
+                                contatos.removeAt(index);
                               });
                             },
                             child: const Text(
@@ -216,7 +228,7 @@ class _ListaContatosState extends State<ListaContatos> {
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => ListaPetContato(
-                            idContato: contatos[index].id.toString(),
+                            idContato: contatos[index].idContato.toString(),
                             nomeContato: contatos[index].nome.toString(),
                           )));
                 }),
@@ -466,6 +478,14 @@ class _ListaContatosState extends State<ListaContatos> {
       }
       _obterTodosContatos();
     }
+  }
+
+  void _obterTodosClientesApi() {
+    info.obterTodosClientesApi().then((dynamic list) {
+      setState(() {
+        contatos = list;
+      });
+    });
   }
 
   void _obterTodosContatos() {

@@ -48,6 +48,9 @@ dependencies:
   uuid: ^3.0.7
   mask_text_input_formatter: 
   url_launcher: ^6.1.12
+  http: ^1.1.0
+  scoped_model: ^2.0.0
+  fluttertoast: ^8.0.8
 
   
 

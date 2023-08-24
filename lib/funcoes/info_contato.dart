@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
 import 'package:sqflite/sqlite_api.dart';
@@ -7,6 +10,7 @@ import '../database/sqflite/db.dart';
 
 const String tabelaContato = "tabelaContato";
 const String idColuna = "id";
+const String idContatoColuna = "idContato";
 const String idPetColuna = "idPet";
 const String nomeColuna = "nome";
 const String emailColuna = "email";
@@ -24,6 +28,8 @@ class InfoContato {
 
   InfoContato.internal();
 
+//FUNÇÕES MYSQL
+
   Future<Contato> salvarContato(Contato contato) async {
     Database? db = await DB.instance.database;
     Database? dbContato = db;
@@ -37,6 +43,7 @@ class InfoContato {
     List<Map> maps = await dbContato!.query(tabelaContato,
         columns: [
           idColuna,
+          idContatoColuna,
           idPetColuna,
           nomeColuna,
           emailColuna,
@@ -117,6 +124,132 @@ class InfoContato {
     dbContato!.close();
   }
 
+  //=========================================================================
+
+  //FUNÇÕES API
+
+  Future<List> obterTodosClientesApi() async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/clientes/lista', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Contato> listaContato = [];
+
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+      for (Map m in listMap) {
+        listaContato.add(Contato.fromJson(m));
+      }
+    }
+    return listaContato;
+  }
+
+  Future<Contato?> obterDadosClientesApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/clientes/lista/$id', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    //List<dynamic> listMap = map["dados"];
+
+    // Map<String, dynamic> primeiroMap = listMap.first;
+
+    Contato primeiroContato = Contato.fromJson(map["dados"]);
+    return primeiroContato;
+  }
+
+  Future<String> salvarClienteApi(Contato contato) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/clientes/adiciona', {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "nome": contato.nome.toString(),
+        "idCliente": contato.idContato.toString(),
+        "email": contato.email.toString(),
+        "telefone": contato.telefone.toString(),
+        "endereco": contato.endereco.toString(),
+        "bairro": contato.bairro.toString(),
+        "complemento": contato.complemento.toString(),
+        "cidade": contato.cidade.toString(),
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> atualizarClienteApi(Contato contato) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        // ignore: prefer_interpolation_to_compose_strings
+        '/petBosque/clientes/update/' + contato.id,
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "PUT",
+        "nome": contato.nome.toString(),
+        "idCliente": contato.idContato.toString(),
+        "email": contato.email.toString(),
+        "telefone": contato.telefone.toString(),
+        "endereco": contato.endereco.toString(),
+        "bairro": contato.bairro.toString(),
+        "complemento": contato.complemento.toString(),
+        "cidade": contato.cidade.toString(),
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> excluirClienteApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        // ignore: prefer_interpolation_to_compose_strings
+        '/petBosque/clientes/delete/' + id,
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "DELETE",
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+//=========================================================================
+
+  //FUNÇÕES FIRESTORE
+
   Future<List> obterTodosContatosFirestore() async {
     CollectionReference contatoCollection =
         FirebaseFirestore.instance.collection('contato');
@@ -187,9 +320,11 @@ class InfoContato {
     planoCollection.doc(id).delete();
   }
 }
+//=========================================================================
 
 class Contato {
   dynamic id;
+  String? idContato;
   String? idPet;
   String? nome;
   String? email;
@@ -202,6 +337,7 @@ class Contato {
 
   Contato(
       {this.nome,
+      this.idContato,
       this.email,
       this.telefone,
       this.id,
@@ -210,9 +346,36 @@ class Contato {
       this.complemento,
       this.cidade,
       this.uf});
+  factory Contato.fromJson(Map json) {
+    return Contato(
+        id: json['id'],
+        idContato: json['idContato'],
+        nome: json['nome'],
+        email: json['email'],
+        telefone: json['telefone'],
+        bairro: json['bairro'],
+        endereco: json['endereco'],
+        complemento: json['complemento'],
+        cidade: json['cidade'],
+        uf: json['uf']);
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': this.id,
+        'idContato': this.idContato,
+        'nome': this.nome,
+        'telefone': this.telefone,
+        'email': this.email,
+        'bairro': this.bairro,
+        'endereco': this.endereco,
+        'complemento': this.complemento,
+        'cidade': this.cidade,
+        'uf': this.uf,
+      };
 
   Contato.fromMap(Map map) {
     id = map[idColuna];
+    idContato = map[idContatoColuna];
     idPet = map[idPetColuna];
     nome = map[nomeColuna];
     email = map[emailColuna];
@@ -226,6 +389,7 @@ class Contato {
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
+      idContatoColuna: idContato,
       idPetColuna: idPet,
       nomeColuna: nome,
       emailColuna: email,
@@ -244,6 +408,6 @@ class Contato {
 
   @override
   String toString() {
-    return "Contato(id: $id,idPet: $idPet,nome: $nome,email: $email,telefone: $telefone,endereco: $endereco,bairro: $bairro,cidade: $cidade,complemento: $complemento,uf: $uf)";
+    return "Contato(id: $id,idContato:$idContato, idPet: $idPet,nome: $nome,email: $email,telefone: $telefone,endereco: $endereco,bairro: $bairro,cidade: $cidade,complemento: $complemento,uf: $uf)";
   }
 }

@@ -34,7 +34,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
   Color corPendente = Colors.yellow;
   Color corCancelado = Colors.red;
   Color corFinalizado = Colors.blue;
-  Color corStatus = Color.fromRGBO(202, 236, 236, 1);
+  Color corStatus = const Color.fromRGBO(202, 236, 236, 1);
   bool loading = true;
   String statusSelecionado = 'Pendente';
 
@@ -189,9 +189,9 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
           },
           icon: const Icon(Icons.add),
           backgroundColor: Color.fromRGBO(35, 151, 166, 1),
-          hoverColor: Color.fromRGBO(35, 151, 166, 50),
+          hoverColor: const Color.fromRGBO(35, 151, 166, 50),
           foregroundColor: Colors.white,
-          label: Text("Novo"),
+          label: const Text("Novo"),
         ),
         body: !loading
             ? ListView.builder(
@@ -200,7 +200,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                 itemBuilder: (context, index) {
                   return _cartaoHospedagem(context, index);
                 })
-            : Center(
+            : const Center(
                 child: CircularProgressIndicator(
                   color: Colors.greenAccent,
                   backgroundColor: Colors.grey,
@@ -260,7 +260,6 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                 decoration: BoxDecoration(
                   border: Border(
                     left: BorderSide(
-                      //                   <--- left side
                       color: corStatus,
                       width: 5.0,
                     ),
@@ -300,7 +299,8 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                           ),
                         ),
                         Text(
-                          hospedagen[index].dataCheckIn ?? "",
+                          DateFormat('dd/MM/yyyy')
+                              .format(hospedagen[index].dataCheckIn.toDate()),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -318,7 +318,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                           ),
                         ),
                         Text(
-                          hospedagen[index].horaCheckIn ?? "",
+                          hospedagen[index].horaCheckIn.toString() ?? "",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -337,7 +337,8 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                           ),
                         ),
                         Text(
-                          hospedagen[index].dataCheckOut ?? "",
+                          DateFormat('dd/MM/yyyy')
+                              .format(hospedagen[index].dataCheckOut.toDate()),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -412,10 +413,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                           ),
                         ),
                         Text(
-                          "R\$ " +
-                                  hospedagen[index]
-                                      .valorTotal!
-                                      .toStringAsFixed(2) ??
+                          "R\$ ${hospedagen[index].valorTotal!.toStringAsFixed(2)}" ??
                               "",
                           style: const TextStyle(
                             fontSize: 20,
@@ -442,6 +440,15 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
     info.obterTodasHospedagemFirestore(status).then((dynamic list) {
       setState(() {
         hospedagen = list;
+
+        String timestamp = DateFormat('dd/MM/yyyy').format(
+            hospedagen[0].dataCheckIn.fromMillisecondsSinceEpoch.toDate());
+        DateTime start = DateTime.parse(timestamp);
+        String timestamp2 = DateFormat('dd/MM/yyyy').format(
+            hospedagen[0].dataCheckOut.fromMillisecondsSinceEpoch.toDate());
+        DateTime end = DateTime.parse(timestamp2);
+        var diaria = DateTimeRange(start: start, end: end).duration.inDays;
+        print("diaria $diaria");
       });
     });
   }

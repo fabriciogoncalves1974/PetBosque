@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
 import 'package:pet_bosque/paginas/novo_pet.dart';
@@ -90,9 +91,9 @@ class _ListaPetContatoState extends State<ListaPetContato> {
             },
             icon: const Icon(Icons.add),
             backgroundColor: Color.fromRGBO(35, 151, 166, 1),
-            hoverColor: Color.fromRGBO(35, 151, 166, 50),
+            hoverColor: const Color.fromRGBO(35, 151, 166, 50),
             foregroundColor: Colors.white,
-            label: Text("Novo"),
+            label: const Text("Novo"),
           ),
           body: ListView.builder(
               padding: const EdgeInsets.all(10.0),
@@ -104,6 +105,9 @@ class _ListaPetContatoState extends State<ListaPetContato> {
   }
 
   Widget _cartaoPet(BuildContext context, int index) {
+    DateTime dataNasc = DateTime.parse(pet[index].dtNasc.toString());
+    DateTime dataCad = DateTime.parse(pet[index].dataCadastro.toString());
+
     return GestureDetector(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),
@@ -162,12 +166,16 @@ class _ListaPetContatoState extends State<ListaPetContato> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                             ),
-                            onPressed: () {
-                              info.deletarPetFirestore(pet[index].id!);
-                              setState(() {
-                                pet.removeAt(index);
+                            onPressed: () async {
+                              await info.excluirPetApi(pet[index].id!);
+                              //infoPet.deletarPetContatoFirestore(
+                              //  contatos[index].id!);
 
+                              // ignore: use_build_context_synchronously
+
+                              setState(() {
                                 Navigator.pop(context);
+                                pet.removeAt(index);
                               });
                             },
                             child: const Text(
@@ -231,7 +239,7 @@ class _ListaPetContatoState extends State<ListaPetContato> {
                       ),
                     ),
                     Text(
-                      pet[index].dataCadastro ?? "",
+                      DateFormat("dd/MM/yyyy").format(dataCad) ?? "",
                       style: const TextStyle(
                         fontSize: 12,
                       ),
@@ -249,7 +257,7 @@ class _ListaPetContatoState extends State<ListaPetContato> {
                       ),
                     ),
                     Text(
-                      pet[index].dtNasc ?? "",
+                      DateFormat("dd/MM/yyyy").format(dataNasc) ?? "",
                       style: const TextStyle(
                         fontSize: 12,
                       ),
@@ -447,7 +455,7 @@ class _ListaPetContatoState extends State<ListaPetContato> {
   }
 
   void _obterTodosPetContato() {
-    info.obterTodosPetContatoFirestore(widget.idContato).then((dynamic list) {
+    info.obterTodosPetClienteApi(widget.idContato).then((dynamic list) {
       setState(() {
         pet = list;
       });

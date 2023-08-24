@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
 import 'package:sqflite/sqlite_api.dart';
@@ -6,7 +9,8 @@ import 'package:sqflite/sqlite_api.dart';
 import '../database/sqflite/db.dart';
 
 const String tabelaPet = "tabelaPet";
-const String idColunaPet = "id";
+const String idColuna = "id";
+const String idPetColuna = "idPet";
 const String idContatoColuna = "idContato";
 const String nomePetColuna = "nomePet";
 const String racaColuna = "raca";
@@ -45,7 +49,8 @@ class InfoPet {
     Database? dbPet = db;
     List<Map> maps = await dbPet!.query(tabelaPet,
         columns: [
-          idColunaPet,
+          idColuna,
+          idPetColuna,
           idContatoColuna,
           nomePetColuna,
           racaColuna,
@@ -65,7 +70,7 @@ class InfoPet {
           porteColuna,
           planoVencidoColuna,
         ],
-        where: "$idColunaPet = ?",
+        where: "$idColuna = ?",
         whereArgs: [id]);
     if (maps.isNotEmpty) {
       return Pet.fromMap(maps.first);
@@ -85,14 +90,14 @@ class InfoPet {
     Database? db = await DB.instance.database;
     Database? dbPet = db;
     return await dbPet!
-        .delete(tabelaPet, where: "$idColunaPet = ?", whereArgs: [id]);
+        .delete(tabelaPet, where: "$idColuna = ?", whereArgs: [id]);
   }
 
   Future<int> atualizarPet(Pet pet) async {
     Database? db = await DB.instance.database;
     Database? dbPet = db;
     return dbPet!.update(tabelaPet, pet.toMap(),
-        where: "$idColunaPet = ?", whereArgs: [pet.id]);
+        where: "$idColuna = ?", whereArgs: [pet.id]);
   }
 
   Future<Future<List<Map<String, Object?>>>> atualizarNomeContato(
@@ -189,6 +194,190 @@ class InfoPet {
     Database? dbPet = db;
     dbPet!.close();
   }
+
+//FUNÇÕES API
+
+  Future<List> obterTodosPetApi() async {
+    final url =
+        Uri.http('fb.servicos.ws', '/petBosque/pet/lista', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List listMap = map["dados"];
+    List<Pet> listaPet = [];
+    for (Map m in listMap) {
+      listaPet.add(Pet.fromJson(m));
+    }
+    return listaPet;
+  }
+
+  Future<List> obterTodosPetClienteApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/pet/cliente/$id', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Pet> listaPet = [];
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+
+      for (Map m in listMap) {
+        listaPet.add(Pet.fromJson(m));
+      }
+    }
+    return listaPet;
+  }
+
+  Future<Pet?> obterDadosPetApi(id) async {
+    final url =
+        Uri.http('fb.servicos.ws', '/petBosque/pet/lista/$id', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    //List<dynamic> listMap = map["dados"];
+
+    // Map<String, dynamic> primeiroMap = listMap.first;
+    Pet primeiroPet = Pet.fromJson(map["dados"]);
+    return primeiroPet;
+  }
+
+  Future<String> salvarPetApi(Pet pet) async {
+    final url =
+        Uri.http('fb.servicos.ws', '/petBosque/pet/adiciona', {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        'nomePet': pet.nomePet.toString(),
+        'idPet': pet.idPet.toString(),
+        'raca': pet.raca.toString(),
+        'peso': pet.peso.toString(),
+        'genero': pet.genero.toString(),
+        'dtNasc': pet.dtNasc.toString(),
+        'especie': pet.especie.toString(),
+        'cor': pet.cor.toString(),
+        'foto': pet.foto.toString(),
+        'idContato': pet.idContato.toString(),
+        'nomeContato': pet.nomeContato.toString(),
+        'contaPlano': pet.contaPlano.toString(),
+        'nomePlano': pet.nomePlano.toString(),
+        'idPlano': pet.idPlano.toString(),
+        'dataContrato': pet.dataContrato.toString(),
+        'dataCadastro': pet.dataCadastro.toString(),
+        'valorPlano': pet.valorPlano.toString(),
+        'porte': pet.porte.toString(),
+        'planoVencido': pet.planoVencido.toString(),
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> atualizarPetApi(Pet pet) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        // ignore: prefer_interpolation_to_compose_strings
+        '/petBosque/pet/update/' + pet.id,
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "PUT",
+        'nomePet': pet.nomePet.toString(),
+        'idPet': pet.idPet.toString(),
+        'raca': pet.raca.toString(),
+        'peso': pet.peso.toString(),
+        'genero': pet.genero.toString(),
+        'dtNasc': pet.dtNasc.toString(),
+        'especie': pet.especie.toString(),
+        'cor': pet.cor.toString(),
+        'foto': pet.foto.toString(),
+        'idContato': pet.idContato.toString(),
+        'nomeContato': pet.nomeContato.toString(),
+        'contaPlano': pet.contaPlano.toString(),
+        'nomePlano': pet.nomePlano.toString(),
+        'idPlano': pet.idPlano.toString(),
+        'dataContrato': pet.dataContrato.toString(),
+        'dataCadastro': pet.dataCadastro.toString(),
+        'valorPlano': pet.valorPlano.toString(),
+        'porte': pet.porte.toString(),
+        'planoVencido': pet.planoVencido.toString(),
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> excluirPetApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        // ignore: prefer_interpolation_to_compose_strings
+        '/petBosque/pet/delete/' + id,
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "DELETE",
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> excluirPetClienteApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        // ignore: prefer_interpolation_to_compose_strings
+        '/petBosque/pet/deleteCliente/' + id,
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "DELETE",
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+//=========================================================================
+
+  //FUNÇÕES FIRESTORE
 
   Future<List> obterTodosPetFirestore() async {
     CollectionReference petCollection =
@@ -318,6 +507,7 @@ class InfoPet {
 
 class Pet {
   dynamic id;
+  String? idPet;
   String? idContato;
   String? nomePet;
   String? raca;
@@ -339,6 +529,7 @@ class Pet {
 
   Pet(
       {this.id,
+      this.idPet,
       this.idContato,
       this.nomePet,
       this.raca,
@@ -358,8 +549,56 @@ class Pet {
       this.valorPlano,
       this.porte});
 
+  factory Pet.fromJson(Map json) {
+    return Pet(
+        id: json['id'],
+        idContato: json['idContato'],
+        idPet: json['idPet'],
+        nomePet: json['nomePet'],
+        raca: json['raca'],
+        peso: json['peso'],
+        genero: json['genero'],
+        dtNasc: json['dtNasc'],
+        especie: json['especie'],
+        cor: json['cor'],
+        foto: json['foto'],
+        nomeContato: json['nomeContato'],
+        contaPlano: json['contaPlano'],
+        nomePlano: json['nomePlano'],
+        idPlano: json['idPlano'],
+        dataContrato: json['dataContrato'],
+        dataCadastro: json['dataCadastro'],
+        planoVencido: json['planoVencido'],
+        valorPlano: json['valorPlano'],
+        porte: json['porte']);
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': this.id,
+        'idContato': this.idContato,
+        'idpet': this.idPet,
+        'nomePet': this.nomePet,
+        'raca': this.raca,
+        'peso': this.peso,
+        'genero': this.genero,
+        'dtNasc': this.dtNasc,
+        'especie': this.especie,
+        'cor': this.cor,
+        'foto': this.foto,
+        'nomeContato': this.nomeContato,
+        'contaPlano': this.contaPlano,
+        'nomePlano': this.nomePlano,
+        'idPlano': this.idPlano,
+        'dataContrato': this.dataContrato,
+        'dataCadastro': this.dataCadastro,
+        'planoVencido': this.planoVencido,
+        'valorPlano': this.valorPlano,
+        'porte': this.porte,
+      };
+
   Pet.fromMap(Map map) {
-    id = map[idColunaPet];
+    id = map[idColuna];
+    idPet = map[idPetColuna];
     idContato = map[idContatoColuna];
     nomePet = map[nomePetColuna];
     raca = map[racaColuna];
@@ -384,6 +623,7 @@ class Pet {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       idContatoColuna: idContato,
+      idPetColuna: idPet,
       nomePetColuna: nomePet,
       racaColuna: raca,
       pesoColuna: peso,
@@ -404,13 +644,13 @@ class Pet {
     };
 
     if (id != null) {
-      map[idColunaPet] = id;
+      map[idColuna] = id;
     }
     return map;
   }
 
   @override
   String toString() {
-    return "Pet(id: $id,idContato: $idContato,nomePet: $nomePet,raca: $raca,cor: $cor,genero: $genero,especie: $especie,peso: $peso,dtNasc: $dtNasc,foto: $foto,nomeContato: $nomeContato, contaPlano: $contaPlano, nomePlano: $nomePlano, idPlano: $idPlano, dataContrato: $dataContrato,dataCadastro: $dataCadastro, valorPlano: $valorPlano,porte: $porte, planoVencido: $planoVencido)";
+    return "Pet(id: $id,idPet: $idPet, idContato: $idContato,nomePet: $nomePet,raca: $raca,cor: $cor,genero: $genero,especie: $especie,peso: $peso,dtNasc: $dtNasc,foto: $foto,nomeContato: $nomeContato, contaPlano: $contaPlano, nomePlano: $nomePlano, idPlano: $idPlano, dataContrato: $dataContrato,dataCadastro: $dataCadastro, valorPlano: $valorPlano,porte: $porte, planoVencido: $planoVencido)";
   }
 }

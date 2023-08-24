@@ -12,6 +12,7 @@ import 'package:pet_bosque/paginas/novo_pet.dart';
 import 'package:uuid/uuid.dart';
 
 InfoPet infoPet = InfoPet();
+InfoContato info = InfoContato();
 
 class NovoContato extends StatefulWidget {
   final Contato _contato;
@@ -48,9 +49,9 @@ class _NovoContatoState extends State<NovoContato> {
   final _cidadeController = TextEditingController();
 
   final _nomeFocus = FocusNode();
-
+  String menssagem = "";
   late Contato _editarContato;
-
+  bool salvo = false;
   bool _contatoEditado = false;
   bool _novoContato = true;
   var mascaraFone = MaskTextInputFormatter(mask: '(##) # ####-####');
@@ -63,14 +64,14 @@ class _NovoContatoState extends State<NovoContato> {
       _novoContato = false;
     }
 
-    _nomeController.text = _editarContato.nome ?? '';
-    _emailController.text = _editarContato.email ?? "";
-    _telefoneController.text = _editarContato.telefone ?? "";
-    _enderecoController.text = _editarContato.endereco ?? "";
+    _nomeController.text = _editarContato.nome ??= "";
+    _emailController.text = _editarContato.email ??= "";
+    _telefoneController.text = _editarContato.telefone ??= "";
+    _enderecoController.text = _editarContato.endereco ??= "";
     _idContatoController.text = _editarContato.id.toString();
-    _complementoController.text = _editarContato.complemento ?? "";
-    _bairroController.text = _editarContato.bairro ?? "";
-    _cidadeController.text = _editarContato.cidade ?? "";
+    _complementoController.text = _editarContato.complemento ??= "";
+    _bairroController.text = _editarContato.bairro ??= "";
+    _cidadeController.text = _editarContato.cidade ??= "";
   }
 
   @override
@@ -104,7 +105,7 @@ class _NovoContatoState extends State<NovoContato> {
                 //  _editarContato.nome.toString());
 
                 if (_novoContato == true) {
-                  String id = Uuid().v1();
+                  /*  String id = Uuid().v1();
                   _editarContato.id = id;
                   db.collection("contato").doc(id).set({
                     "idContato": id,
@@ -116,73 +117,111 @@ class _NovoContatoState extends State<NovoContato> {
                     "bairro": _editarContato.bairro,
                     "cidade": _editarContato.cidade,
                     "uf": _editarContato.uf
+                  });*/
+                  _editarContato.idContato = const Uuid().v1();
+                  await info.salvarClienteApi(_editarContato).then((value) {
+                    menssagem = value;
+                  });
+                  // ignore: use_build_context_synchronously
+                  setState(() {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          Future.delayed(const Duration(seconds: 3), () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => const Inicio(
+                                        index: 1,
+                                      )),
+                            );
+                            salvo = true;
+                            if (salvo == true) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text("Cadastrar Pet?"),
+                                      content: const Text(
+                                          "Ja é possivel cadastrar um Pet para esse contato."),
+                                      actions: <Widget>[
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            fixedSize: const Size(120, 50),
+                                            backgroundColor: Colors.redAccent,
+                                            side: const BorderSide(
+                                                width: 3,
+                                                color: Colors.redAccent),
+                                            elevation: 3,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text(
+                                            "Não",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 20,
+                                        ),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            fixedSize: const Size(120, 50),
+                                            backgroundColor: Colors.blueAccent,
+                                            side: const BorderSide(
+                                                width: 3,
+                                                color: Colors.blueAccent),
+                                            elevation: 3,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context)
+                                                .pushReplacement(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            NovoPet(
+                                                              idContato:
+                                                                  _editarContato
+                                                                      .idContato
+                                                                      .toString(),
+                                                              nomeContato:
+                                                                  _editarContato
+                                                                      .nome
+                                                                      .toString(),
+                                                            )));
+                                          },
+                                          child: const Text(
+                                            "Sim",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            }
+                          });
+
+                          return AlertDialog(
+                            content: Text(
+                              menssagem,
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                          );
+                        });
                   });
                 }
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => const Inicio(
-                            index: 1,
-                          )),
-                );
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("Cadastrar Pet?"),
-                        content: const Text(
-                            "Ja é possivel cadastrar um Pet para esse contato."),
-                        actions: <Widget>[
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: const Size(120, 50),
-                              backgroundColor: Colors.redAccent,
-                              side: const BorderSide(
-                                  width: 3, color: Colors.redAccent),
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text(
-                              "Não",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: const Size(120, 50),
-                              backgroundColor: Colors.blueAccent,
-                              side: const BorderSide(
-                                  width: 3, color: Colors.blueAccent),
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context)
-                                  .pushReplacement(MaterialPageRoute(
-                                      builder: (context) => NovoPet(
-                                            idContato:
-                                                _editarContato.id.toString(),
-                                            nomeContato:
-                                                _editarContato.nome.toString(),
-                                          )));
-                            },
-                            child: const Text(
-                              "Sim",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      );
-                    });
+
                 if (_novoContato == false) {
-                  db.collection("contato").doc(_editarContato.id).set({
+                  /* db.collection("contato").doc(_editarContato.id).set({
                     "idContato": _editarContato.id,
                     "nome": _editarContato.nome,
                     "telefone": _editarContato.telefone,
@@ -192,13 +231,35 @@ class _NovoContatoState extends State<NovoContato> {
                     "bairro": _editarContato.bairro,
                     "cidade": _editarContato.cidade,
                     "uf": _editarContato.uf
+                  });*/
+
+                  await info.atualizarClienteApi(_editarContato).then((value) {
+                    menssagem = value;
                   });
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => const Inicio(
-                              index: 1,
-                            )),
-                  );
+                  // ignore: use_build_context_synchronously
+                  setState(() {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          Future.delayed(const Duration(seconds: 3), () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => const Inicio(
+                                        index: 1,
+                                      )),
+                            );
+                          });
+
+                          return AlertDialog(
+                            content: Text(
+                              menssagem,
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                          );
+                        });
+                  });
                 }
               } else {
                 FocusScope.of(context).requestFocus(_nomeFocus);

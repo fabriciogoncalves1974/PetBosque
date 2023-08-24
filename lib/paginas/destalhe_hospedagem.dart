@@ -39,7 +39,8 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
   late String valoradicional;
   late String observacao;
   late String porte;
-
+  TimeOfDay _time = TimeOfDay.now();
+  DateTime _dateTime = DateTime.now();
   paginaContatos() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const ListaContatos()),
@@ -157,7 +158,7 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
                   ),
                 ),
                 Text(
-                  hospedagem[index].dataCheckIn ?? "",
+                  hospedagem[index].dataCheckIn.toString() ?? "",
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -175,7 +176,7 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
                   ),
                 ),
                 Text(
-                  hospedagem[index].horaCheckIn ?? "",
+                  hospedagem[index].horaCheckIn.toString() ?? "",
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -197,7 +198,7 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
                   ),
                 ),
                 Text(
-                  hospedagem[index].dataCheckOut ?? "",
+                  hospedagem[index].dataCheckOut.toString() ?? "",
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -681,7 +682,9 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
   }
 
   void _obterColaboradores() {
-    infoColaborador.obterNomeColaborador().then((dynamic listaColaborador) {
+    infoColaborador
+        .obterNomeColaboradorFirestore()
+        .then((dynamic listaColaborador) {
       setState(() {
         itens = listaColaborador;
       });

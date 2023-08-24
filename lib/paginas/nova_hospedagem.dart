@@ -243,12 +243,11 @@ class _NovaHospedagemState extends State<NovaHospedagem> {
             ),
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () {
-                _novaHospedagem.dataCheckIn =
-                    DateFormat("dd/MM/yyyy").format(_dateTime);
+                print(_novaHospedagem.dataCheckIn.toString());
+                _novaHospedagem.dataCheckIn = _dateTime;
                 _novaHospedagem.horaCheckIn = _time.format(context);
                 _novaHospedagem.horaCheckOut = _timeCheckOut.format(context);
-                _novaHospedagem.dataCheckOut =
-                    DateFormat("dd/MM/yyyy").format(_dataCheckOut);
+                _novaHospedagem.dataCheckOut = _dataCheckOut;
                 _novaHospedagem.status = status;
                 _novaHospedagem.fotoPet = widget.fotoPet;
                 if (_dataCheckOut.compareTo(_dateTime) < 0) {
@@ -289,6 +288,10 @@ class _NovaHospedagemState extends State<NovaHospedagem> {
                 } else {
                   _totalHospedagem();
                   // info.salvarHospedagem(_novaHospedagem);
+                  DateTime dtCheckIn =
+                      DateTime.parse(_novaHospedagem.dataCheckIn.toString());
+                  DateTime dtCheckOut =
+                      DateTime.parse(_novaHospedagem.dataCheckOut.toString());
                   String id = Uuid().v1();
                   db.collection("hospedagem").doc(id).set({
                     "idHospedagem": id,
@@ -296,9 +299,9 @@ class _NovaHospedagemState extends State<NovaHospedagem> {
                     "nomeContato": _novaHospedagem.nomeContato,
                     "fotoPet": _novaHospedagem.fotoPet,
                     "nomePet": _novaHospedagem.nomePet,
-                    "dataCheckIn": _novaHospedagem.dataCheckIn,
+                    "dataCheckIn": dtCheckIn,
                     "horaCheckIn": _novaHospedagem.horaCheckIn,
-                    "dataCheckOut": _novaHospedagem.dataCheckOut,
+                    "dataCheckOut": dtCheckOut,
                     "horaCheckOut": _novaHospedagem.horaCheckOut,
                     "dia": _novaHospedagem.dia,
                     "valorDia": _novaHospedagem.valorDia,

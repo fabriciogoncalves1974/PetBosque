@@ -291,9 +291,9 @@ class Hospedagem {
   String? nomeContato;
   String? fotoPet;
   String? nomePet;
-  String? dataCheckIn;
-  String? horaCheckIn;
-  String? dataCheckOut;
+  dynamic dataCheckIn;
+  dynamic? horaCheckIn;
+  dynamic dataCheckOut;
   String? horaCheckOut;
   dynamic dia;
   double? valorDia;

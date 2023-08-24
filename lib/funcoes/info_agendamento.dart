@@ -395,7 +395,6 @@ class InfoAgendamento {
   Future<int?> quantidadeAgendamentosColaboradorFirestore(id) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
     var qtd = db.collection("contato").count().get();
-    print('hhhh $qtd');
     return null;
   }
 

@@ -33,7 +33,7 @@ enum Genero {
   Femea,
 }
 
-final String dataContrato = DateFormat("dd/MM/yyyy").format(DateTime.now());
+final String dataContrato = DateFormat("yyyy-MM-dd").format(DateTime.now());
 
 class _EditarPetState extends State<EditarPet> {
   Genero? _genero = Genero.Macho;
@@ -56,7 +56,7 @@ class _EditarPetState extends State<EditarPet> {
   get formatado => null;
 
   Plano? selectedValue;
-
+  String menssagem = "";
   String? porteSelecionado;
   var itemsPorte = [
     'Pequeno',
@@ -70,6 +70,7 @@ class _EditarPetState extends State<EditarPet> {
     _obterPlanos();
 
     _editarPet = Pet.fromMap(widget._pet.toMap());
+    _editarPet.idContato = _editarPet.idContato;
 
     if (_editarPet.genero == "Macho") {
       _genero = Genero.Macho;
@@ -138,8 +139,7 @@ class _EditarPetState extends State<EditarPet> {
                   _editarPet.nomePet!.isNotEmpty) {
                 //await info.atualizarFotoPet(
                 //  _editarPet.id.toString(), _editarPet.foto.toString());
-                // info.atualizarPet(_editarPet);
-                db.collection("pet").doc(_editarPet.id).set({
+                /* db.collection("pet").doc(_editarPet.id).set({
                   "idPet": _editarPet.id,
                   "idContato": _editarPet.idContato,
                   "nomePet": _editarPet.nomePet,
@@ -159,15 +159,37 @@ class _EditarPetState extends State<EditarPet> {
                   "dataCadastro": _editarPet.dataCadastro,
                   "dataContrato": _editarPet.dataContrato,
                   "planoVencido": _editarPet.planoVencido,
+                });*/
+                await info.atualizarPetApi(_editarPet).then((value) {
+                  menssagem = value;
+                });
+                setState(() {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        Future.delayed(const Duration(seconds: 3), () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ListaPetContato(
+                                        idContato:
+                                            _editarPet.idContato.toString(),
+                                        nomeContato:
+                                            _editarPet.nomeContato.toString(),
+                                      )));
+                        });
+
+                        return AlertDialog(
+                          content: Text(
+                            menssagem,
+                            style: const TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                        );
+                      });
                 });
                 itensContaPlano = [];
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ListaPetContato(
-                              idContato: _editarPet.idContato.toString(),
-                              nomeContato: _editarPet.nomeContato.toString(),
-                            )));
               } else {
                 FocusScope.of(context).requestFocus(_nomeFocus);
               }
@@ -547,7 +569,7 @@ class _EditarPetState extends State<EditarPet> {
                   //Use of SizedBox
                   height: 20,
                 ),
-                if (_editarPet.porte != null)
+                if (_editarPet.porte != "")
                   Row(children: [
                     const SizedBox(
                       width: 35,
@@ -571,7 +593,7 @@ class _EditarPetState extends State<EditarPet> {
                       ),
                     ),
                   ]),
-                if (_editarPet.porte == null)
+                if (_editarPet.porte == "")
                   Row(children: [
                     const SizedBox(
                       width: 35,

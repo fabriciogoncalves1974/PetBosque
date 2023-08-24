@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
@@ -22,6 +23,9 @@ class Principal extends StatefulWidget {
   _PrincipalState createState() => _PrincipalState();
 }
 
+DateTime now = DateTime.now();
+String formattedDate = DateFormat.yMMMMEEEEd().format(DateTime.now());
+
 class _PrincipalState extends State<Principal> {
   List<Agendamento> agendamento = [];
   List<Hospedagem> hospedagem = [];
@@ -38,11 +42,14 @@ class _PrincipalState extends State<Principal> {
   int qtdHospedagem = 0;
   int index = 0;
   int index2 = 0;
+  String _apiResponse = '';
+  List<Cliente> _clientes = [];
 
   @override
   void initState() {
     super.initState();
-
+    // fetchClientes();
+    formatFirestoreTimestamp();
     _obterTodosAgendamentos(data);
     //_obterQuantidadeAgendamentos();
     //_obterQuantidadeHospedagem();
@@ -528,6 +535,22 @@ class _PrincipalState extends State<Principal> {
                         ),
                       ],
                     ),
+                  Row(
+                    children: [
+                      Text(
+                        'Date: $formattedDate',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: salvar,
+                        child: Text('Salvar'),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
@@ -546,6 +569,40 @@ class _PrincipalState extends State<Principal> {
       });
     });
   }*/
+  void salvar() {
+    DateTime data = DateTime.now();
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    db.collection("teste").doc().set({
+      "data": data,
+    });
+  }
+
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  Future<void> formatFirestoreTimestamp() async {
+    try {
+      FirebaseFirestore db = FirebaseFirestore.instance;
+      QuerySnapshot query = await db.collection('teste').get();
+      List listaDatas = [];
+
+      query.docs.forEach((doc) {
+        Timestamp timestamp = doc.get('data');
+        String formattedDate =
+            DateFormat('dd/MM/yyyy').format(timestamp.toDate());
+        print("Formatted Date: $formattedDate");
+        setState(() {
+          listaDatas.add(timestamp);
+        });
+      });
+
+      // Get the Timestamp from Firestore
+      // Timestamp timestamp = documentSnapshot.data() as Timestamp;
+
+      // Format the Timestamp as a string
+    } catch (e) {
+      print("Error fetching document: $e");
+    }
+  }
 
   void _obterTodasHospedagens(String data) {
     infoHospedagem
@@ -562,7 +619,7 @@ class _PrincipalState extends State<Principal> {
         if (hospedagem.isNotEmpty) {
           contatoPrimeiroHospedagem = hospedagem[index2].nomeContato!;
           petPrimeiroHospedagem = hospedagem[index2].nomePet!;
-          horaPrimeiroHospedagem = hospedagem[index2].horaCheckIn!;
+          horaPrimeiroHospedagem = hospedagem[index2].horaCheckIn.toString()!;
         }
       });
     });
@@ -588,6 +645,20 @@ class _PrincipalState extends State<Principal> {
     });
   }
 
+  /* Future<void> fetchClientes() async {
+    final response =
+        await http.get(Uri.parse('http://sys.jrpdv.com.br:9810/api/Clientes'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = json.decode(response.body);
+      setState(() {
+        _clientes = responseData.map((item) => Cliente.fromJson(item)).toList();
+      });
+    } else {
+      // Manejar error en la consulta a la API
+    }
+  }*/
+
   /* void _obterQuantidadeHospedagem() {
     infoHospedagem.quantidadeHospedagemDia(data).then((dynamic result) {
       setState(() {
@@ -595,4 +666,17 @@ class _PrincipalState extends State<Principal> {
       });
     });
   }*/
+}
+
+class Cliente {
+  final String codigo;
+  final String descricao;
+
+  Cliente({required this.codigo, required this.descricao});
+  factory Cliente.fromJson(Map<String, dynamic> json) {
+    return Cliente(
+      codigo: json['Codigo'],
+      descricao: json['Nome'],
+    );
+  }
 }

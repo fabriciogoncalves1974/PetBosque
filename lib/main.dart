@@ -13,10 +13,10 @@ void main() async {
   Platform.isAndroid
       ? await Firebase.initializeApp(
           options: const FirebaseOptions(
-              apiKey: "AIzaSyBiwgpTQGW8jKUQS-AKxRXnI0mFUSQnPR4",
-              appId: "1:379303878360:android:dacfc171b167ad3100c1ad",
-              messagingSenderId: "379303878360",
-              projectId: "petbosque-7e36e"))
+              apiKey: "AIzaSyBy0RGCYbp4jerl9z5GU-AbaAITfEPOVBk",
+              appId: "1:211553804123:android:47d2cd16042ffa1a75447e",
+              messagingSenderId: "211553804123",
+              projectId: "lunapet-1974"))
       : await Firebase.initializeApp();
   runApp(
     MaterialApp(

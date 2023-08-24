@@ -299,7 +299,7 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
                           ),
                         ),
                         Text(
-                          hospedagen[index].dataCheckIn ?? "",
+                          hospedagen[index].dataCheckIn.toString() ?? "",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -317,7 +317,7 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
                           ),
                         ),
                         Text(
-                          hospedagen[index].horaCheckIn ?? "",
+                          hospedagen[index].horaCheckIn.toString() ?? "",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -336,7 +336,7 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
                           ),
                         ),
                         Text(
-                          hospedagen[index].dataCheckOut ?? "",
+                          hospedagen[index].dataCheckOut.toString() ?? "",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -441,6 +441,14 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
     info.obterTodasHospedagemDiaFirestore(data).then((dynamic list) {
       setState(() {
         hospedagen = list;
+        String timestamp = DateFormat('dd/MM/yyyy, hh:MM')
+            .format(hospedagen[0].dataCheckIn.toDate());
+        DateTime start = DateTime.parse(timestamp);
+        String timestamp2 = DateFormat('dd/MM/yyyy, hh:MM')
+            .format(hospedagen[0].dataCheckOut.toDate());
+        DateTime end = DateTime.parse(timestamp2);
+        var diaria = DateTimeRange(start: start, end: end).duration.inDays;
+        print("diaria $diaria");
       });
     });
   }

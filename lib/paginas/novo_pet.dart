@@ -16,7 +16,7 @@ class NovoPet extends StatefulWidget {
       {super.key, Pet? pet, required this.idContato, required this.nomeContato})
       : _pet = pet ?? Pet();
 
-  final String idContato;
+  final dynamic idContato;
   final String nomeContato;
 
   @override
@@ -35,8 +35,9 @@ enum Genero {
   Femea,
 }
 
-final String dataContrato = DateFormat("dd/MM/yyyy").format(DateTime.now());
-final String dataCadastro = DateFormat("dd/MM/yyyy").format(DateTime.now());
+String menssagem = "";
+final String dataContrato = DateFormat("yyyy-MM-dd").format(DateTime.now());
+final String dataCadastro = DateFormat("yyyy-MM-dd").format(DateTime.now());
 
 class _NovoPetState extends State<NovoPet> {
   Genero? _genero = Genero.Macho;
@@ -122,9 +123,18 @@ class _NovoPetState extends State<NovoPet> {
             onPressed: () async {
               if (_editarPet.nomePet != null &&
                   _editarPet.nomePet!.isNotEmpty) {
-                _editarPet.dtNasc = DateFormat("dd/MM/yyyy").format(_dateTime);
-                _editarPet.dataCadastro = dataCadastro;
-                // info.salvarPet(_editarPet);
+                _editarPet.dtNasc = DateFormat("yyyy-MM-dd").format(_dateTime);
+                DateTime dtCadastro = DateTime.parse(dataCadastro);
+                _editarPet.dataCadastro =
+                    DateFormat("yyyy-MM-dd").format(dtCadastro);
+                _editarPet.idContato = widget.idContato.toString();
+                _editarPet.idPet = const Uuid().v1();
+                temPlano = false;
+                verificaNull();
+                info.salvarPetApi(_editarPet).then((value) {
+                  menssagem = value;
+                });
+                /*
                 String id = Uuid().v1();
                 db.collection("pet").doc(id).set({
                   "idPet": id,
@@ -146,12 +156,30 @@ class _NovoPetState extends State<NovoPet> {
                   "dataContrato": _editarPet.dataContrato,
                   "dataCadastro": _editarPet.dataCadastro,
                   "planoVencido": _editarPet.planoVencido,
+                });*/
+
+                // ignore: use_build_context_synchronously
+                setState(() {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        Future.delayed(const Duration(seconds: 3), () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ListaPetContato(
+                                    idContato: widget.idContato.toString(),
+                                    nomeContato: widget.nomeContato.toString(),
+                                  )));
+                        });
+                        return AlertDialog(
+                          content: Text(
+                            menssagem,
+                            style: const TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                        );
+                      });
                 });
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ListaPetContato(
-                          idContato: widget.idContato.toString(),
-                          nomeContato: widget.nomeContato.toString(),
-                        )));
               } else {
                 FocusScope.of(context).requestFocus(_nomeFocus);
               }
@@ -396,7 +424,7 @@ class _NovoPetState extends State<NovoPet> {
                         onChanged: (contaPlanoValue) {
                           setState(() {
                             contaPlano = contaPlanoValue!;
-                            _editarPet.contaPlano = contaPlano;
+                            _editarPet.contaPlano = contaPlano.toString();
                           });
                         },
                       ),
@@ -646,6 +674,17 @@ class _NovoPetState extends State<NovoPet> {
     } else {
       return Future.value(true);
     }
+  }
+
+  void verificaNull() {
+    _editarPet.cor ??= "";
+    _editarPet.raca ??= "";
+    _editarPet.porte ??= "";
+    _editarPet.valorPlano ??= "";
+    _editarPet.peso ??= "";
+    _editarPet.foto ??= "";
+    _editarPet.genero ??= "";
+    _editarPet.especie ??= "";
   }
 
   void _obterPlanos() {
