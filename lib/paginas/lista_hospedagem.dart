@@ -211,6 +211,10 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
   }
 
   Widget _cartaoHospedagem(BuildContext context, int index) {
+    double valorTotal = double.parse(hospedagen[index].valorTotal!.toString());
+    DateTime dataIn = DateTime.parse(hospedagen[index].dataCheckIn.toString());
+    DateTime dataOut =
+        DateTime.parse(hospedagen[index].dataCheckOut.toString());
     if (hospedagen[index].status == "Pendente") {
       corStatus = corPendente;
     }
@@ -299,8 +303,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                           ),
                         ),
                         Text(
-                          DateFormat('dd/MM/yyyy')
-                              .format(hospedagen[index].dataCheckIn.toDate()),
+                          DateFormat("dd/MM/yyyy").format(dataIn) ?? "",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -337,8 +340,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                           ),
                         ),
                         Text(
-                          DateFormat('dd/MM/yyyy')
-                              .format(hospedagen[index].dataCheckOut.toDate()),
+                          DateFormat("dd/MM/yyyy").format(dataOut) ?? "",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -413,8 +415,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                           ),
                         ),
                         Text(
-                          "R\$ ${hospedagen[index].valorTotal!.toStringAsFixed(2)}" ??
-                              "",
+                          "R\$ " + valorTotal!.toStringAsFixed(2) ?? "",
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -437,18 +438,17 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
   }
 
   void _obterTodasHospedagem(String status) {
-    info.obterTodasHospedagemFirestore(status).then((dynamic list) {
+    info.obterTodasHospedagensApi().then((dynamic list) {
       setState(() {
         hospedagen = list;
 
-        String timestamp = DateFormat('dd/MM/yyyy').format(
+        /* String timestamp = DateFormat('dd/MM/yyyy').format(
             hospedagen[0].dataCheckIn.fromMillisecondsSinceEpoch.toDate());
         DateTime start = DateTime.parse(timestamp);
         String timestamp2 = DateFormat('dd/MM/yyyy').format(
             hospedagen[0].dataCheckOut.fromMillisecondsSinceEpoch.toDate());
         DateTime end = DateTime.parse(timestamp2);
-        var diaria = DateTimeRange(start: start, end: end).duration.inDays;
-        print("diaria $diaria");
+        var diaria = DateTimeRange(start: start, end: end).duration.inDays;*/
       });
     });
   }

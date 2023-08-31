@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
@@ -7,7 +7,6 @@ import 'package:pet_bosque/funcoes/info_plano.dart';
 import 'package:pet_bosque/paginas/lista_agendamentos.dart';
 import 'package:pet_bosque/paginas/lista_pet.dart';
 import 'package:pet_bosque/paginas/novo_agendamento.dart';
-import 'package:uuid/uuid.dart';
 
 class NovoAgendamentoPlano extends StatefulWidget {
   final Agendamento _agendamento;
@@ -38,7 +37,7 @@ class NovoAgendamentoPlano extends StatefulWidget {
 }
 
 Plano? itens;
-String data = DateFormat("dd/MM/yyyy").format(DateTime.now());
+String data = DateFormat("yyyy-MM-dd").format(DateTime.now());
 InfoAgendamento info = InfoAgendamento();
 InfoPlano infoPlano = InfoPlano();
 InfoPet infoPet = InfoPet();
@@ -59,7 +58,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
   late int contadorPlano;
   String planoVencido = "N";
   bool loading = false;
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  //FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
@@ -93,7 +92,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
       lastDate: DateTime(2030),
     ).then((value) {
       setState(() {
-        _dataAgendamento = DateFormat("dd/MM/yyyy").format(value!);
+        _dataAgendamento = DateFormat("yyyy-MM-dd").format(value!);
         _dateTime = _dateTime;
         _dateTime = value;
       });
@@ -102,7 +101,6 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
 
   late TimeOfDay picked;
   late String hora;
-  final String _infoValor = "0,00";
 
   void _executaFuncoes() {
     _total();
@@ -117,22 +115,25 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
       contadorPlano = 4;
     }
     contadorPlano = (contadorPlano - 1);
-    //infoPet.contaPlanoPet(widget.idPet, contadorPlano);
-    db
+    infoPet.contaPlanoPetApi(
+      contadorPlano,
+      widget.idPet,
+    );
+    /* db
         .collection('pet')
         .doc(widget.idPet)
-        .update({'contaPlano': contadorPlano});
+        .update({'contaPlano': contadorPlano});*/
   }
 
   void _total() {
     setState(() {
       valorAdicional = double.tryParse(valorAdicionalController.text) ?? 0;
-      valorPlano = itens?.valor ?? 0;
+      valorPlano = double.tryParse(itens?.valor) ?? 0;
 
       valorTotal = (valorPlano! + valorAdicional);
 
       _novoAgendamento.valorTotal = valorTotal;
-      _novoAgendamento.data = DateFormat("dd/MM/yyyy").format(_dateTime);
+      _novoAgendamento.data = DateFormat("yyyy-MM-dd").format(_dateTime);
       _novoAgendamento.hora = _time.format(context);
       _novoAgendamento.status = status;
       if (itens?.svBanho.toString() == "S") {
@@ -144,6 +145,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
         _novoAgendamento.valorTosa = 0;
       }
       if (itens?.svTosaHigienica.toString() == "S") {
+        _novoAgendamento.svTosaHigienica = "S";
         _novoAgendamento.valorTosaHigienica = 0;
       }
       if (itens?.svHidratacao.toString() == "S") {
@@ -220,57 +222,20 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                       widget.renovaPlano == "N") {
                     planoVencido = "S";
                     _novoAgendamento.planoVencido = planoVencido;
-                    _alteraPlanoVencido(idPet, planoVencido);
+                    _alteraPlanoVencido(planoVencido, idPet);
                   }
                   if (widget.renovaPlano == "S") {
                     planoVencido = "N";
                     _contadorPLano();
-                    _renovaPlano(widget.idPet, contadorPlano);
-                    _alteraPlanoVencido(idPet, planoVencido);
+                    _renovaPlano(contadorPlano, widget.idPet);
+                    _alteraPlanoVencido(planoVencido, idPet);
                   }
                   //info.salvarAgendamento(_novoAgendamento);
+                  //salvaAdendamentoFirestore();
                   _executaFuncoes();
-                  if (_novoAgendamento.valorAdicional == null) {
-                    _novoAgendamento.valorAdicional = 0;
-                  }
-                  if (_novoAgendamento.observacao == null) {
-                    _novoAgendamento.observacao = "";
-                  }
-                  String id = Uuid().v1();
-                  db.collection("agendamentos").doc(id).set({
-                    "idAgendamento": id,
-                    "idPet": _novoAgendamento.idPet,
-                    "nomeContato": _novoAgendamento.nomeContato,
-                    "fotoPet": _novoAgendamento.fotoPet,
-                    "nomePet": _novoAgendamento.nomePet,
-                    "data": _novoAgendamento.data,
-                    "hora": _novoAgendamento.hora,
-                    "svBanho": _novoAgendamento.svBanho,
-                    "valorBanho": _novoAgendamento.valorBanho,
-                    "svTosa": _novoAgendamento.svTosa,
-                    "valorTosa": _novoAgendamento.valorTosa,
-                    "svCorteUnha": _novoAgendamento.svCorteUnha,
-                    "valorCorteUnha": _novoAgendamento.valorCorteUnha,
-                    "svHidratacao": _novoAgendamento.svHidratacao,
-                    "valorHidratacao": _novoAgendamento.valorHidratacao,
-                    "svTosaHigienica": _novoAgendamento.svTosaHigienica,
-                    "valorTosaHigienica": _novoAgendamento.valorTosaHigienica,
-                    "svPintura": _novoAgendamento.svPintura,
-                    "valorPintura": _novoAgendamento.valorPintura,
-                    "svHospedagem": _novoAgendamento.svHospedagem,
-                    "valorHospedagem": _novoAgendamento.valorHospedagem,
-                    "svTransporte": _novoAgendamento.svTransporte,
-                    "valorTransporte": _novoAgendamento.valorTransporte,
-                    "valorAdicional": _novoAgendamento.valorAdicional,
-                    "valorTotal": _novoAgendamento.valorTotal,
-                    "observacao": _novoAgendamento.observacao,
-                    "status": _novoAgendamento.status,
-                    "colaborador": _novoAgendamento.colaborador,
-                    "idColaborador": _novoAgendamento.idColaborador,
-                    "idParticipante": _novoAgendamento.id,
-                    "participante": _novoAgendamento.participante,
-                    "planoVencido": _novoAgendamento.planoVencido
-                  });
+                  _novoAgendamento.valorAdicional ??= 0;
+                  _novoAgendamento.observacao ??= "";
+                  info.salvarAgendamentoApi(_novoAgendamento);
                   loading = false;
                   Navigator.push(
                       context,
@@ -283,7 +248,7 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
                 backgroundColor: Color.fromRGBO(35, 151, 166, 1),
                 hoverColor: Color.fromRGBO(35, 151, 166, 50),
                 foregroundColor: Colors.white,
-                label: Text("Salvar"),
+                label: const Text("Salvar"),
               ),
               body: SingleChildScrollView(
                 padding: const EdgeInsets.all(10.0),
@@ -675,33 +640,70 @@ class _NovoAgendamentoPlanoState extends State<NovoAgendamentoPlano> {
 
   void _SalvarAgendamento() async {
     final gravaAgendamento = _novoAgendamento;
-    await info.salvarAgendamento(gravaAgendamento);
+    await info.salvarAgendamentoApi(gravaAgendamento);
     paginaAgendamentos();
   }
 
-  void _alteraPlanoVencido(String id, String planoVencido) {
-    //infoPet.atualizaPlanoVencido(id, planoVencido);
-    db
+  void salvaAgendamentoFirestore() {
+    /*
+                  String id = Uuid().v1();
+                  db.collection("agendamentos").doc(id).set({
+                    "idAgendamento": id,
+                    "idPet": _novoAgendamento.idPet,
+                    "nomeContato": _novoAgendamento.nomeContato,
+                    "fotoPet": _novoAgendamento.fotoPet,
+                    "nomePet": _novoAgendamento.nomePet,
+                    "data": _novoAgendamento.data,
+                    "hora": _novoAgendamento.hora,
+                    "svBanho": _novoAgendamento.svBanho,
+                    "valorBanho": _novoAgendamento.valorBanho,
+                    "svTosa": _novoAgendamento.svTosa,
+                    "valorTosa": _novoAgendamento.valorTosa,
+                    "svCorteUnha": _novoAgendamento.svCorteUnha,
+                    "valorCorteUnha": _novoAgendamento.valorCorteUnha,
+                    "svHidratacao": _novoAgendamento.svHidratacao,
+                    "valorHidratacao": _novoAgendamento.valorHidratacao,
+                    "svTosaHigienica": _novoAgendamento.svTosaHigienica,
+                    "valorTosaHigienica": _novoAgendamento.valorTosaHigienica,
+                    "svPintura": _novoAgendamento.svPintura,
+                    "valorPintura": _novoAgendamento.valorPintura,
+                    "svHospedagem": _novoAgendamento.svHospedagem,
+                    "valorHospedagem": _novoAgendamento.valorHospedagem,
+                    "svTransporte": _novoAgendamento.svTransporte,
+                    "valorTransporte": _novoAgendamento.valorTransporte,
+                    "valorAdicional": _novoAgendamento.valorAdicional,
+                    "valorTotal": _novoAgendamento.valorTotal,
+                    "observacao": _novoAgendamento.observacao,
+                    "status": _novoAgendamento.status,
+                    "colaborador": _novoAgendamento.colaborador,
+                    "idColaborador": _novoAgendamento.idColaborador,
+                    "idParticipante": _novoAgendamento.id,
+                    "participante": _novoAgendamento.participante,
+                    "planoVencido": _novoAgendamento.planoVencido
+                  });*/
+  }
+
+  void _alteraPlanoVencido(planoVencido, id) {
+    infoPet.atualizaPlanoVencidoApi(planoVencido, id);
+    /* db
         .collection('pet')
         .doc(widget.idPet)
-        .update({'planoVencido': planoVencido});
+        .update({'planoVencido': planoVencido});*/
   }
 
   void _renovaPlano(id, contadorPlano) {
-    //infoPet.renovaPlano(id, contadorPlano);
-    db
+    infoPet.renovaPlanoApi(id, contadorPlano);
+    /* db
         .collection('pet')
         .doc(widget.idPet)
-        .update({'contaPlano': contadorPlano});
+        .update({'contaPlano': contadorPlano});*/
   }
 
   void _obterPlanos() async {
-    infoPlano
-        .obterPlanosPet2Firestore(widget.idPlano)
-        .then((dynamic listaPlano) {
+    infoPlano.obterPlanosPetApi(widget.idPlano).then((Plano? plano) {
       setState(() {
-        itens = listaPlano[0]!;
-        valorTotal = itens!.valor;
+        itens = plano!;
+        valorTotal = double.parse(itens!.valor);
       });
     });
   }

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
 import 'package:sqflite/sqlite_api.dart';
@@ -283,6 +286,93 @@ class InfoHospedagem {
         FirebaseFirestore.instance.collection('hospedagem');
     planoCollection.doc(id).delete();
   }
+
+//=========================================================================
+
+  //FUNÇÕES API
+
+  Future<List> obterTodasHospedagensApi() async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/hospedagem/lista', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Hospedagem> listaHospedagem = [];
+
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+      for (Map m in listMap) {
+        listaHospedagem.add(Hospedagem.fromJson(m));
+      }
+    }
+    return listaHospedagem;
+  }
+
+  Future<String> salvarHospedagemApi(Hospedagem hospedagem) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/hospedagem/adiciona', {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "idPet": hospedagem.idPet.toString(),
+        "adicional": hospedagem.adicional.toString(),
+        'colaborador': hospedagem.colaborador.toString(),
+        'dataCheckIn': hospedagem.dataCheckIn.toString(),
+        'dataCheckOut': hospedagem.dataCheckOut.toString(),
+        'dia': hospedagem.dia.toString(),
+        'fotoPet': hospedagem.fotoPet.toString(),
+        'genero': hospedagem.genero.toString(),
+        'horaCheckIn': hospedagem.horaCheckIn.toString(),
+        'horaCheckOut': hospedagem.horaCheckOut.toString(),
+        'idColaborador': hospedagem.idColaborador.toString(),
+        'nomeContato': hospedagem.nomeContato.toString(),
+        'nomePet': hospedagem.nomePet.toString(),
+        'observacao': hospedagem.observacao.toString(),
+        'porte': hospedagem.porte.toString(),
+        'status': hospedagem.status.toString(),
+        'valorDia': hospedagem.valorDia.toString(),
+        'valorTotal': hospedagem.valorTotal.toString(),
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> excluirPlanoApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        // ignore: prefer_interpolation_to_compose_strings
+        '/petBosque/hospedagem/delete/' + id,
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "DELETE",
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+//=======================================================================
 }
 
 class Hospedagem {
@@ -296,9 +386,9 @@ class Hospedagem {
   dynamic dataCheckOut;
   String? horaCheckOut;
   dynamic dia;
-  double? valorDia;
-  double? adicional;
-  double? valorTotal;
+  dynamic valorDia;
+  dynamic adicional;
+  dynamic valorTotal;
   String? observacao;
   String? status;
   String? colaborador;
@@ -326,6 +416,52 @@ class Hospedagem {
       this.status,
       this.valorDia,
       this.valorTotal});
+
+  factory Hospedagem.fromJson(Map json) {
+    return Hospedagem(
+      id: json['id'],
+      idPet: json['idPet'],
+      colaborador: json['colaborador'],
+      adicional: json['adicional'],
+      dataCheckIn: json['dataCheckIn'],
+      dataCheckOut: json['dataCheckOut'],
+      dia: json['dia'],
+      fotoPet: json['fotoPet'],
+      genero: json['genero'],
+      horaCheckIn: json['horaCheckIn'],
+      horaCheckOut: json['horaCheckOut'],
+      idColaborador: json['idColaborador'],
+      nomeContato: json['nomeContato'],
+      nomePet: json['nomePet'],
+      observacao: json['observacao'],
+      porte: json['porte'],
+      status: json['status'],
+      valorDia: json['valorDia'],
+      valorTotal: json['valorTotal'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': this.id,
+        'idPet': this.idPet,
+        'adicional': this.adicional,
+        'colaborador': this.colaborador,
+        'dataCheckIn': this.dataCheckIn,
+        'dataCheckOut': this.dataCheckOut,
+        'dia': this.dia,
+        'fotoPet': this.fotoPet,
+        'genero': this.genero,
+        'horaCheckIn': this.horaCheckIn,
+        'horaCheckOut': this.horaCheckOut,
+        'idColaborador': this.idColaborador,
+        'nomeContato': this.nomeContato,
+        'nomePet': this.nomePet,
+        'observacao': this.observacao,
+        'porte': this.porte,
+        'status': this.status,
+        'valorDia': this.valorDia,
+        'valorTotal': this.valorTotal
+      };
 
   Hospedagem.fromMap(Map map) {
     id = map[idColuna];

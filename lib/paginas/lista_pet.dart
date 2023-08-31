@@ -128,7 +128,7 @@ class _ListaPetState extends State<ListaPet> {
               caption: 'Agendar',
               onTap: () {
                 if (pet[index].idPlano.toString() != "" &&
-                    pet[index].contaPlano! > 0) {
+                    int.parse(pet[index].contaPlano!) > 0) {
                   contadorPlano = pet[index].contaPlano.toString();
                   showDialog(
                       context: context,
@@ -191,7 +191,8 @@ class _ListaPetState extends State<ListaPet> {
                         );
                       });
                 }
-                if (pet[index].idPlano != "0" && pet[index].contaPlano! == 0) {
+                if (pet[index].idPlano != "0" &&
+                    int.parse(pet[index].contaPlano!) == 0) {
                   contadorPlano = pet[index].contaPlano.toString();
                   showDialog(
                       context: context,
@@ -385,7 +386,7 @@ class _ListaPetState extends State<ListaPet> {
   }
 
   void _obterTodosPet() {
-    info.obterTodosPetFirestore().then((dynamic list) {
+    info.obterTodosPetApi().then((dynamic list) {
       setState(() {
         pet = list;
       });

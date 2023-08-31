@@ -378,7 +378,7 @@ class _EditarPetState extends State<EditarPet> {
                             _editarPet.valorPlano =
                                 selectedValue!.valor.toString();
                             for (int n = 0;
-                                n <= selectedValue!.contaPlano;
+                                n <= int.parse(selectedValue!.contaPlano);
                                 n++) {
                               itensContaPlano.add('$n');
                             }
@@ -800,7 +800,7 @@ class _EditarPetState extends State<EditarPet> {
   }
 
   void _obterPlanos() {
-    infoPlano.obterTodosPlanosFirestore().then((dynamic listaPlano) {
+    infoPlano.obterTodosPlanosApi().then((dynamic listaPlano) {
       setState(() {
         itens = listaPlano;
       });

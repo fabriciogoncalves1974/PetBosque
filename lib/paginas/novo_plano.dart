@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:pet_bosque/funcoes/info_plano.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
 import 'package:pet_bosque/paginas/lista_planos.dart';
-import 'package:uuid/uuid.dart';
 
 class NovoPlano extends StatefulWidget {
   final Plano _plano;
@@ -70,7 +69,7 @@ class _NovoPlanoState extends State<NovoPlano> {
   bool _planoEditado = false;
   late Plano _editarPlano;
   bool loading = false;
-
+  String menssagem = "";
   FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
@@ -125,8 +124,12 @@ class _NovoPlanoState extends State<NovoPlano> {
               }
               if (_editarPlano.nomePlano != null &&
                   _editarPlano.nomePlano!.isNotEmpty) {
-                // info.salvarPlano(_editarPlano);
-                String id = Uuid().v1();
+                verificaNull();
+                info.salvarPlanoApi(_editarPlano).then((value) {
+                  menssagem = value;
+                  ;
+                  // info.salvarPlano(_editarPlano);
+                  /*String id = Uuid().v1();
                 db.collection("planos").doc(id).set({
                   "idPlano": id,
                   "nomePlano": _editarPlano.nomePlano,
@@ -140,15 +143,32 @@ class _NovoPlanoState extends State<NovoPlano> {
                   "svTransporte": _editarPlano.svTransporte,
                   "contaPlano": _editarPlano.contaPlano,
                   "valor": _editarPlano.valor,
+                });*/
+                  setState(() {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          Future.delayed(const Duration(seconds: 2), () {
+                            _limpaCheck();
+                            loading = false;
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => const Inicio(
+                                        index: 4,
+                                      )),
+                            );
+                          });
+                          return AlertDialog(
+                            content: Text(
+                              menssagem,
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                          );
+                        });
+                  });
                 });
-                _limpaCheck();
-                loading = false;
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => const Inicio(
-                            index: 4,
-                          )),
-                );
               } else {
                 FocusScope.of(context).requestFocus(_nomeFocus);
               }
@@ -374,6 +394,19 @@ class _NovoPlanoState extends State<NovoPlano> {
         ),
       ),
     );
+  }
+
+  void verificaNull() {
+    _editarPlano.svBanho ??= "";
+    _editarPlano.svTosa ??= "";
+    _editarPlano.svTosaHigienica ??= "";
+    _editarPlano.svCorteUnha ??= "";
+    _editarPlano.svHidratacao ??= "";
+    _editarPlano.svPintura ??= "";
+    _editarPlano.svHospedagem ??= "";
+    _editarPlano.svTransporte ??= "";
+    _editarPlano.contaPlano ??= 0;
+    _editarPlano.valor ??= 0;
   }
 
   Future<bool> _retornaPop(BuildContext context) {

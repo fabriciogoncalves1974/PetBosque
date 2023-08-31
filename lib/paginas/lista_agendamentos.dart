@@ -184,6 +184,8 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
   }
 
   Widget _cartaoContato(BuildContext context, int index) {
+    DateTime data = DateTime.parse(agendamento[index].data.toString());
+    double valorTotal = double.parse(agendamento[index].valorTotal!.toString());
     if (agendamento[index].status == "Pendente") {
       corStatus = corPendente;
     }
@@ -307,7 +309,7 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
                         ),
                       ),
                       Text(
-                        agendamento[index].data ?? "",
+                        DateFormat("dd/MM/yyyy").format(data) ?? "",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -472,11 +474,7 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
                         ),
                       ),
                       Text(
-                        "R\$ " +
-                                agendamento[index]
-                                    .valorTotal!
-                                    .toStringAsFixed(2) ??
-                            "",
+                        "R\$ " + valorTotal!.toStringAsFixed(2) ?? "",
                         style: const TextStyle(
                           fontSize: 12,
                         ),
@@ -502,7 +500,7 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
       _dataAgendamento = dataRetorno;
       dataRetorno = _dataAgendamento;
     }
-    info.obterTodosAgendamentosFirestore(_dataAgendamento).then((dynamic list) {
+    info.obterTodosAgendamentosApi().then((dynamic list) {
       setState(() {
         agendamento = list;
       });

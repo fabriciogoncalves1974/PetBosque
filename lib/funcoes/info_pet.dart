@@ -325,6 +325,81 @@ class InfoPet {
     return retorno;
   }
 
+  Future<String> contaPlanoPetApi(contador, id) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        // ignore: prefer_interpolation_to_compose_strings
+        '/petBosque/pet/contaPlano/$contador/$id',
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "PUT",
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> renovaPlanoApi(contador, id) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        // ignore: prefer_interpolation_to_compose_strings
+        '/petBosque/pet/renovaPlano/$contador/$id',
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "PUT",
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> atualizaPlanoVencidoApi(planoVencido, id) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        // ignore: prefer_interpolation_to_compose_strings
+        '/petBosque/pet/planoVencido/$planoVencido/$id',
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "PUT",
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
   Future<String> excluirPetApi(id) async {
     final url = Uri.http(
         'fb.servicos.ws',

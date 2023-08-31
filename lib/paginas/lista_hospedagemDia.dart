@@ -210,6 +210,10 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
   }
 
   Widget _cartaoHospedagem(BuildContext context, int index) {
+    double valorTotal = double.parse(hospedagen[index].valorTotal!.toString());
+    DateTime dataIn = DateTime.parse(hospedagen[index].dataCheckIn.toString());
+    DateTime dataOut =
+        DateTime.parse(hospedagen[index].dataCheckOut.toString());
     if (hospedagen[index].status == "Pendente") {
       corStatus = corPendente;
     }
@@ -299,7 +303,7 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
                           ),
                         ),
                         Text(
-                          hospedagen[index].dataCheckIn.toString() ?? "",
+                          DateFormat("dd/MM/yyyy").format(dataIn) ?? "",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -336,7 +340,7 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
                           ),
                         ),
                         Text(
-                          hospedagen[index].dataCheckOut.toString() ?? "",
+                          DateFormat("dd/MM/yyyy").format(dataOut) ?? "",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -411,11 +415,7 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
                           ),
                         ),
                         Text(
-                          "R\$ " +
-                                  hospedagen[index]
-                                      .valorTotal!
-                                      .toStringAsFixed(2) ??
-                              "",
+                          "R\$ " + valorTotal!.toStringAsFixed(2) ?? "",
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,

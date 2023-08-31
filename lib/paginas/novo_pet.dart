@@ -366,7 +366,9 @@ class _NovoPetState extends State<NovoPet> {
                           temPlano = true;
                           _editarPet.valorPlano =
                               selectedValue!.valor.toString();
-                          for (int n = 0; n <= selectedValue!.contaPlano; n++) {
+                          for (int n = 0;
+                              n <= int.parse(selectedValue!.contaPlano);
+                              n++) {
                             itensContaPlano.add('$n');
                           }
                         });
@@ -688,7 +690,7 @@ class _NovoPetState extends State<NovoPet> {
   }
 
   void _obterPlanos() {
-    infoPlano.obterTodosPlanosFirestore().then((dynamic listaPlano) {
+    infoPlano.obterTodosPlanosApi().then((dynamic listaPlano) {
       setState(() {
         itens = listaPlano;
       });

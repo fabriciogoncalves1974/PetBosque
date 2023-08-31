@@ -30,6 +30,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
     );
   }
 
+  String menssagem = "";
   @override
   void initState() {
     super.initState();
@@ -65,10 +66,10 @@ class _ListaPlanosState extends State<ListaPlanos> {
                 MaterialPageRoute(builder: (context) => NovoPlano()));
           },
           icon: const Icon(Icons.add),
-          backgroundColor: Color.fromRGBO(35, 151, 166, 1),
-          hoverColor: Color.fromRGBO(35, 151, 166, 50),
+          backgroundColor: const Color.fromRGBO(35, 151, 166, 1),
+          hoverColor: const Color.fromRGBO(35, 151, 166, 50),
           foregroundColor: Colors.white,
-          label: Text("Novo"),
+          label: const Text("Novo"),
         ),
         body: !loading
             ? ListView.builder(
@@ -77,7 +78,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
                 itemBuilder: (context, index) {
                   return _cartaoPet(context, index);
                 })
-            : Center(
+            : const Center(
                 child: CircularProgressIndicator(),
               ),
       ),
@@ -101,9 +102,8 @@ class _ListaPlanosState extends State<ListaPlanos> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text("Deseja realmente excluir o plano  " +
-                            plano[index].nomePlano.toString() +
-                            "!"),
+                        title: Text(
+                            "Deseja realmente excluir o plano  ${plano[index].nomePlano}!"),
                         actions: <Widget>[
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -137,11 +137,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
                                   borderRadius: BorderRadius.circular(10)),
                             ),
                             onPressed: () {
-                              info.deletarPlanoFirestore(plano[index].id!);
-                              setState(() {
-                                plano.removeAt(index);
-                                Navigator.pop(context);
-                              });
+                              excluirPlano(plano[index].id!);
                             },
                             child: const Text(
                               "Sim",
@@ -319,6 +315,33 @@ class _ListaPlanosState extends State<ListaPlanos> {
     );
   }
 
+  void excluirPlano(id) {
+    info.excluirPlanoApi(id).then((value) {
+      menssagem = value;
+
+      setState(() {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                content: Text(
+                  menssagem,
+                  style: const TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              );
+            });
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const Inicio(
+                    index: 4,
+                  )));
+        });
+      });
+    });
+  }
+
   void _ExibirNovoPlano({Plano? plano}) async {
     final gravaPlano = await Navigator.push(
         context,
@@ -339,7 +362,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
   }
 
   void _obterTodosPlanos() {
-    info.obterTodosPlanosFirestore().then((dynamic list) {
+    info.obterTodosPlanosApi().then((dynamic list) {
       setState(() {
         plano = list;
       });

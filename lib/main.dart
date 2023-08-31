@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
 
 void main() async {
@@ -27,6 +28,11 @@ void main() async {
         cardTheme: const CardTheme(elevation: 20),
         useMaterial3: true,
       ),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate
+      ],
+      supportedLocales: [const Locale('pt', 'BR')],
     ),
   );
 }

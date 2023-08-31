@@ -5,7 +5,6 @@ import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
 import 'package:pet_bosque/paginas/lista_agendamentos.dart';
 import 'package:pet_bosque/paginas/lista_pet.dart';
-import 'package:uuid/uuid.dart';
 
 class NovoAgendamento extends StatefulWidget {
   final Agendamento _agendamento;
@@ -70,7 +69,7 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
   final Agendamento _novoAgendamento = Agendamento();
 
   bool _agendamentoEditado = false;
-  String data = DateFormat("dd/MM/yyyy").format(DateTime.now());
+  String data = DateFormat("yyyy-MM-dd").format(DateTime.now());
   late String _dataAgendamento;
   late int contadorPlano;
 
@@ -104,7 +103,7 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
       lastDate: DateTime(2030),
     ).then((value) {
       setState(() {
-        _dataAgendamento = DateFormat("dd/MM/yyyy").format(value!);
+        _dataAgendamento = DateFormat("yyyy-MM-dd").format(value!);
         _dateTime = value;
       });
     });
@@ -115,6 +114,7 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
   String _infoValor = "0,00";
   FirebaseFirestore db = FirebaseFirestore.instance;
   void _executaFuncoes() {
+    verificaNull();
     _total();
     _limpaCheck();
     if (contadorPlano != 0) {
@@ -178,7 +178,7 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
       //_novoAgendamento.svTransporte = transporte;
       _novoAgendamento.valorTransporte = vTransporte;
       _novoAgendamento.valorTotal = valor;
-      _novoAgendamento.data = DateFormat("dd/MM/yyyy").format(_dateTime);
+      _novoAgendamento.data = DateFormat("yyyy-MM-dd").format(_dateTime);
       _novoAgendamento.hora = _time.format(context);
       _novoAgendamento.status = status;
     });
@@ -219,10 +219,12 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
-              _novoAgendamento.planoVencido = planoVencido;
-              //info.salvarAgendamento(_novoAgendamento);
               _executaFuncoes();
-              String id = Uuid().v1();
+              _novoAgendamento.planoVencido = planoVencido;
+              info.salvarAgendamentoApi(_novoAgendamento);
+              //info.salvarAgendamento(_novoAgendamento);
+
+              /* String id = Uuid().v1();
               db.collection("agendamentos").doc(id).set({
                 "idAgendamento": id,
                 "idPet": _novoAgendamento.idPet,
@@ -256,7 +258,7 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
                 "idParticipante": _novoAgendamento.id,
                 "participante": _novoAgendamento.participante,
                 "planoVencido": _novoAgendamento.planoVencido
-              });
+              });*/
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -922,9 +924,25 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
     }
   }
 
+  void verificaNull() {
+    _novoAgendamento.svBanho ??= "N";
+    _novoAgendamento.svCorteUnha ??= "N";
+    _novoAgendamento.svHidratacao ??= "N";
+    _novoAgendamento.svHospedagem ??= "N";
+    _novoAgendamento.svPintura ??= "N";
+    _novoAgendamento.svTosa ??= "N";
+    _novoAgendamento.svTosaHigienica ??= "N";
+    _novoAgendamento.svTransporte ??= "N";
+    _novoAgendamento.observacao ??= "";
+    _novoAgendamento.colaborador ??= "";
+    _novoAgendamento.idColaborador ??= "";
+    _novoAgendamento.idParticipante ??= "";
+    _novoAgendamento.participante ??= "";
+  }
+
   void _SalvarAgendamento() async {
     final gravaAgendamento = _novoAgendamento;
-    await info.salvarAgendamento(gravaAgendamento);
+    await info.salvarAgendamentoApi(gravaAgendamento);
     paginaAgendamentos();
   }
 }

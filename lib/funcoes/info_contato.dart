@@ -349,7 +349,7 @@ class Contato {
   factory Contato.fromJson(Map json) {
     return Contato(
         id: json['id'],
-        idContato: json['idContato'],
+        idContato: json['idCliente'],
         nome: json['nome'],
         email: json['email'],
         telefone: json['telefone'],
@@ -362,7 +362,7 @@ class Contato {
 
   Map<String, dynamic> toJson() => {
         'id': this.id,
-        'idContato': this.idContato,
+        'idCliente': this.idContato,
         'nome': this.nome,
         'telefone': this.telefone,
         'email': this.email,

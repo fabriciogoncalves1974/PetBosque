@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
 import 'package:sqflite/sqlite_api.dart';
@@ -98,6 +101,100 @@ class InfoPlano {
     }
     return listaPlano;
   }
+
+  //=========================================================================
+
+  //FUNÇÕES API
+
+  Future<List> obterTodosPlanosApi() async {
+    final url =
+        Uri.http('fb.servicos.ws', '/petBosque/planos/lista', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Plano> listaPlano = [];
+
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+      for (Map m in listMap) {
+        listaPlano.add(Plano.fromJson(m));
+      }
+    }
+    return listaPlano;
+  }
+
+  Future<Plano?> obterPlanosPetApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/planos/lista/ + $id', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    //List<dynamic> listMap = map["dados"];
+
+    // Map<String, dynamic> primeiroMap = listMap.first;
+
+    Plano primeiroPlano = Plano.fromJson(map["dados"]);
+    return primeiroPlano;
+  }
+
+  Future<String> salvarPlanoApi(Plano plano) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/planos/adiciona', {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "nomePlano": plano.nomePlano.toString(),
+        "svBanho": plano.svBanho.toString(),
+        "svTosa": plano.svTosa.toString(),
+        "svCorteUnha": plano.svCorteUnha.toString(),
+        "svHidratacao": plano.svHidratacao.toString(),
+        "svTosaHigienica": plano.svTosaHigienica.toString(),
+        "svPintura": plano.svPintura.toString(),
+        "svHospedagem": plano.svHospedagem.toString(),
+        "svTransporte": plano.svTransporte.toString(),
+        "valor": plano.valor.toString(),
+        "contaPlano": plano.contaPlano.toString(),
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> excluirPlanoApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        // ignore: prefer_interpolation_to_compose_strings
+        '/petBosque/planos/delete/' + id,
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "DELETE",
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+//=======================================================================
 
   Future<List> obterTodosPlanosFirestore() async {
     CollectionReference planoCollection =
@@ -230,6 +327,37 @@ class Plano {
       this.valor,
       this.contaPlano,
       this.id});
+
+  factory Plano.fromJson(Map json) {
+    return Plano(
+      id: json['id'],
+      nomePlano: json['nomePlano'],
+      svBanho: json['svBanho'],
+      svTosa: json['svTosa'],
+      svCorteUnha: json['svCorteUnha'],
+      svHidratacao: json['svHidratacao'],
+      svTosaHigienica: json['svTosaHigienica'],
+      svPintura: json['svPintura'],
+      svHospedagem: json['svHospedagem'],
+      svTransporte: json['svTransporte'],
+      valor: json['valor'],
+      contaPlano: json['contaPlano'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': this.id,
+        'svBanho': this.svBanho,
+        'svTosa': this.svTosa,
+        'svCorteUnha': this.svCorteUnha,
+        'svHidratacao': this.svHidratacao,
+        'svTosaHigienica': this.svTosaHigienica,
+        'svPintura': this.svPintura,
+        'svHospedagem': this.svHospedagem,
+        'svTransporte': this.svTransporte,
+        'valor': this.valor,
+        'contaPlano': this.contaPlano,
+      };
 
   Plano.fromMap(Map map) {
     id = map[idColuna];

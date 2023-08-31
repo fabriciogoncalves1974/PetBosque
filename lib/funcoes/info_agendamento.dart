@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
 import 'package:sqflite/sqlite_api.dart';
@@ -403,6 +406,106 @@ class InfoAgendamento {
         FirebaseFirestore.instance.collection('agendamentos');
     planoCollection.doc(id).delete();
   }
+
+//=========================================================================
+
+  //FUNÇÕES API
+
+  Future<List> obterTodosAgendamentosApi() async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/agendamento/lista', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Agendamento> listaPlano = [];
+
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+      for (Map m in listMap) {
+        listaPlano.add(Agendamento.fromJson(m));
+      }
+    }
+    return listaPlano;
+  }
+
+  Future<String> salvarAgendamentoApi(Agendamento agendamento) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/agendamento/adiciona', {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "idPet": agendamento.idPet.toString(),
+        "colaborador": agendamento.colaborador.toString(),
+        "data": agendamento.data.toString(),
+        "fotoPet": agendamento.fotoPet.toString(),
+        "hora": agendamento.hora.toString(),
+        "idColaborador": agendamento.idColaborador.toString(),
+        "idParticipante": agendamento.idParticipante.toString(),
+        "participante": agendamento.participante.toString(),
+        "nomeContato": agendamento.nomeContato.toString(),
+        "nomePet": agendamento.nomePet.toString(),
+        "observacao": agendamento.observacao.toString(),
+        "planoVencido": agendamento.planoVencido.toString(),
+        "status": agendamento.status.toString(),
+        "svBanho": agendamento.svBanho.toString(),
+        "svCorteUnha": agendamento.svCorteUnha.toString(),
+        "svHidratacao": agendamento.svHidratacao.toString(),
+        "svHospedagem": agendamento.svHospedagem.toString(),
+        "svPintura": agendamento.svPintura.toString(),
+        "svTosa": agendamento.svTosa.toString(),
+        "svTosaHigienica": agendamento.svTosaHigienica.toString(),
+        "svTransporte": agendamento.svTransporte.toString(),
+        "valorAdicional": agendamento.valorAdicional.toString(),
+        "valorBanho": agendamento.valorBanho.toString(),
+        "valorCorteUnha": agendamento.valorCorteUnha.toString(),
+        "valorHidratacao": agendamento.valorHidratacao.toString(),
+        "valorHospedagem": agendamento.valorHospedagem.toString(),
+        "valorPintura": agendamento.valorPintura.toString(),
+        "valorTosa": agendamento.valorTosa.toString(),
+        "valorTosaHigienica": agendamento.valorTosaHigienica.toString(),
+        "valorTotal": agendamento.valorTotal.toString(),
+        "valorTransporte": agendamento.valorTransporte.toString(),
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> excluirPlanoApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        // ignore: prefer_interpolation_to_compose_strings
+        '/petBosque/agendamento/delete/' + id,
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "DELETE",
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+//=======================================================================
 }
 
 class Agendamento {
@@ -414,30 +517,30 @@ class Agendamento {
   String? data;
   String? hora;
   String? svBanho;
-  double? valorBanho;
+  dynamic valorBanho;
   String? svTosa;
-  double? valorTosa;
+  dynamic valorTosa;
   String? svCorteUnha;
-  double? valorCorteUnha;
+  dynamic valorCorteUnha;
   String? svHidratacao;
-  double? valorHidratacao;
+  dynamic valorHidratacao;
   String? svTosaHigienica;
-  double? valorTosaHigienica;
+  dynamic valorTosaHigienica;
   String? svPintura;
-  double? valorPintura;
+  dynamic valorPintura;
   String? svHospedagem;
-  double? valorHospedagem;
+  dynamic valorHospedagem;
   String? svTransporte;
-  double? valorTransporte;
-  double? valorAdicional;
-  double? valorTotal;
+  dynamic valorTransporte;
+  dynamic valorAdicional;
+  dynamic valorTotal;
   String? observacao;
   String? status;
   String? colaborador;
   String? idColaborador;
   String? idParticipante;
   String? participante;
-  String? planoVencido;
+  dynamic planoVencido;
 
   Agendamento(
       {this.idPet,
@@ -472,6 +575,78 @@ class Agendamento {
       this.valorTosaHigienica,
       this.valorTotal,
       this.valorTransporte});
+
+  factory Agendamento.fromJson(Map json) {
+    return Agendamento(
+      id: json['id'],
+      idPet: json['idPet'],
+      colaborador: json['colaborador'],
+      data: json['data'],
+      fotoPet: json['fotoPet'],
+      hora: json['hora'],
+      idColaborador: json['colaborador'],
+      idParticipante: json['idParticipante'],
+      participante: json['participante'],
+      nomeContato: json['nomeContato'],
+      nomePet: json['nomePet'],
+      observacao: json['observacao'],
+      planoVencido: json['planoVencido'],
+      status: json['status'],
+      svBanho: json['svBanho'],
+      svCorteUnha: json['svCorteUnha'],
+      svHidratacao: json['svHidratacao'],
+      svHospedagem: json['svHospedagem'],
+      svPintura: json['svPintura'],
+      svTosa: json['svTosa'],
+      svTosaHigienica: json['svTosaHigienica'],
+      svTransporte: json['svTransporte'],
+      valorAdicional: json['valorAdicional'],
+      valorBanho: json['valorBanho'],
+      valorCorteUnha: json['valorCorteUnha'],
+      valorHidratacao: json['valorHidratacao'],
+      valorHospedagem: json['valorHospedagem'],
+      valorPintura: json['valorPintura'],
+      valorTosa: json['valorTosa'],
+      valorTosaHigienica: json['valorTosaHigienica'],
+      valorTotal: json['valorTotal'],
+      valorTransporte: json['valorTransporte'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': this.id,
+        'idPet': this.idPet,
+        'colaborador': this.colaborador,
+        'data': this.data,
+        'fotoPet': this.fotoPet,
+        'hora': this.hora,
+        'idColaborador': this.idColaborador,
+        'idParticipante': this.idParticipante,
+        'participante': this.participante,
+        'nomeContato': this.nomeContato,
+        'nomePet': this.nomePet,
+        'observacao': this.observacao,
+        'planoVencido': this.planoVencido,
+        'status': this.status,
+        'svBanho': this.svBanho,
+        'svCorteUnha': this.svCorteUnha,
+        'svHidratacao': this.svHidratacao,
+        'svHospedagem': this.svHospedagem,
+        'svPintura': this.svPintura,
+        'svTosa': this.svTosa,
+        'svTosaHigienica': this.svTosaHigienica,
+        'svTransporte': this.svTransporte,
+        'valorAdicional': this.valorAdicional,
+        'valorBanho': this.valorBanho,
+        'valorCorteUnha': this.valorCorteUnha,
+        'valorHidratacao': this.valorHidratacao,
+        'valorHospedagem': this.valorHospedagem,
+        'valorPintura': this.valorPintura,
+        'valorTosa': this.valorTosa,
+        'valorTosaHigienica': this.valorTosaHigienica,
+        'valorTotal': this.valorTotal,
+        'valorTransporte': this.valorTransporte
+      };
 
   Agendamento.fromMap(Map map) {
     id = map[idColuna];
