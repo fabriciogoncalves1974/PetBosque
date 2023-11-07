@@ -185,6 +185,6 @@ class PesquisaPetHospedagem extends SearchDelegate<Pet?> {
   }
 
   Future<List<Pet>> _pesquisarTodosPets() {
-    return infoPet.pesquisarTodosPetFirestore(query);
+    return infoPet.pesquisarPetApi(query);
   }
 }

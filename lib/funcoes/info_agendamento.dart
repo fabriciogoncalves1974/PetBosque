@@ -198,7 +198,7 @@ class InfoAgendamento {
     Database? db = await DB.instance.database;
     Database? dbAgendamento = db;
     return await dbAgendamento!.rawQuery(
-        "SELECT SUM(valorTotal) as total FROM $tabelaAgendamento WHERE idColaborador = $id");
+        "SELECT SUM(valorTotal) as total FROM $tabelaAgendamento WHERE idColaborador  $id");
   }
 
   Future totalAgendamentosColaboradorAvulso(int id) async {
@@ -351,7 +351,7 @@ class InfoAgendamento {
             id: doc['idAgendamento']))
         .toList();
   }
-
+/*
   Future<List> obterTodosAgendamentosColaboradorFirestore(id) async {
     CollectionReference agendamentoCollection =
         FirebaseFirestore.instance.collection('agendamentos');
@@ -406,7 +406,7 @@ class InfoAgendamento {
         FirebaseFirestore.instance.collection('agendamentos');
     planoCollection.doc(id).delete();
   }
-
+*/
 //=========================================================================
 
   //FUNÇÕES API
@@ -417,15 +417,129 @@ class InfoAgendamento {
 
     final response = await http.get(url);
     final map = await jsonDecode(response.body);
-    List<Agendamento> listaPlano = [];
+    List<Agendamento> listaAgendamento = [];
 
     if (map.containsKey("dados") && map["dados"] is List) {
       List listMap = map["dados"];
       for (Map m in listMap) {
-        listaPlano.add(Agendamento.fromJson(m));
+        listaAgendamento.add(Agendamento.fromJson(m));
       }
     }
-    return listaPlano;
+    return listaAgendamento;
+  }
+
+  Future<List> obterTodosAgendamentosColaboradorApi(id) async {
+    final url = Uri.http('fb.servicos.ws',
+        '/petBosque/agendamento/colaborador/$id', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Agendamento> listaAgendamento = [];
+
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+      for (Map m in listMap) {
+        listaAgendamento.add(Agendamento.fromJson(m));
+      }
+    }
+    return listaAgendamento;
+  }
+
+  Future<List> obterTodosAgendamentosColaboradorPeriodoApi(
+      id, dataInicio, dataFinal) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        '/petBosque/agendamento/periodo/$id/$dataInicio/$dataFinal',
+        {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Agendamento> listaAgendamento = [];
+
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+      for (Map m in listMap) {
+        listaAgendamento.add(Agendamento.fromJson(m));
+      }
+    }
+    return listaAgendamento;
+  }
+
+  Future<List> obterTodosAgendamentosPendentesApi() async {
+    final url = Uri.http('fb.servicos.ws',
+        '/petBosque/agendamento/lista/pendente', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Agendamento> listaAgendamento = [];
+
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+      for (Map m in listMap) {
+        listaAgendamento.add(Agendamento.fromJson(m));
+      }
+    }
+    return listaAgendamento;
+  }
+
+  Future<Agendamento?> obterDetalheAgendamentoApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/agendamento/lista/$id', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    //List<dynamic> listMap = map["dados"];
+
+    // Map<String, dynamic> primeiroMap = listMap.first;
+
+    Agendamento primeiroAgendamento = Agendamento.fromJson(map["dados"]);
+    return primeiroAgendamento;
+  }
+
+  Future totalAgendamentosColaboradorAvulsoApi(
+      id, dataInicio, dataFinal) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        '/petBosque/agendamento/totalAvulso/$id/$dataInicio/$dataFinal',
+        {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<dynamic> listMap = map["dados"];
+
+    Map<String, dynamic> primeiroMap = listMap.first;
+
+    return primeiroMap;
+  }
+
+  Future totalAgendamentosColaboradorPlanoApi(id, dataInicio, dataFinal) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        '/petBosque/agendamento/totalPlano/$id/$dataInicio/$dataFinal',
+        {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<dynamic> listMap = map["dados"];
+
+    Map<String, dynamic> primeiroMap = listMap.first;
+
+    return primeiroMap;
+  }
+
+  Future quantidadeAgendamentosColaboradorApi(id, dataInicio, dataFinal) async {
+    final url = Uri.http(
+        'fb.servicos.ws',
+        '/petBosque/agendamento/quantidade/$id/$dataInicio/$dataFinal',
+        {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<dynamic> listMap = map["dados"];
+
+    Map<String, dynamic> primeiroMap = listMap.first;
+
+    return primeiroMap;
   }
 
   Future<String> salvarAgendamentoApi(Agendamento agendamento) async {
@@ -491,6 +605,62 @@ class InfoAgendamento {
       Uri.parse("$url"),
       body: {
         "_method": "DELETE",
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> atualizarStatusApi(
+      String id,
+      String status,
+      String colaborador,
+      String idColaborador,
+      String participante,
+      String idParticipante) async {
+    final url = Uri.http('fb.servicos.ws',
+        '/petBosque/agendamento/status/' + id, {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "PUT",
+        "status": status.toString(),
+        "colaborador": colaborador.toString(),
+        "idColaborador": idColaborador.toString(),
+        "participante": participante.toString(),
+        "idParticipante": idParticipante.toString(),
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> atualizaPlanoVencidoApi(String id, String planoVencido) async {
+    final url = Uri.http('fb.servicos.ws',
+        '/petBosque/agendamento/planoVencido/' + id, {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "PUT",
+        "planoVencido": planoVencido.toString(),
       },
     );
     String retorno = "";

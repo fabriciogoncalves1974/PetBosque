@@ -1,12 +1,14 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:pet_bosque/funcoes/info_especie.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
 import 'package:pet_bosque/funcoes/info_plano.dart';
+import 'package:pet_bosque/funcoes/info_raca.dart';
 import 'package:pet_bosque/paginas/lista_pet_contato.dart';
 import 'package:uuid/uuid.dart';
 
@@ -25,8 +27,12 @@ class NovoPet extends StatefulWidget {
 
 InfoPet info = InfoPet();
 InfoPlano infoPlano = InfoPlano();
+InfoEspecie infoEspecie = InfoEspecie();
+InfoRaca infoRaca = InfoRaca();
 List<Pet> pet = [];
 List<Plano> itens = [];
+List<Especie> itensEspecie = [];
+List<Raca> itensRaca = [];
 List itensContaPlano = [];
 bool temPlano = false;
 
@@ -41,10 +47,11 @@ final String dataCadastro = DateFormat("yyyy-MM-dd").format(DateTime.now());
 
 class _NovoPetState extends State<NovoPet> {
   Genero? _genero = Genero.Macho;
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  // FirebaseFirestore db = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
   final _nomePetController = TextEditingController();
-
+  final _especieController = TextEditingController();
+  final _racaController = TextEditingController();
   final _nomeFocus = FocusNode();
 
   late Pet _editarPet;
@@ -54,7 +61,7 @@ class _NovoPetState extends State<NovoPet> {
   get formatado => null;
 
   Plano? selectedValue;
-
+  bool habilitaRaca = false;
   String? porteSelecionado;
   dynamic contaPlano;
 
@@ -67,11 +74,13 @@ class _NovoPetState extends State<NovoPet> {
   @override
   void initState() {
     super.initState();
+    _obterEspecie();
     _obterPlanos();
     _editarPet = Pet.fromMap(widget._pet.toMap());
     _editarPet.idContato = widget.idContato;
     _editarPet.genero = "Macho";
     _nomePetController.text = _editarPet.nomePet ?? '';
+    _especieController.text = _editarPet.especie ?? '';
   }
 
   DateTime _dateTime = DateTime.now();
@@ -174,8 +183,15 @@ class _NovoPetState extends State<NovoPet> {
                           content: Text(
                             menssagem,
                             style: const TextStyle(
-                              fontSize: 20,
+                              color: Color.fromARGB(255, 73, 66, 2),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
                             ),
+                          ),
+                          icon: const Icon(
+                            Icons.check,
+                            weight: 30,
+                            color: Colors.green,
                           ),
                         );
                       });
@@ -436,22 +452,62 @@ class _NovoPetState extends State<NovoPet> {
                   //Use of SizedBox
                   height: 20,
                 ),
-                TextFormField(
-                  textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      //Fundo do textfield branco
-                      //filled: true,
-                      //fillColor: Colors.white,
-                      labelText: "Raça",
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.all(10),
-                      )),
-                  onChanged: (text) {
-                    _petEditado = true;
-                    _editarPet.raca = text;
+                TypeAheadField<Especie>(
+                  textFieldConfiguration: TextFieldConfiguration(
+                      controller: _especieController,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Espécie',
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(10),
+                          ))),
+                  suggestionsCallback: (pattern) async {
+                    return await pesquisaEspecie(pattern);
+                  },
+                  itemBuilder: (context, suggestion) {
+                    return ListTile(
+                      title: Text(suggestion.nome!),
+                    );
+                  },
+                  onSuggestionSelected: (suggestion) {
+                    setState(() {
+                      _especieController.text = suggestion.nome!;
+                      _petEditado = true;
+                      _editarPet.especie = suggestion.nome;
+                      habilitaRaca = true;
+                      _obterRaca(suggestion.id);
+                    });
                   },
                 ),
+                const SizedBox(
+                  height: 35,
+                ),
+                if (habilitaRaca == true)
+                  TypeAheadField<Raca>(
+                    textFieldConfiguration: TextFieldConfiguration(
+                        controller: _racaController,
+                        decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Raça',
+                            prefixIcon: Padding(
+                              padding: EdgeInsets.all(10),
+                            ))),
+                    suggestionsCallback: (pattern2) async {
+                      return await pesquisaRaca(pattern2);
+                    },
+                    itemBuilder: (context, suggestion2) {
+                      return ListTile(
+                        title: Text(suggestion2.nome!),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion2) {
+                      setState(() {
+                        _racaController.text = suggestion2.nome!;
+                        _petEditado = true;
+                        _editarPet.raca = suggestion2.nome;
+                      });
+                    },
+                  ),
                 Row(children: [
                   const SizedBox(
                     width: 35,
@@ -557,19 +613,6 @@ class _NovoPetState extends State<NovoPet> {
                       });
                     },
                   ),
-                ),
-                TextFormField(
-                  textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Especie",
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.all(0),
-                      )),
-                  onChanged: (text) {
-                    _petEditado = true;
-                    _editarPet.especie = text;
-                  },
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 50.0),
@@ -689,11 +732,45 @@ class _NovoPetState extends State<NovoPet> {
     _editarPet.especie ??= "";
   }
 
-  void _obterPlanos() {
-    infoPlano.obterTodosPlanosApi().then((dynamic listaPlano) {
+  Future _obterPlanos() async {
+    await infoPlano.obterTodosPlanosApi().then((dynamic listaPlano) {
       setState(() {
         itens = listaPlano;
       });
     });
+  }
+
+  Future _obterEspecie() async {
+    await infoEspecie.obterTodasEspecieApi().then((dynamic listaEspecie) {
+      setState(() {
+        itensEspecie = listaEspecie;
+      });
+    });
+  }
+
+  Future pesquisaEspecie(String param) async {
+    List result = itensEspecie
+        .where((element) =>
+            element.nome!.toLowerCase().contains(param.toLowerCase()))
+        .toList();
+
+    return result;
+  }
+
+  Future _obterRaca(id) async {
+    await infoRaca.pesquisarRacaApi(id).then((dynamic listaRaca) {
+      setState(() {
+        itensRaca = listaRaca;
+      });
+    });
+  }
+
+  Future pesquisaRaca(String param) async {
+    List result = itensRaca
+        .where((element) =>
+            element.nome!.toLowerCase().contains(param.toLowerCase()))
+        .toList();
+
+    return result;
   }
 }

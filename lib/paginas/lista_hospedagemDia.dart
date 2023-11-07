@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -104,11 +103,11 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
     });
   }
 
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  //FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
-    db.collection('hospedagem').snapshots().listen(
+    /* db.collection('hospedagem').snapshots().listen(
       (event) {
         setState(() {
           _dataAgendamento = DateFormat("dd/MM/yyyy").format(_dateTime);
@@ -116,7 +115,7 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
           loading = false;
         });
       },
-    );
+    );*/
   }
 
   @override
@@ -251,7 +250,7 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
                   icon: Icons.delete,
                   caption: 'Excluir',
                   onTap: () {
-                    info.deletarHospedagemFirestore(hospedagen[index].id!);
+                    // info.deletarHospedagemFirestore(hospedagen[index].id!);
                     setState(() {
                       hospedagen.removeAt(index);
                     });
@@ -438,7 +437,7 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
   }
 
   void _obterTodasHospedagem(String data) {
-    info.obterTodasHospedagemDiaFirestore(data).then((dynamic list) {
+    /* info.obterTodasHospedagemDiaFirestore(data).then((dynamic list) {
       setState(() {
         hospedagen = list;
         String timestamp = DateFormat('dd/MM/yyyy, hh:MM')
@@ -449,6 +448,11 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
         DateTime end = DateTime.parse(timestamp2);
         var diaria = DateTimeRange(start: start, end: end).duration.inDays;
         print("diaria $diaria");
+      });
+    });*/
+    info.obterTodasHospedagensApi().then((dynamic list) {
+      setState(() {
+        hospedagen = list;
       });
     });
   }

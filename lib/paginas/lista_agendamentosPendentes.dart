@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/paginas/detalhe_agendamento.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
@@ -79,19 +79,15 @@ class _ListaAgendamentosPendentesState
     );
   }
 
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  // FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
 
-    db.collection('agendamentos').snapshots().listen(
-      (event) {
-        setState(() {
-          _obterTodosAgendamentosPendentes();
-          loading = false;
-        });
-      },
-    );
+    setState(() {
+      _obterTodosAgendamentosPendentes();
+      loading = false;
+    });
   }
 
   @override
@@ -143,6 +139,8 @@ class _ListaAgendamentosPendentesState
   }
 
   Widget _cartaoContato(BuildContext context, int index) {
+    DateTime data = DateTime.parse(agendamento[index].data.toString());
+    double valorTotal = double.parse(agendamento[index].valorTotal!.toString());
     if (agendamento[index].status == "Pendente") {
       corStatus = corPendente;
     }
@@ -164,7 +162,7 @@ class _ListaAgendamentosPendentesState
                 icon: Icons.delete,
                 caption: 'Excluir',
                 onTap: () {
-                  info.deletarAgendamentoFirestore(agendamento[index].id!);
+                  //info.deletarAgendamentoFirestore(agendamento[index].id!);
                   setState(() {
                     agendamento.removeAt(index);
                   });
@@ -197,7 +195,7 @@ class _ListaAgendamentosPendentesState
                         ),
                       ),
                       Text(
-                        agendamento[index].data ?? "",
+                        DateFormat("dd/MM/yyyy").format(data) ?? "",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -348,8 +346,7 @@ class _ListaAgendamentosPendentesState
                         ),
                       ),
                       Text(
-                        "R\$ ${agendamento[index].valorTotal!.toStringAsFixed(2)}" ??
-                            "",
+                        "R\$ " + valorTotal!.toStringAsFixed(2) ?? "",
                         style: const TextStyle(
                           fontSize: 12,
                         ),
@@ -371,7 +368,7 @@ class _ListaAgendamentosPendentesState
   }
 
   void _obterTodosAgendamentosPendentes() {
-    info.obterTodosAgendamentosPendentesFirestore().then((dynamic list) {
+    info.obterTodosAgendamentosPendentesApi().then((dynamic list) {
       setState(() {
         agendamento = list;
       });

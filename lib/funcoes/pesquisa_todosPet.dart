@@ -48,7 +48,7 @@ class PesquisaTodosPetPage extends SearchDelegate<Pet?> {
   @override
   Widget buildSuggestions(BuildContext context) {
     return FutureBuilder<List<Pet>>(
-      future: _pesquisarTodosPets(),
+      //future: _pesquisarTodosPets(),
       builder: (context, snapshot) {
         final List<Pet>? pets = snapshot.data;
         if (snapshot.hasData && pets != null) {
@@ -132,8 +132,8 @@ class PesquisaTodosPetPage extends SearchDelegate<Pet?> {
                                                           10)),
                                             ),
                                             onPressed: () {
-                                              infoPet.deletarPetFirestore(
-                                                  pets[index].id!);
+                                              //infoPet.deletarPetFirestore(
+                                              // pets[index].id!);
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -418,7 +418,7 @@ class PesquisaTodosPetPage extends SearchDelegate<Pet?> {
     );
   }
 
-  Future<List<Pet>> _pesquisarTodosPets() {
-    return infoPet.pesquisarTodosPetFirestore(query);
-  }
+  // Future<List<Pet>> _pesquisarTodosPets() {
+  //  return infoPet.pesquisarTodosPetFirestore(query);
+  // }
 }

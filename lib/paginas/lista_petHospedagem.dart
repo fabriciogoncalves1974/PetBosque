@@ -208,7 +208,7 @@ class _ListaPetHospedagem extends State<ListaPetHospedagem> {
   }
 
   void _obterTodosPet() {
-    info.obterTodosPetFirestore().then((dynamic list) {
+    info.obterTodosPetApi().then((dynamic list) {
       setState(() {
         pet = list;
       });

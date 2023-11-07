@@ -1,25 +1,30 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:pet_bosque/funcoes/info_plano.dart';
+import 'package:pet_bosque/funcoes/info_especie.dart';
+import 'package:pet_bosque/funcoes/info_raca.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
-import 'package:pet_bosque/paginas/novo_plano.dart';
+import 'package:pet_bosque/paginas/nova_raca.dart';
 
 enum OrderOption { orderaz, orderza }
 
-class ListaPlanos extends StatefulWidget {
-  const ListaPlanos({Key? key}) : super(key: key);
+class ListaRaca extends StatefulWidget {
+  const ListaRaca({Key? key}) : super(key: key);
 
   @override
-  State<ListaPlanos> createState() => _ListaPlanosState();
+  State<ListaRaca> createState() => _ListaRacaState();
 }
 
 //FirebaseFirestore db = FirebaseFirestore.instance;
 
-class _ListaPlanosState extends State<ListaPlanos> {
-  InfoPlano info = InfoPlano();
+class _ListaRacaState extends State<ListaRaca> {
+  InfoRaca info = InfoRaca();
+  InfoEspecie infoEspecie = InfoEspecie();
   bool loading = true;
-  List<Plano> plano = [];
+  List<Raca> raca = [];
+  List<Especie> itensEspecie = [];
 
+  Especie? selectedValue;
   paginaInicial() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -34,7 +39,8 @@ class _ListaPlanosState extends State<ListaPlanos> {
   void initState() {
     super.initState();
     setState(() {
-      _obterTodosPlanos();
+      _obterTodasRaca();
+      _obterEspecie();
     });
   }
 
@@ -50,8 +56,46 @@ class _ListaPlanosState extends State<ListaPlanos> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text("Planos"),
+          title: const Text("Raça"),
           centerTitle: true,
+          actions: <Widget>[
+            DropdownButtonHideUnderline(
+              child: DropdownButton2(
+                hint: Text(
+                  'Todas Especies',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).hintColor,
+                  ),
+                ),
+                items: itensEspecie
+                    .map((item) => DropdownMenuItem<Especie>(
+                          value: item,
+                          child: Text(
+                            item.nome.toString(),
+                            style: const TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ))
+                    .toList(),
+                value: selectedValue,
+                onChanged: (value) {
+                  setState(() {
+                    selectedValue = value;
+                    _pesquisaRaca(value!.id);
+                  });
+                },
+                buttonStyleData: const ButtonStyleData(
+                  height: 40,
+                  width: 140,
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  height: 40,
+                ),
+              ),
+            ),
+          ],
           automaticallyImplyLeading: false,
           leading: IconButton(
             onPressed: () {
@@ -63,7 +107,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => NovoPlano()));
+                MaterialPageRoute(builder: (context) => NovaRaca()));
           },
           icon: const Icon(Icons.add),
           backgroundColor: const Color.fromRGBO(35, 151, 166, 1),
@@ -74,7 +118,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
         body: !loading
             ? ListView.builder(
                 padding: const EdgeInsets.all(10.0),
-                itemCount: plano.length,
+                itemCount: raca.length,
                 itemBuilder: (context, index) {
                   return _cartaoPet(context, index);
                 })
@@ -106,7 +150,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
                     builder: (context) {
                       return AlertDialog(
                         title: Text(
-                            "Deseja realmente excluir o plano  ${plano[index].nomePlano}!"),
+                            "Deseja realmente excluir a raça  ${raca[index].nome}!"),
                         actions: <Widget>[
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -140,7 +184,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
                                   borderRadius: BorderRadius.circular(10)),
                             ),
                             onPressed: () {
-                              excluirPlano(plano[index].id!);
+                              excluirEspecie(raca[index].id!);
                             },
                             child: const Text(
                               "Sim",
@@ -165,7 +209,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
                 Row(
                   children: [
                     const Text(
-                      "Plano: ",
+                      "Raça: ",
                       style: TextStyle(
                         color: Color.fromARGB(255, 73, 66, 2),
                         fontSize: 16,
@@ -173,7 +217,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
                       ),
                     ),
                     Text(
-                      plano[index].nomePlano ?? "",
+                      raca[index].nome ?? "",
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -181,130 +225,21 @@ class _ListaPlanosState extends State<ListaPlanos> {
                     ),
                   ],
                 ),
-                const Row(children: [
-                  Text(
-                    "Serviços: ",
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 73, 66, 2),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ]),
-                Row(children: [
-                  if (plano[index].svBanho == "S")
-                    const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    ),
-                  if (plano[index].svBanho == "S")
-                    const Text(
-                      "Banho",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  if (plano[index].svTosa == "S")
-                    const Icon(color: Colors.green, Icons.check),
-                  if (plano[index].svTosa == "S")
-                    const Text(
-                      "Tosa",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  if (plano[index].svTosaHigienica == "S")
-                    const Icon(color: Colors.green, Icons.check),
-                  if (plano[index].svTosaHigienica == "S")
-                    const Text(
-                      "Tosa Hig",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  if (plano[index].svHidratacao == "S")
-                    const Icon(color: Colors.green, Icons.check),
-                  if (plano[index].svHidratacao == "S")
-                    const Text(
-                      "Hidratação",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                ]),
-                Row(children: [
-                  if (plano[index].svPintura == "S")
-                    const Icon(color: Colors.green, Icons.check),
-                  if (plano[index].svPintura == "S")
-                    const Text(
-                      "Pintura",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  if (plano[index].svCorteUnha == "S")
-                    const Icon(color: Colors.green, Icons.check),
-                  if (plano[index].svCorteUnha == "S")
-                    const Text(
-                      "Corte Unha",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  if (plano[index].svHospedagem == "S")
-                    const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    ),
-                  if (plano[index].svHospedagem == "S")
-                    const Text(
-                      "Hospedagem",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  if (plano[index].svTransporte == "S")
-                    const Icon(color: Colors.green, Icons.check),
-                  if (plano[index].svTransporte == "S")
-                    const Text(
-                      "Transporte",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                ]),
                 Row(
                   children: [
                     const Text(
-                      "Nº de Banhos ",
+                      "Espécie: ",
                       style: TextStyle(
                         color: Color.fromARGB(255, 73, 66, 2),
-                        fontSize: 12,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      plano[index].contaPlano.toString() ?? "",
+                      raca[index].especie ?? "",
                       style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      "Valor: ",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 73, 66, 2),
-                        fontSize: 12,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      plano[index].valor.toString() ?? "",
-                      style: const TextStyle(
-                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -318,8 +253,8 @@ class _ListaPlanosState extends State<ListaPlanos> {
     );
   }
 
-  void excluirPlano(id) {
-    info.excluirPlanoApi(id).then((value) {
+  void excluirEspecie(id) {
+    info.excluirRacaApi(id).then((value) {
       menssagem = value;
 
       setState(() {
@@ -345,30 +280,43 @@ class _ListaPlanosState extends State<ListaPlanos> {
     });
   }
 
-  void _ExibirNovoPlano({Plano? plano}) async {
-    final gravaPlano = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => NovoPlano(
-                  plano: plano,
-                )));
-    if (gravaPlano != null) {
-      if (plano != null) {
-        await info.atualizarPlano(gravaPlano);
+  void _ExibirNovaRaca({Raca? raca}) async {
+    final gravaRaca = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => NovaRaca()));
+    if (gravaRaca != null) {
+      if (raca != null) {
+        await info.atualizarRacaApi(gravaRaca);
 
-        _obterTodosPlanos();
+        _obterTodasRaca();
       } else {
-        await info.salvarPlano(gravaPlano);
+        await info.salvarRacaApi(gravaRaca);
       }
-      _obterTodosPlanos();
+      _obterTodasRaca();
     }
   }
 
-  Future _obterTodosPlanos() async {
-    await info.obterTodosPlanosApi().then((dynamic list) {
+  Future _obterTodasRaca() async {
+    await info.obterTodasRacaApi().then((dynamic list) {
       setState(() {
-        plano = list;
+        raca = list;
         loading = false;
+      });
+    });
+  }
+
+  Future _pesquisaRaca(id) async {
+    await info.pesquisarRacaApi(id).then((dynamic listaRaca) {
+      setState(() {
+        raca = listaRaca;
+        loading = false;
+      });
+    });
+  }
+
+  Future _obterEspecie() async {
+    await infoEspecie.obterTodasEspecieApi().then((dynamic listaEspecie) {
+      setState(() {
+        itensEspecie = listaEspecie;
       });
     });
   }

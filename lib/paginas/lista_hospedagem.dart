@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -37,6 +36,8 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
   Color corStatus = const Color.fromRGBO(202, 236, 236, 1);
   bool loading = true;
   String statusSelecionado = 'Pendente';
+  late String mensagem;
+  bool vazio = false;
 
   var status = [
     'Pendente',
@@ -105,19 +106,16 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
     });
   }
 
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  //FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
-    db.collection('hospedagem').snapshots().listen(
-      (event) {
-        setState(() {
-          _dataAgendamento = DateFormat("dd/MM/yyyy").format(_dateTime);
-          _obterTodasHospedagem(statusSelecionado);
-          loading = false;
-        });
-      },
-    );
+
+    setState(() {
+      _dataAgendamento = DateFormat("dd/MM/yyyy").format(_dateTime);
+      _obterTodasHospedagem(statusSelecionado);
+      loading = false;
+    });
   }
 
   @override
@@ -188,7 +186,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
             paginaPetHospedagem();
           },
           icon: const Icon(Icons.add),
-          backgroundColor: Color.fromRGBO(35, 151, 166, 1),
+          backgroundColor: const Color.fromRGBO(35, 151, 166, 1),
           hoverColor: const Color.fromRGBO(35, 151, 166, 50),
           foregroundColor: Colors.white,
           label: const Text("Novo"),
@@ -198,7 +196,38 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                 padding: const EdgeInsets.all(10.0),
                 itemCount: hospedagen.length,
                 itemBuilder: (context, index) {
-                  return _cartaoHospedagem(context, index);
+                  if (vazio == true) {
+                    return Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              color: const Color.fromRGBO(204, 236, 247, 100),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: const Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "menssagemmmm",
+                                        style: TextStyle(
+                                          color: Color.fromARGB(255, 73, 66, 2),
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ])));
+                  } else {
+                    return _cartaoHospedagem(context, index);
+                  }
                 })
             : const Center(
                 child: CircularProgressIndicator(
@@ -252,7 +281,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                   icon: Icons.delete,
                   caption: 'Excluir',
                   onTap: () {
-                    info.deletarHospedagemFirestore(hospedagen[index].id!);
+                    //info.deletarHospedagemFirestore(hospedagen[index].id!);
                     setState(() {
                       hospedagen.removeAt(index);
                     });
@@ -437,18 +466,17 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
         });
   }
 
-  void _obterTodasHospedagem(String status) {
-    info.obterTodasHospedagensApi().then((dynamic list) {
+  Future _obterTodasHospedagem(String status) async {
+    await info
+        .obterTodasHospedagensStatusApi(statusSelecionado)
+        .then((dynamic list) {
       setState(() {
         hospedagen = list;
-
-        /* String timestamp = DateFormat('dd/MM/yyyy').format(
-            hospedagen[0].dataCheckIn.fromMillisecondsSinceEpoch.toDate());
-        DateTime start = DateTime.parse(timestamp);
-        String timestamp2 = DateFormat('dd/MM/yyyy').format(
-            hospedagen[0].dataCheckOut.fromMillisecondsSinceEpoch.toDate());
-        DateTime end = DateTime.parse(timestamp2);
-        var diaria = DateTimeRange(start: start, end: end).duration.inDays;*/
+        if (hospedagen.isEmpty) {
+          vazio = true;
+        } else {
+          vazio = false;
+        }
       });
     });
   }

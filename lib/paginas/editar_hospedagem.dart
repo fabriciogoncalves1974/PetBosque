@@ -35,7 +35,7 @@ class _EditarHospedagemState extends State<EditarHospedagem> {
   bool _hospedagemEditada = false;
   int diaria = 0;
   double totalHospedagem = 0;
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  //FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
@@ -267,7 +267,7 @@ class _EditarHospedagemState extends State<EditarHospedagem> {
                   _totalHospedagem();
                   // info.salvarHospedagem(_editarHospedagem);
 
-                  db.collection("hospedagem").doc(_editarHospedagem.id).set({
+                  /*  db.collection("hospedagem").doc(_editarHospedagem.id).set({
                     "idHospedagem": _editarHospedagem.id,
                     "idPet": _editarHospedagem.idPet,
                     "nomeContato": _editarHospedagem.nomeContato,
@@ -287,7 +287,7 @@ class _EditarHospedagemState extends State<EditarHospedagem> {
                     "idColaborador": _editarHospedagem.idColaborador,
                     "genero": _editarHospedagem.genero,
                     "porte": _editarHospedagem.porte
-                  });
+                  });*/
 
                   _limpaCampos();
                   Navigator.push(

@@ -17,13 +17,13 @@ class list {
 
 class _ListaState extends State<Lista> {
   InfoPlano info = InfoPlano();
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  //FirebaseFirestore db = FirebaseFirestore.instance;
 
   List<Plano> plano = [];
 
   @override
   void initState() {
-    db.collection('planos').snapshots().listen((query) {
+    /*  db.collection('planos').snapshots().listen((query) {
       List list = [];
       query.docs.forEach((doc) {
         setState(() {
@@ -31,7 +31,7 @@ class _ListaState extends State<Lista> {
           print(list);
         });
       });
-    });
+    });*/
     super.initState();
   }
 

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_bosque/funcoes/info_plano.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
@@ -70,7 +69,7 @@ class _NovoPlanoState extends State<NovoPlano> {
   late Plano _editarPlano;
   bool loading = false;
   String menssagem = "";
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  //FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
@@ -105,8 +104,10 @@ class _NovoPlanoState extends State<NovoPlano> {
             title: const Text("Novo Plano"),
             leading: BackButton(onPressed: () {
               if (_planoEditado != true) {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => ListaPlanos()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => Inicio(
+                          index: 4,
+                        )));
               }
               _retornaPop(context);
             }),
@@ -127,23 +128,6 @@ class _NovoPlanoState extends State<NovoPlano> {
                 verificaNull();
                 info.salvarPlanoApi(_editarPlano).then((value) {
                   menssagem = value;
-                  ;
-                  // info.salvarPlano(_editarPlano);
-                  /*String id = Uuid().v1();
-                db.collection("planos").doc(id).set({
-                  "idPlano": id,
-                  "nomePlano": _editarPlano.nomePlano,
-                  "svBanho": _editarPlano.svBanho,
-                  "svTosa": _editarPlano.svTosa,
-                  "svCorteUnha": _editarPlano.svCorteUnha,
-                  "svHidratacao": _editarPlano.svHidratacao,
-                  "svTosaHigienica": _editarPlano.svTosaHigienica,
-                  "svPintura": _editarPlano.svPintura,
-                  "svHospedagem": _editarPlano.svHospedagem,
-                  "svTransporte": _editarPlano.svTransporte,
-                  "contaPlano": _editarPlano.contaPlano,
-                  "valor": _editarPlano.valor,
-                });*/
                   setState(() {
                     showDialog(
                         context: context,
@@ -153,17 +137,22 @@ class _NovoPlanoState extends State<NovoPlano> {
                             loading = false;
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) => const Inicio(
-                                        index: 4,
-                                      )),
+                                  builder: (context) => const ListaPlanos()),
                             );
                           });
                           return AlertDialog(
                             content: Text(
                               menssagem,
                               style: const TextStyle(
-                                fontSize: 20,
+                                color: Color.fromARGB(255, 73, 66, 2),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
                               ),
+                            ),
+                            icon: const Icon(
+                              Icons.check,
+                              weight: 30,
+                              color: Colors.green,
                             ),
                           );
                         });
@@ -203,14 +192,12 @@ class _NovoPlanoState extends State<NovoPlano> {
                   },
                 ),
                 const SizedBox(
-                  //Use of SizedBox
                   height: 20,
                 ),
                 Row(children: [
                   Checkbox(
                       value: svcBanho,
                       onChanged: (checked) {
-                        print(checked);
                         setState(() {
                           svcBanho = checked!;
                           _editarPlano.svBanho = "S";
@@ -226,7 +213,6 @@ class _NovoPlanoState extends State<NovoPlano> {
                   Checkbox(
                       value: svcTosa,
                       onChanged: (checked) {
-                        print(checked);
                         setState(() {
                           svcTosa = checked!;
                           _editarPlano.svTosa = "S";
@@ -242,7 +228,6 @@ class _NovoPlanoState extends State<NovoPlano> {
                   Checkbox(
                       value: svcTosaHigienica,
                       onChanged: (checked) {
-                        print(checked);
                         setState(() {
                           svcTosaHigienica = checked!;
                           _editarPlano.svTosaHigienica = "S";
@@ -258,7 +243,6 @@ class _NovoPlanoState extends State<NovoPlano> {
                   Checkbox(
                       value: svcCorteUnha,
                       onChanged: (checked) {
-                        print(checked);
                         setState(() {
                           svcCorteUnha = checked!;
                           _editarPlano.svCorteUnha = "S";
@@ -274,7 +258,6 @@ class _NovoPlanoState extends State<NovoPlano> {
                   Checkbox(
                       value: svcHidratacao,
                       onChanged: (checked) {
-                        print(checked);
                         setState(() {
                           svcHidratacao = checked!;
                           _editarPlano.svHidratacao = "S";
@@ -335,7 +318,6 @@ class _NovoPlanoState extends State<NovoPlano> {
                   ),
                 ]),
                 const SizedBox(
-                  //Use of SizedBox
                   height: 20,
                 ),
                 Row(children: [
@@ -364,7 +346,6 @@ class _NovoPlanoState extends State<NovoPlano> {
                   ),
                 ]),
                 const SizedBox(
-                  //Use of SizedBox
                   height: 20,
                 ),
                 TextFormField(
@@ -385,7 +366,6 @@ class _NovoPlanoState extends State<NovoPlano> {
                   },
                 ),
                 const SizedBox(
-                  //Use of SizedBox
                   height: 20,
                 ),
               ]),
@@ -449,8 +429,10 @@ class _NovoPlanoState extends State<NovoPlano> {
                         borderRadius: BorderRadius.circular(10)),
                   ),
                   onPressed: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => ListaPlanos()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => Inicio(
+                              index: 4,
+                            )));
                   },
                   child: const Text(
                     "Continuar",

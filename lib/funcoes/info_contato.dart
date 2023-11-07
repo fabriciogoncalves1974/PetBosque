@@ -249,7 +249,7 @@ class InfoContato {
 //=========================================================================
 
   //FUNÇÕES FIRESTORE
-
+/*
   Future<List> obterTodosContatosFirestore() async {
     CollectionReference contatoCollection =
         FirebaseFirestore.instance.collection('contato');
@@ -318,7 +318,7 @@ class InfoContato {
     CollectionReference planoCollection =
         FirebaseFirestore.instance.collection('contato');
     planoCollection.doc(id).delete();
-  }
+  }*/
 }
 //=========================================================================
 

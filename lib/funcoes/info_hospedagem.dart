@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
@@ -188,7 +187,7 @@ class InfoHospedagem {
     Database? dbHospedagem = db;
     dbHospedagem!.close();
   }
-
+/*
   Future<List> obterTodasHospedagemDiaFirestore(data) async {
     CollectionReference hospedagemCollection =
         FirebaseFirestore.instance.collection('hospedagem');
@@ -285,7 +284,7 @@ class InfoHospedagem {
     CollectionReference planoCollection =
         FirebaseFirestore.instance.collection('hospedagem');
     planoCollection.doc(id).delete();
-  }
+  }*/
 
 //=========================================================================
 
@@ -306,6 +305,37 @@ class InfoHospedagem {
       }
     }
     return listaHospedagem;
+  }
+
+  Future<List> obterTodasHospedagensStatusApi(String status) async {
+    final url = Uri.http('fb.servicos.ws',
+        '/petBosque/hospedagem/lista/status/$status', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Hospedagem> listaHospedagem = [];
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+
+      for (Map m in listMap) {
+        listaHospedagem.add(Hospedagem.fromJson(m));
+      }
+    }
+    return listaHospedagem;
+  }
+
+  Future<Hospedagem?> obterDetalheHospedagemApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/hospedagem/lista/$id', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    //List<dynamic> listMap = map["dados"];
+
+    // Map<String, dynamic> primeiroMap = listMap.first;
+
+    Hospedagem primeiraHospedagem = Hospedagem.fromJson(map["dados"]);
+    return primeiraHospedagem;
   }
 
   Future<String> salvarHospedagemApi(Hospedagem hospedagem) async {
@@ -333,6 +363,32 @@ class InfoHospedagem {
         'status': hospedagem.status.toString(),
         'valorDia': hospedagem.valorDia.toString(),
         'valorTotal': hospedagem.valorTotal.toString(),
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
+  Future<String> atualizarStatusApi(String id, String status,
+      String colaborador, String idColaborador) async {
+    final url = Uri.http('fb.servicos.ws', '/petBosque/hospedagem/status/' + id,
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "PUT",
+        "status": status.toString(),
+        "colaborador": colaborador.toString(),
+        "idColaborador": idColaborador.toString(),
       },
     );
     String retorno = "";
@@ -382,9 +438,9 @@ class Hospedagem {
   String? fotoPet;
   String? nomePet;
   dynamic dataCheckIn;
-  dynamic? horaCheckIn;
+  dynamic horaCheckIn;
   dynamic dataCheckOut;
-  String? horaCheckOut;
+  dynamic horaCheckOut;
   dynamic dia;
   dynamic valorDia;
   dynamic adicional;

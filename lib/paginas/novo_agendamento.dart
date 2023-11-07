@@ -112,7 +112,7 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
   late TimeOfDay picked;
   late String hora;
   String _infoValor = "0,00";
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  //FirebaseFirestore db = FirebaseFirestore.instance;
   void _executaFuncoes() {
     verificaNull();
     _total();

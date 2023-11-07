@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
@@ -49,7 +48,7 @@ class _PrincipalState extends State<Principal> {
   void initState() {
     super.initState();
     // fetchClientes();
-    formatFirestoreTimestamp();
+    // formatFirestoreTimestamp();
     _obterTodosAgendamentos(data);
     //_obterQuantidadeAgendamentos();
     //_obterQuantidadeHospedagem();
@@ -313,34 +312,38 @@ class _PrincipalState extends State<Principal> {
                   if (contatoPrimeiroAgendamento == "")
                     Row(
                       children: [
-                        InkWell(
-                          child: Container(
-                              height: 115,
-                              width: 380,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.white,
-                                ),
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color.fromRGBO(204, 236, 247, 100),
-                              ),
-                              child: const Column(children: [
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(children: [
-                                  Text(
-                                    "Sem agendamentos para hoje!  ",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 14.0,
-                                      color: Colors.black,
-                                    ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: InkWell(
+                            child: Container(
+                                height: 115,
+                                width: 380,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.white,
                                   ),
-                                ]),
-                              ])),
-                          onTap: () {},
-                        ),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color:
+                                      const Color.fromRGBO(204, 236, 247, 100),
+                                ),
+                                child: const Column(children: [
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(children: [
+                                    Text(
+                                      "Sem agendamentos para hoje!  ",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ]),
+                                ])),
+                            onTap: () {},
+                          ),
+                        )
                       ],
                     ),
                   const SizedBox(
@@ -535,22 +538,6 @@ class _PrincipalState extends State<Principal> {
                         ),
                       ],
                     ),
-                  Row(
-                    children: [
-                      Text(
-                        'Date: $formattedDate',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: salvar,
-                        child: Text('Salvar'),
-                      ),
-                    ],
-                  )
                 ],
               ),
             ),
@@ -570,16 +557,17 @@ class _PrincipalState extends State<Principal> {
     });
   }*/
   void salvar() {
+    /*
     DateTime data = DateTime.now();
     FirebaseFirestore db = FirebaseFirestore.instance;
     db.collection("teste").doc().set({
       "data": data,
-    });
+    });*/
   }
 
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  //final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<void> formatFirestoreTimestamp() async {
+  /* Future<void> formatFirestoreTimestamp() async {
     try {
       FirebaseFirestore db = FirebaseFirestore.instance;
       QuerySnapshot query = await db.collection('teste').get();
@@ -602,10 +590,10 @@ class _PrincipalState extends State<Principal> {
     } catch (e) {
       print("Error fetching document: $e");
     }
-  }
+  }*/
 
   void _obterTodasHospedagens(String data) {
-    infoHospedagem
+    /* infoHospedagem
         .obterTodasHospedagemDiaFirestore(dataAgendamento)
         .then((dynamic list) {
       setState(() {
@@ -622,11 +610,11 @@ class _PrincipalState extends State<Principal> {
           horaPrimeiroHospedagem = hospedagem[index2].horaCheckIn.toString()!;
         }
       });
-    });
+    });*/
   }
 
   void _obterTodosAgendamentos(String dataAgendamento) {
-    info.obterTodosAgendamentosFirestore(data).then((dynamic list) {
+    /* info.obterTodosAgendamentosFirestore(data).then((dynamic list) {
       setState(() {
         agendamento = list;
         if (agendamento.isEmpty) {
@@ -642,7 +630,7 @@ class _PrincipalState extends State<Principal> {
           index = index + 1;
         }
       });
-    });
+    });*/
   }
 
   /* Future<void> fetchClientes() async {

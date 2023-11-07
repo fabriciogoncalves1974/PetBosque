@@ -15,7 +15,7 @@ class EditarColaborador extends StatefulWidget {
 }
 
 InfoColaborador info = InfoColaborador();
-FirebaseFirestore db = FirebaseFirestore.instance;
+//FirebaseFirestore db = FirebaseFirestore.instance;
 
 class _EditarColaboradorState extends State<EditarColaborador> {
   final _nomeColaboradorFocus = FocusNode();
@@ -84,7 +84,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
               if (_editarColaborador.nomeColaborador != null &&
                   _editarColaborador.nomeColaborador!.isNotEmpty) {
                 //info.atualizarColaborador(_editarColaborador);
-                db.collection("colaborador").doc(_editarColaborador.id).set({
+                /*  db.collection("colaborador").doc(_editarColaborador.id).set({
                   "idColaborador": _editarColaborador.id,
                   "nomeColaborador": _editarColaborador.nomeColaborador,
                   "funcao": _editarColaborador.funcao,
@@ -92,7 +92,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                   "porcenParticipante": _editarColaborador.porcenParticipante,
                   "metaComissao": _editarColaborador.metaComissao,
                   "status": _editarColaborador.status
-                });
+                });*/
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => ListaColaborador()));
               } else {

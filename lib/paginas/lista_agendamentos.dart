@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -86,7 +85,7 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
     );
   }
 
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  // FirebaseFirestore db = FirebaseFirestore.instance;
   void _showDatePicker(BuildContext context) {
     showDatePicker(
       context: context,
@@ -98,13 +97,13 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
         _dataAgendamento = DateFormat("dd/MM/yyyy").format(value!);
         _dateTime = value;
 
-        db.collection('agendamentos').snapshots().listen(
+        /* db.collection('agendamentos').snapshots().listen(
           (event) {
             setState(() {
               _obterTodosAgendamentos(_dataAgendamento);
             });
           },
-        );
+        );*/
       });
     });
   }
@@ -118,14 +117,10 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
     dataAtual = DateFormat("dd/MM/yyyy").format(_dateTime!);
     _dataAgendamento = DateFormat("dd/MM/yyyy").format(_dateTime);
 
-    db.collection('agendamentos').snapshots().listen(
-      (event) {
-        setState(() {
-          _obterTodosAgendamentos(_dataAgendamento);
-          loading = false;
-        });
-      },
-    );
+    setState(() {
+      _obterTodosAgendamentos(_dataAgendamento);
+      loading = false;
+    });
   }
 
   @override
@@ -265,11 +260,11 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
                                     borderRadius: BorderRadius.circular(10)),
                               ),
                               onPressed: () {
-                                info.deletarAgendamentoFirestore(
+                                /* info.deletarAgendamentoFirestore(
                                     agendamento[index].id!);
                                 setState(() {
                                   agendamento.removeAt(index);
-                                });
+                                });*/
                                 Navigator.pop(context);
                               },
                               child: const Text(

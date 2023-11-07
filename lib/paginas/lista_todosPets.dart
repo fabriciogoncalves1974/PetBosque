@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
 import 'package:pet_bosque/funcoes/pesquisa_todosPet.dart';
 import 'package:pet_bosque/paginas/detalhe_contato.dart';
@@ -20,6 +21,7 @@ class ListaTodosPets extends StatefulWidget {
 class _ListaTodosPetsState extends State<ListaTodosPets> {
   InfoPet info = InfoPet();
   List<Pet> pet = [];
+  bool loading = true;
 
   @override
   void initState() {
@@ -74,12 +76,19 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
               )
             ],
           ),
-          body: ListView.builder(
-              padding: const EdgeInsets.all(10.0),
-              itemCount: pet.length,
-              itemBuilder: (context, index) {
-                return _cartaoPet(context, index);
-              }),
+          body: !loading
+              ? ListView.builder(
+                  padding: const EdgeInsets.all(10.0),
+                  itemCount: pet.length,
+                  itemBuilder: (context, index) {
+                    return _cartaoPet(context, index);
+                  })
+              : const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.greenAccent,
+                    backgroundColor: Colors.grey,
+                  ),
+                ),
         ));
   }
 
@@ -144,7 +153,7 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
                                   borderRadius: BorderRadius.circular(10)),
                             ),
                             onPressed: () {
-                              info.deletarPetFirestore(pet[index].id!);
+                              //  info.deletarPetFirestore(pet[index].id!);
                               setState(() {
                                 pet.removeAt(index);
 
@@ -231,7 +240,9 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
                       ),
                     ),
                     Text(
-                      pet[index].dataCadastro ?? "",
+                      DateFormat("dd/MM/yyyy").format(DateTime.parse(
+                              pet[index].dataCadastro.toString())) ??
+                          "",
                       style: const TextStyle(
                         fontSize: 12,
                       ),
@@ -249,7 +260,9 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
                       ),
                     ),
                     Text(
-                      pet[index].dtNasc ?? "",
+                      DateFormat("dd/MM/yyyy").format(
+                              DateTime.parse(pet[index].dtNasc.toString())) ??
+                          "",
                       style: const TextStyle(
                         fontSize: 12,
                       ),
@@ -375,7 +388,9 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
                         ),
                       ),
                       Text(
-                        pet[index].valorPlano ?? "",
+                        double.parse(pet[index].valorPlano.toString())
+                                .toStringAsFixed(2) ??
+                            "",
                         style: const TextStyle(
                           fontSize: 12,
                         ),
@@ -392,7 +407,9 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
                         ),
                       ),
                       Text(
-                        pet[index].dataContrato ?? "",
+                        DateFormat("dd/MM/yyyy").format(DateTime.parse(
+                                pet[index].dataContrato.toString())) ??
+                            "",
                         style: const TextStyle(
                           fontSize: 12,
                         ),
@@ -450,10 +467,11 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
     _obterTodosPet();
   }
 
-  void _obterTodosPet() {
-    info.obterTodosPetApi().then((dynamic list) {
+  Future _obterTodosPet() async {
+    await info.obterTodosPetApi().then((dynamic list) {
       setState(() {
         pet = list;
+        loading = false;
       });
     });
   }

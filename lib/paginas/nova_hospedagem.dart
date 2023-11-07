@@ -54,7 +54,7 @@ class _NovaHospedagemState extends State<NovaHospedagem> {
   bool _hospedagemEditada = false;
   late int diaria;
   double totalHospedagem = 0;
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  //FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
@@ -293,7 +293,7 @@ class _NovaHospedagemState extends State<NovaHospedagem> {
                   DateTime dtCheckOut =
                       DateTime.parse(_novaHospedagem.dataCheckOut.toString());
                   String id = Uuid().v1();
-                  db.collection("hospedagem").doc(id).set({
+                  /*  db.collection("hospedagem").doc(id).set({
                     "idHospedagem": id,
                     "idPet": _novaHospedagem.idPet,
                     "nomeContato": _novaHospedagem.nomeContato,
@@ -313,7 +313,7 @@ class _NovaHospedagemState extends State<NovaHospedagem> {
                     "idColaborador": _novaHospedagem.idColaborador,
                     "genero": _novaHospedagem.genero,
                     "porte": _novaHospedagem.porte
-                  });
+                  });*/
 
                   _limpaCampos();
                   Navigator.push(

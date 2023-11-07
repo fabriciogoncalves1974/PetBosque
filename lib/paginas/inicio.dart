@@ -10,9 +10,9 @@ import 'package:pet_bosque/paginas/lista_agendamentosPendentes.dart';
 import 'package:pet_bosque/paginas/lista_colaborador.dart';
 import 'package:pet_bosque/paginas/lista_contato.dart';
 import 'package:pet_bosque/paginas/lista_hospedagem.dart';
-import 'package:pet_bosque/paginas/lista_planos.dart';
 import 'package:pet_bosque/paginas/lista_todosPets.dart';
 import 'package:pet_bosque/paginas/principal.dart';
+import 'package:pet_bosque/paginas/tabelas.dart';
 
 class Inicio extends StatefulWidget {
   const Inicio({Key? key, required this.index}) : super(key: key);
@@ -38,7 +38,7 @@ class _InicioState extends State<Inicio> {
     const ListaContatos(),
     const Principal(),
     const ListaTodosPets(),
-    const ListaPlanos(),
+    const Tabelas(),
   ];
 
   @override
@@ -60,7 +60,7 @@ class _InicioState extends State<Inicio> {
   paginaInicial() {
     Navigator.of(context).push(
       MaterialPageRoute(
-          builder: (context) => const Inicio(
+          builder: (context) => Inicio(
                 index: 2,
               )),
     );
@@ -90,6 +90,12 @@ class _InicioState extends State<Inicio> {
           builder: (context) => const Inicio(
                 index: 4,
               )),
+    );
+  }
+
+  paginaTabelas() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const Tabelas()),
     );
   }
 
@@ -203,6 +209,11 @@ class _InicioState extends State<Inicio> {
                     onTap: paginaPlanos,
                   ),
                   CustomListTile(
+                    icone: Icons.attach_money,
+                    texto: "Tabelas",
+                    onTap: paginaTabelas,
+                  ),
+                  CustomListTile(
                     icone: Icons.account_circle,
                     texto: "Colaboradores",
                     onTap: paginaColaboradores,
@@ -250,7 +261,7 @@ class _InicioState extends State<Inicio> {
                   icon: Icons.pets,
                   title: 'Pets',
                 ),
-                TabItem(icon: Icons.attach_money, title: 'Planos'),
+                TabItem(icon: Icons.tab, title: 'Tabelas'),
               ],
               initialActiveIndex: _currentIndex,
               onTap: onTabTapped,

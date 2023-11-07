@@ -46,7 +46,7 @@ class _EditarPetState extends State<EditarPet> {
 
   final _nomeFocus = FocusNode();
   DateTime _dateTime = DateTime.now();
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  //FirebaseFirestore db = FirebaseFirestore.instance;
   late Pet _editarPet;
 
   bool _petEditado = false;
@@ -471,7 +471,7 @@ class _EditarPetState extends State<EditarPet> {
                                         _editarPet.idPlano = '0';
                                         itensContaPlano = [];
                                         planoExcluido = true;
-                                        db
+                                        /*  db
                                             .collection('pet')
                                             .doc(_editarPet.id)
                                             .update({
@@ -479,7 +479,7 @@ class _EditarPetState extends State<EditarPet> {
                                           'nomePlano': 'N',
                                           'planoVencido': 'P',
                                           'contaPlano': 0
-                                        });
+                                        });*/
                                         //_excluirPetPlano(_editarPet.id!);
                                       });
                                       Navigator.push(

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -35,7 +34,7 @@ class NovoContato extends StatefulWidget {
   _NovoContatoState createState() => _NovoContatoState();
 }
 
-FirebaseFirestore db = FirebaseFirestore.instance;
+//FirebaseFirestore db = FirebaseFirestore.instance;
 
 class _NovoContatoState extends State<NovoContato> {
   final _formKey = GlobalKey<FormState>();
@@ -101,28 +100,11 @@ class _NovoContatoState extends State<NovoContato> {
             onPressed: () async {
               if (_editarContato.nome != null &&
                   _editarContato.nome!.isNotEmpty) {
-                //await infoPet.atualizarNomeContato(_editarContato.id.toString(),
-                //  _editarContato.nome.toString());
-
                 if (_novoContato == true) {
-                  /*  String id = Uuid().v1();
-                  _editarContato.id = id;
-                  db.collection("contato").doc(id).set({
-                    "idContato": id,
-                    "nome": _editarContato.nome,
-                    "telefone": _editarContato.telefone,
-                    "email": _editarContato.email,
-                    "endereco": _editarContato.endereco,
-                    "complemento": _editarContato.complemento,
-                    "bairro": _editarContato.bairro,
-                    "cidade": _editarContato.cidade,
-                    "uf": _editarContato.uf
-                  });*/
                   _editarContato.idContato = const Uuid().v1();
                   await info.salvarClienteApi(_editarContato).then((value) {
                     menssagem = value;
                   });
-                  // ignore: use_build_context_synchronously
                   setState(() {
                     showDialog(
                         context: context,
@@ -212,8 +194,15 @@ class _NovoContatoState extends State<NovoContato> {
                             content: Text(
                               menssagem,
                               style: const TextStyle(
-                                fontSize: 20,
+                                color: Color.fromARGB(255, 73, 66, 2),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
                               ),
+                            ),
+                            icon: const Icon(
+                              Icons.check,
+                              weight: 30,
+                              color: Colors.green,
                             ),
                           );
                         });
@@ -221,22 +210,9 @@ class _NovoContatoState extends State<NovoContato> {
                 }
 
                 if (_novoContato == false) {
-                  /* db.collection("contato").doc(_editarContato.id).set({
-                    "idContato": _editarContato.id,
-                    "nome": _editarContato.nome,
-                    "telefone": _editarContato.telefone,
-                    "email": _editarContato.email,
-                    "endereco": _editarContato.endereco,
-                    "complemento": _editarContato.complemento,
-                    "bairro": _editarContato.bairro,
-                    "cidade": _editarContato.cidade,
-                    "uf": _editarContato.uf
-                  });*/
-
                   await info.atualizarClienteApi(_editarContato).then((value) {
                     menssagem = value;
                   });
-                  // ignore: use_build_context_synchronously
                   setState(() {
                     showDialog(
                         context: context,
@@ -334,7 +310,6 @@ class _NovoContatoState extends State<NovoContato> {
                                   ),
                                 ),
                                 const SizedBox(
-                                  //Use of SizedBox
                                   height: 20,
                                 ),
                                 ElevatedButton(
@@ -370,7 +345,6 @@ class _NovoContatoState extends State<NovoContato> {
                   },
                 ),
                 const SizedBox(
-                  //Use of SizedBox
                   height: 20,
                 ),
                 TextFormField(
@@ -398,7 +372,6 @@ class _NovoContatoState extends State<NovoContato> {
                   },
                 ),
                 const SizedBox(
-                  //Use of SizedBox
                   height: 20,
                 ),
                 TextFormField(
@@ -417,7 +390,6 @@ class _NovoContatoState extends State<NovoContato> {
                   keyboardType: TextInputType.phone,
                 ),
                 const SizedBox(
-                  //Use of SizedBox
                   height: 20,
                 ),
                 TextFormField(
@@ -435,7 +407,6 @@ class _NovoContatoState extends State<NovoContato> {
                   },
                 ),
                 const SizedBox(
-                  //Use of SizedBox
                   height: 20,
                 ),
                 TextFormField(
@@ -453,7 +424,6 @@ class _NovoContatoState extends State<NovoContato> {
                   },
                 ),
                 const SizedBox(
-                  //Use of SizedBox
                   height: 20,
                 ),
                 Row(
@@ -478,7 +448,6 @@ class _NovoContatoState extends State<NovoContato> {
                       height: 10,
                     ),
                     const SizedBox(
-                      //Use of SizedBox
                       height: 20,
                     ),
                     Expanded(
@@ -498,8 +467,7 @@ class _NovoContatoState extends State<NovoContato> {
                     )),
                   ],
                 ),
-                const SizedBox(
-                  //Use of SizedBox
+                /* const SizedBox(
                   height: 20,
                 ),
                 TextFormField(
@@ -516,9 +484,8 @@ class _NovoContatoState extends State<NovoContato> {
                     _editarContato.email = text;
                   },
                   keyboardType: TextInputType.emailAddress,
-                ),
+                ),*/
                 const SizedBox(
-                  //Use of SizedBox
                   height: 20,
                 ),
               ]),

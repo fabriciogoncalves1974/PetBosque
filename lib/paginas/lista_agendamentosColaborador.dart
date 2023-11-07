@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
@@ -15,10 +14,17 @@ InfoAgendamento info = InfoAgendamento();
 
 class ListaAgendamentosColaborador extends StatefulWidget {
   const ListaAgendamentosColaborador(
-      {Key? key, required this.idColaborador, required this.taxaComissao})
+      {Key? key,
+      required this.idColaborador,
+      required this.taxaComissao,
+      required this.dataInicial,
+      required this.dataFinal})
       : super(key: key);
   final dynamic idColaborador;
   final double taxaComissao;
+  final DateTime dataInicial;
+  final DateTime dataFinal;
+
   @override
   State<ListaAgendamentosColaborador> createState() =>
       _ListaAgendamentosColabordorState();
@@ -69,18 +75,13 @@ class _ListaAgendamentosColabordorState
   }
 
   paginaConfig() {}
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  //FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
-    db.collection('agendamentos').snapshots().listen(
-      (event) {
-        setState(() {
-          _obterTodosAgendamentos();
-          loading = false;
-        });
-      },
-    );
+    _obterTodosAgendamentos(
+        widget.idColaborador, widget.dataInicial, widget.dataFinal);
+    loading = false;
   }
 
   @override
@@ -131,10 +132,11 @@ class _ListaAgendamentosColabordorState
       corStatus = corFinalizado;
     }
     valorComissaoPlano = (widget.taxaComissao *
-        (agendamento[index].valorTotal! * 25 / 100) /
+        (double.parse(agendamento[index].valorTotal!) * 25 / 100) /
         100);
-    valorComissao =
-        (widget.taxaComissao * agendamento[index].valorTotal! / 100);
+    valorComissao = (widget.taxaComissao *
+        double.parse(agendamento[index].valorTotal!) /
+        100);
     return GestureDetector(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 2),
@@ -147,7 +149,7 @@ class _ListaAgendamentosColabordorState
                 icon: Icons.delete,
                 caption: 'Excluir',
                 onTap: () {
-                  info.deletarAgendamentoFirestore(agendamento[index].id!);
+                  // info.deletarAgendamentoFirestore(agendamento[index].id!);
                   setState(() {
                     agendamento.removeAt(index);
                   });
@@ -284,6 +286,8 @@ class _ListaAgendamentosColabordorState
                           fontSize: 10,
                         ),
                       ),
+                  ]),
+                  Row(children: [
                     if (agendamento[index].svCorteUnha == "S")
                       const Icon(color: Colors.green, Icons.check),
                     if (agendamento[index].svCorteUnha == "S")
@@ -330,7 +334,8 @@ class _ListaAgendamentosColabordorState
                           ),
                         ),
                         Text(
-                          agendamento[index].valorTotal!.toStringAsFixed(2) ??
+                          double.parse(agendamento[index].valorTotal!)
+                                  .toStringAsFixed(2) ??
                               "",
                           style: const TextStyle(
                             fontSize: 12,
@@ -350,7 +355,9 @@ class _ListaAgendamentosColabordorState
                           ),
                         ),
                         Text(
-                          valorComissaoPlano!.toStringAsFixed(2) ?? "",
+                          double.parse(valorComissaoPlano!.toString())
+                                  .toStringAsFixed(2) ??
+                              "",
                           style: const TextStyle(
                             fontSize: 12,
                           ),
@@ -369,7 +376,7 @@ class _ListaAgendamentosColabordorState
                           ),
                         ),
                         Text(
-                          "R\$ ${agendamento[index].valorTotal!.toStringAsFixed(2)}" ??
+                          "R\$ ${double.parse(agendamento[index].valorTotal!).toStringAsFixed(2)}" ??
                               "",
                           style: const TextStyle(
                             fontSize: 12,
@@ -389,7 +396,8 @@ class _ListaAgendamentosColabordorState
                           ),
                         ),
                         Text(
-                          "R\$ ${valorComissao.toStringAsFixed(2)}" ?? "",
+                          "R\$ ${double.parse(valorComissao.toString()).toStringAsFixed(2)}" ??
+                              "",
                           style: const TextStyle(
                             fontSize: 12,
                           ),
@@ -410,9 +418,10 @@ class _ListaAgendamentosColabordorState
         });
   }
 
-  void _obterTodosAgendamentos() {
+  void _obterTodosAgendamentos(idColaborador, dataInicial, dataFinal) {
     info
-        .obterTodosAgendamentosColaboradorFirestore(widget.idColaborador)
+        .obterTodosAgendamentosColaboradorPeriodoApi(
+            widget.idColaborador, widget.dataInicial, widget.dataFinal)
         .then((dynamic list) {
       setState(() {
         agendamento = list;

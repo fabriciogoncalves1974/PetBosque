@@ -53,16 +53,7 @@ class _ListaContatosState extends State<ListaContatos> {
     super.initState();
     setState(() {
       _obterTodosClientesApi();
-      loading = false;
     });
-    /* db.collection('contato').snapshots().listen(
-      (event) {
-        setState(() {
-          _obterTodosContatos();
-          loading = false;
-        });
-      },
-    );*/
   }
 
   @override
@@ -472,29 +463,24 @@ class _ListaContatosState extends State<ListaContatos> {
       if (contato != null) {
         // await info.atualizarContato(gravaContato);
 
-        _obterTodosContatos();
+        _obterTodosClientesApi();
       } else {
         //await info.salvarContato(gravaContato);
       }
-      _obterTodosContatos();
+      _obterTodosClientesApi();
     }
   }
 
-  void _obterTodosClientesApi() {
-    info.obterTodosClientesApi().then((dynamic list) {
+  Future _obterTodosClientesApi() async {
+    await info.obterTodosClientesApi().then((dynamic list) {
       setState(() {
         contatos = list;
+        loading = false;
       });
     });
   }
 
-  void _obterTodosContatos() {
-    info.obterTodosContatosFirestore().then((dynamic list) {
-      setState(() {
-        contatos = list;
-      });
-    });
-  }
+ 
 
   void _ordenarLista(OrderOption result) {
     switch (result) {

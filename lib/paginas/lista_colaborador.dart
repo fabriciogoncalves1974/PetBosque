@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -18,7 +17,7 @@ class ListaColaborador extends StatefulWidget {
   State<ListaColaborador> createState() => _ListaColaboradorState();
 }
 
-FirebaseFirestore db = FirebaseFirestore.instance;
+//FirebaseFirestore db = FirebaseFirestore.instance;
 
 class _ListaColaboradorState extends State<ListaColaborador> {
   InfoColaborador info = InfoColaborador();
@@ -45,14 +44,8 @@ class _ListaColaboradorState extends State<ListaColaborador> {
 
   @override
   void initState() {
+    _obterDadosColaboradores();
     super.initState();
-    db.collection('colaborador').snapshots().listen(
-      (event) {
-        setState(() {
-          _obterDadosColaboradores();
-        });
-      },
-    );
   }
 
   @override
@@ -98,6 +91,9 @@ class _ListaColaboradorState extends State<ListaColaborador> {
   }
 
   Widget _cartaoColaborador(BuildContext context, int index) {
+    double metaComissao =
+        double.parse(colaborador[index].metaComissao!.toString());
+    String taxaPart = colaborador[index].porcenParticipante ?? "0";
     return GestureDetector(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),
@@ -123,7 +119,7 @@ class _ListaColaboradorState extends State<ListaColaborador> {
                 caption: 'Desativar',
                 onTap: () {
                   //info.inativarColaborador(colaborador[index].id!);
-                  db.collection("colaborador").doc(colaborador[index].id).set({
+                  /*  db.collection("colaborador").doc(colaborador[index].id).set({
                     "idColaborador": colaborador[index].id,
                     "nomeColaborador": colaborador[index].nomeColaborador,
                     "funcao": colaborador[index].funcao,
@@ -131,7 +127,7 @@ class _ListaColaboradorState extends State<ListaColaborador> {
                     "porcenParticipante": colaborador[index].porcenParticipante,
                     "metaComissao": colaborador[index].metaComissao,
                     "status": "Inativo"
-                  });
+                  });*/
                   setState(() {
                     _obterDadosColaboradores();
                   });
@@ -143,16 +139,6 @@ class _ListaColaboradorState extends State<ListaColaborador> {
                 icon: Icons.add,
                 caption: 'Ativar',
                 onTap: () {
-                  //info.ativarColaborador(colaborador[index].id!);
-                  db.collection("colaborador").doc(colaborador[index].id).set({
-                    "idColaborador": colaborador[index].id,
-                    "nomeColaborador": colaborador[index].nomeColaborador,
-                    "funcao": colaborador[index].funcao,
-                    "porcenComissao": colaborador[index].porcenComissao,
-                    "porcenParticipante": colaborador[index].porcenParticipante,
-                    "metaComissao": colaborador[index].metaComissao,
-                    "status": "Ativo"
-                  });
                   setState(() {
                     _obterDadosColaboradores();
                   });
@@ -244,7 +230,7 @@ class _ListaColaboradorState extends State<ListaColaborador> {
                     ),
                   ),
                   Text(
-                    colaborador[index].porcenParticipante.toString() ?? "",
+                    taxaPart.toString(),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -261,11 +247,7 @@ class _ListaColaboradorState extends State<ListaColaborador> {
                     ),
                   ),
                   Text(
-                    "R\$ " +
-                            colaborador[index]
-                                .metaComissao!
-                                .toStringAsFixed(2) ??
-                        "",
+                    "R\$ " + metaComissao.toStringAsFixed(2) ?? "",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -303,7 +285,7 @@ class _ListaColaboradorState extends State<ListaColaborador> {
   }
 
   void _obterDadosColaboradores() {
-    info.obterTodosColaboradoresFirestore().then((dynamic list) {
+    info.obterTodosColaboradoresApi().then((dynamic list) {
       setState(() {
         colaborador = list;
       });

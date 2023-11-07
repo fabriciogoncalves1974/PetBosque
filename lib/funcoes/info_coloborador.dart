@@ -1,4 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
 import 'package:sqflite/sqlite_api.dart';
@@ -130,56 +132,69 @@ class InfoColaborador {
     dbPlano!.close();
   }
 
-  Future<List> obterTodosColaboradoresFirestore() async {
-    CollectionReference colaboradorCollection =
-        FirebaseFirestore.instance.collection('colaborador');
-    var result = await colaboradorCollection.get();
-    return result.docs
-        .map((doc) => Colaborador(
-            nomeColaborador: doc['nomeColaborador'],
-            funcao: doc['funcao'],
-            porcenComissao: doc['porcenComissao'],
-            porcenParticipante: doc['porcenParticipante'],
-            metaComissao: doc['metaComissao'],
-            status: doc['status'],
-            id: doc['idColaborador']))
-        .toList();
+//=========================================================================
+
+  //FUNÇÕES API
+
+  Future<List> obterTodosColaboradoresApi() async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/colaborador/lista', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Colaborador> listaColaborador = [];
+
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+      for (Map m in listMap) {
+        listaColaborador.add(Colaborador.fromJson(m));
+      }
+    }
+    return listaColaborador;
   }
 
-  Future<List> obterNomeColaboradorFirestore() async {
-    CollectionReference colaboradorCollection =
-        FirebaseFirestore.instance.collection('colaborador');
-    var result =
-        await colaboradorCollection.where('status', isEqualTo: 'Ativo').get();
-    return result.docs
-        .map((doc) => Colaborador(
-            nomeColaborador: doc['nomeColaborador'],
-            funcao: doc['funcao'],
-            porcenComissao: doc['porcenComissao'],
-            porcenParticipante: doc['porcenParticipante'],
-            metaComissao: doc['metaComissao'],
-            status: doc['status'],
-            id: doc['idColaborador']))
-        .toList();
+  Future<Colaborador?> obterDadosColaboradorApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/colaborador/lista/$id', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    //List<dynamic> listMap = map["dados"];
+
+    // Map<String, dynamic> primeiroMap = listMap.first;
+
+    Colaborador primeiroColaborador = Colaborador.fromJson(map["dados"]);
+    return primeiroColaborador;
   }
 
-  Future<List> obterDadosColaboradorFirestore(idColaborador) async {
-    CollectionReference colaboradorCollection =
-        FirebaseFirestore.instance.collection('colaborador');
-    var result = await colaboradorCollection
-        .where('idColaborador', isEqualTo: idColaborador)
-        .get();
-    return result.docs
-        .map((doc) => Colaborador(
-            nomeColaborador: doc['nomeColaborador'],
-            funcao: doc['funcao'],
-            porcenComissao: doc['porcenComissao'],
-            porcenParticipante: doc['porcenParticipante'],
-            metaComissao: doc['metaComissao'],
-            status: doc['status'],
-            id: doc['idColaborador']))
-        .toList();
+  Future<String> salvarColaboradorApi(Colaborador colaborador) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/colaborador/adiciona', {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "nomeColaborador": colaborador.nomeColaborador.toString(),
+        "funcao": colaborador.funcao.toString(),
+        "porcenComissao": colaborador.porcenComissao.toString(),
+        "porcenParticipante": colaborador.porcenParticipante.toString(),
+        "metaComissao": colaborador.metaComissao.toString(),
+        "status": colaborador.status.toString(),
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
   }
+
+//=========================================================================
 }
 
 class Colaborador {
@@ -199,6 +214,27 @@ class Colaborador {
       this.metaComissao,
       this.status,
       this.id});
+
+  factory Colaborador.fromJson(Map json) {
+    return Colaborador(
+        id: json['id'],
+        nomeColaborador: json['nomeColaborador'],
+        funcao: json['funcao'],
+        porcenComissao: json['porcenComissao'],
+        porcenParticipante: json['porcenParticipante'],
+        metaComissao: json['metaComissao'],
+        status: json['status']);
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': this.id,
+        'nomeColaborador': this.nomeColaborador,
+        'funcao': this.funcao,
+        'porcenComissao': this.porcenComissao,
+        'porcenParticipante': this.porcenParticipante,
+        'metaComissao': this.metaComissao,
+        'status': this.status,
+      };
 
   Colaborador.fromMap(Map map) {
     id = map[idColuna];

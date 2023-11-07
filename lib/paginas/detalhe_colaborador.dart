@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_bosque/funcoes/info_coloborador.dart';
@@ -26,9 +25,10 @@ class DetalheColaborador extends StatefulWidget {
   State<DetalheColaborador> createState() => _DetalheColaboradorState();
 }
 
+late Colaborador colaborador = Colaborador();
+
 class _DetalheColaboradorState extends State<DetalheColaborador> {
   List<Agendamento> agendamento = [];
-  List<Colaborador> colaborador = [];
   List<Colaborador> itens = [];
   String mesTexto = "Período";
   late DateTime dataInicio;
@@ -41,14 +41,17 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
   double valorAgendamentosParticipantePlano = 0;
   double valorAgendamentosAvulso = 0;
   double valorAgendamentosParticipanteAvulso = 0;
-  double valorComissao = 0;
+  double valorComissaoPlano = 0;
   double valorComissaoAvulso = 0;
   double totalPagar = 0;
   double valorComissaoParticipanteAvulso = 0;
   double porcentComissao = 0;
   double porcentComissaoParticipante = 0;
+  DateTime dataAtual = DateTime.now();
   late int mes;
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  int vCarregando = 0;
+  bool carregando = true;
+  //FirebaseFirestore db = FirebaseFirestore.instance;
   String? mesSelecionado;
   List listaTotal = [];
 
@@ -90,13 +93,10 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _excutaFuncoes();
 
-      final dataAtual = DateTime.now();
-
       dataInicio = DateTime(dataAtual.year, dataAtual.month, 01);
       mes = dataAtual.month;
-      ultimoDia = DateTime(dataAtual.year, dataAtual.month + 1, 0).day;
+      ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
       dataFinal = DateTime(dataAtual.year, dataAtual.month, ultimoDia);
-
       switch (mes) {
         case 1:
           mesTexto = 'Janeiro';
@@ -140,12 +140,16 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
     });
   }
 
-  void _excutaFuncoes() {
-    _obterColaboradores();
-    _obterQuantidadeAgendamentos(widget.idColaborador);
-    _totalAgendamentosAvulso(widget.idColaborador);
-    _totalAgendamentosColaborador(widget.idColaborador);
+  void _excutaFuncoes() async {
+    await _obterColaboradores();
+    await _obterQuantidadeAgendamentos(
+        widget.idColaborador, dataInicio, dataFinal);
+    await _totalAgendamentosAvulso(widget.idColaborador, dataInicio, dataFinal);
+    await _totalAgendamentosColaborador(
+        widget.idColaborador, dataInicio, dataFinal);
     _totalAgendamentosParticipanteAvulso(widget.idColaborador);
+
+    carregando = false;
   }
 
   Colaborador? selectedValue;
@@ -197,453 +201,552 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
                         ));
                   }).toList(),
                   onChanged: (String? newValue) {
+                    mesSelecionado = newValue!;
+                    switch (mesSelecionado!) {
+                      case 'Janeiro':
+                        mes = 01;
+                        ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
+                        dataFinal = DateTime(dataAtual.year, mes, ultimoDia);
+                        dataInicio = DateTime(dataAtual.year, mes, 01);
+                        break;
+                      case 'Fevereiro':
+                        mes = 02;
+                        ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
+                        dataFinal = DateTime(dataAtual.year, mes, ultimoDia);
+                        dataInicio = DateTime(dataAtual.year, mes, 01);
+                        break;
+                      case 'Março':
+                        mes = 03;
+                        ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
+                        dataFinal = DateTime(dataAtual.year, mes, ultimoDia);
+                        dataInicio = DateTime(dataAtual.year, mes, 01);
+                        break;
+                      case 'Abril':
+                        mes = 04;
+                        ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
+                        dataFinal = DateTime(dataAtual.year, mes, ultimoDia);
+                        dataInicio = DateTime(dataAtual.year, mes, 01);
+                        break;
+                      case 'Maio':
+                        mes = 05;
+                        ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
+                        dataFinal = DateTime(dataAtual.year, mes, ultimoDia);
+                        dataInicio = DateTime(dataAtual.year, mes, 01);
+                        break;
+                      case 'Junho':
+                        mes = 06;
+                        ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
+                        dataFinal = DateTime(dataAtual.year, mes, ultimoDia);
+                        dataInicio = DateTime(dataAtual.year, mes, 01);
+                        break;
+                      case 'Julho':
+                        mes = 07;
+                        ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
+                        dataFinal = DateTime(dataAtual.year, mes, ultimoDia);
+                        dataInicio = DateTime(dataAtual.year, mes, 01);
+                        break;
+                      case 'Agosto':
+                        mes = 08;
+                        ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
+                        dataFinal = DateTime(dataAtual.year, mes, ultimoDia);
+                        dataInicio = DateTime(dataAtual.year, mes, 01);
+                        break;
+                      case 'Setembro':
+                        mes = 09;
+                        ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
+                        dataFinal = DateTime(dataAtual.year, mes, ultimoDia);
+                        dataInicio = DateTime(dataAtual.year, mes, 01);
+                        break;
+                      case 'Outubro':
+                        mes = 10;
+                        ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
+                        dataFinal = DateTime(dataAtual.year, mes, ultimoDia);
+                        dataInicio = DateTime(dataAtual.year, mes, 01);
+                        break;
+                      case 'Novembro':
+                        mes = 11;
+                        ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
+                        dataFinal = DateTime(dataAtual.year, mes, ultimoDia);
+                        dataInicio = DateTime(dataAtual.year, mes, 01);
+                        break;
+                      case 'Dezembro':
+                        mes = 12;
+                        ultimoDia = DateTime(dataAtual.year, mes + 1, 0).day;
+                        dataFinal = DateTime(dataAtual.year, mes, ultimoDia);
+                        dataInicio = DateTime(dataAtual.year, mes, 01);
+                        break;
+                    }
                     setState(() {
-                      mesSelecionado = newValue!;
+                      _totalAgendamentosColaborador(
+                          widget.idColaborador, dataInicio, dataFinal);
+                      _totalAgendamentosAvulso(
+                          widget.idColaborador, dataInicio, dataFinal);
+                      _obterQuantidadeAgendamentos(
+                          widget.idColaborador, dataInicio, dataFinal);
                     });
                   },
                 ),
               )
             ]),
-        body: CustomScrollView(
-          slivers: [
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return _detalhes(context, index);
-                },
-                childCount: colaborador.length,
+        body: !carregando
+            ? Padding(
+                padding: const EdgeInsets.all(16),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color: const Color.fromRGBO(204, 236, 247, 100),
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            mesSelecionado ?? mesTexto.toString(),
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 73, 66, 2),
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          const Text(
+                            "Nome: ",
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 73, 66, 2),
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            colaborador.nomeColaborador ?? "",
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          const Text(
+                            "Função: ",
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 73, 66, 2),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            colaborador.funcao ?? "",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Row(children: [
+                        const Text(
+                          "Quantidade de Agendamentos:",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 73, 66, 2),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "$qtdAgendamentos",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.list),
+                          color: Colors.blue,
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    ListaAgendamentosColaborador(
+                                      idColaborador: colaborador.id!,
+                                      taxaComissao: porcentComissao,
+                                      dataInicial: dataInicio,
+                                      dataFinal: dataFinal,
+                                    )));
+                          },
+                        ),
+                      ]),
+                      Row(children: [
+                        const Text(
+                          "Valor total Agendamentos:",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 73, 66, 2),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "R\$ ${valorAgendamentos.toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ]),
+                      Row(children: [
+                        const Text(
+                          "Valor total Participações:",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 73, 66, 2),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "R\$ ${valorAgendamentosParticipante.toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ]),
+                      Row(children: [
+                        const Text(
+                          "Taxa Comissão: %",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 73, 66, 2),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          colaborador.porcenComissao.toString() ?? "",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ]),
+                      Row(children: [
+                        const Text(
+                          "Taxa Participante: %",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 73, 66, 2),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          colaborador.porcenParticipante.toString() ?? "",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ]),
+                      Row(children: [
+                        const Text(
+                          "Meta Comissão: R\$",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 73, 66, 2),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          colaborador.metaComissao!.toString(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.red,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ]),
+                      const Divider(
+                        color: Colors.black,
+                        height: 10,
+                      ),
+                      const Row(children: [
+                        Text(
+                          "Comissão Plano:",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 73, 66, 2),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ]),
+                      Container(
+                        color: const Color.fromARGB(255, 228, 222, 222),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Principal:",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 73, 66, 2),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              ConstrainedBox(
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 80,
+                                ),
+                                child: Text(
+                                  "R\$ ${valorComissaoPlano!.toStringAsFixed(2)}" ??
+                                      "",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              )
+                            ]),
+                      ),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Participante:",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 73, 66, 2),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            ConstrainedBox(
+                              constraints: const BoxConstraints.tightFor(
+                                width: 80,
+                              ),
+                              child: Text(
+                                "R\$ ${valorComissaoParticipanteAvulso!.toStringAsFixed(2)}" ??
+                                    "",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            )
+                          ]),
+                      const Divider(
+                        color: Colors.black,
+                        height: 10,
+                      ),
+                      const Row(children: [
+                        Text(
+                          "Comissão Avulso:",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 73, 66, 2),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ]),
+                      Container(
+                        color: const Color.fromARGB(255, 228, 222, 222),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Principal:",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 73, 66, 2),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              ConstrainedBox(
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 80,
+                                ),
+                                child: Text(
+                                  "R\$ ${valorComissaoAvulso!.toStringAsFixed(2)}" ??
+                                      "",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              )
+                            ]),
+                      ),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Participante:",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 73, 66, 2),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            ConstrainedBox(
+                              constraints: const BoxConstraints.tightFor(
+                                width: 80,
+                              ),
+                              child: Text(
+                                "R\$ ${valorComissaoParticipanteAvulso!.toStringAsFixed(2)}" ??
+                                    "",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            )
+                          ]),
+                      const Divider(
+                        color: Colors.black,
+                        height: 10,
+                      ),
+                      Container(
+                        color: const Color.fromARGB(255, 228, 222, 222),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Total a pagar:",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 73, 66, 2),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              ConstrainedBox(
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 90,
+                                ),
+                                child: Text(
+                                  "R\$ ${totalPagar!.toStringAsFixed(2)}" ?? "",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              )
+                            ]),
+                      ),
+                    ],
+                  ),
+                ))
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Colors.greenAccent,
+                  backgroundColor: Colors.grey,
+                ),
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
 
-  Widget _detalhes(BuildContext context, int index) {
-    //qtdAgendamentos = int.parse(colaborador.length.toString());
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          color: const Color.fromRGBO(204, 236, 247, 100),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                const Text(
-                  "Nome: ",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 73, 66, 2),
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  colaborador[index].nomeColaborador ?? "",
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              children: [
-                const Text(
-                  "Função: ",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 73, 66, 2),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  colaborador[index].funcao ?? "",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(children: [
-              const Text(
-                "Quantidade de Agendamentos:",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 73, 66, 2),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                "$qtdAgendamentos",
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.list),
-                color: Colors.blue,
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ListaAgendamentosColaborador(
-                            idColaborador: colaborador[index].id!,
-                            taxaComissao: porcentComissao,
-                          )));
-                },
-              ),
-            ]),
-            Row(children: [
-              const Text(
-                "Valor total Agendamentos:",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 73, 66, 2),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                "R\$ ${valorAgendamentos.toStringAsFixed(2)}",
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.blue,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ]),
-            Row(children: [
-              const Text(
-                "Valor total Participações:",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 73, 66, 2),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                "R\$ ${valorAgendamentosParticipante.toStringAsFixed(2)}",
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.blue,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ]),
-            Row(children: [
-              const Text(
-                "Taxa Comissão: %",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 73, 66, 2),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                colaborador[index].porcenComissao.toString() ?? "",
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ]),
-            Row(children: [
-              const Text(
-                "Taxa Participante: %",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 73, 66, 2),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                colaborador[index].porcenParticipante.toString() ?? "",
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ]),
-            Row(children: [
-              const Text(
-                "Meta Comissão: R\$",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 73, 66, 2),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                colaborador[index].metaComissao!.toStringAsFixed(2),
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ]),
-            const Divider(
-              color: Colors.black,
-              height: 10,
-            ),
-            const Row(children: [
-              Text(
-                "Comissão Plano:",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 73, 66, 2),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ]),
-            Container(
-              color: const Color.fromARGB(255, 228, 222, 222),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Principal:",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 73, 66, 2),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints.tightFor(
-                        width: 80,
-                      ),
-                      child: Text(
-                        "R\$ ${valorComissao!.toStringAsFixed(2)}" ?? "",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )
-                  ]),
-            ),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              const Text(
-                "Participante:",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 73, 66, 2),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              ConstrainedBox(
-                constraints: const BoxConstraints.tightFor(
-                  width: 80,
-                ),
-                child: Text(
-                  "R\$ ${valorComissao!.toStringAsFixed(2)}" ?? "",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              )
-            ]),
-            const Divider(
-              color: Colors.black,
-              height: 10,
-            ),
-            const Row(children: [
-              Text(
-                "Comissão Avulso:",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 73, 66, 2),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ]),
-            Container(
-              color: const Color.fromARGB(255, 228, 222, 222),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Principal:",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 73, 66, 2),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints.tightFor(
-                        width: 80,
-                      ),
-                      child: Text(
-                        "R\$ ${valorComissaoAvulso!.toStringAsFixed(2)}" ?? "",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )
-                  ]),
-            ),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              const Text(
-                "Participante:",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 73, 66, 2),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              ConstrainedBox(
-                constraints: const BoxConstraints.tightFor(
-                  width: 80,
-                ),
-                child: Text(
-                  "R\$ ${valorComissaoParticipanteAvulso!.toStringAsFixed(2)}" ??
-                      "",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              )
-            ]),
-            const Divider(
-              color: Colors.black,
-              height: 10,
-            ),
-            Container(
-              color: const Color.fromARGB(255, 228, 222, 222),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Total a pagar:",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 73, 66, 2),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints.tightFor(
-                        width: 90,
-                      ),
-                      child: Text(
-                        "R\$ ${totalPagar!.toStringAsFixed(2)}" ?? "",
-                        style: const TextStyle(
-                          fontSize: 24,
-                          color: Colors.green,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )
-                  ]),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future _obterQuantidadeAgendamentos(String id) async {
-    await db
-        .collection("agendamentos")
-        .where('idColaborador', isEqualTo: id)
-        .count()
-        .get()
-        .then(
-          (res) => qtdAgendamentos = res.count,
-        );
-  }
-
-  Future _totalAgendamentosColaborador(String id) async {
-    QuerySnapshot query = (await db
-        .collection("agendamentos")
-        .where('idColaborador', isEqualTo: id)
-        .where('planoVencido', isEqualTo: 'N')
-        .get());
-    valorAgendamentosPlano = 0;
-    query.docs.forEach((doc) {
-      valorAgendamentosPlano =
-          (doc.get("valorTotal") * 25 / 100) + valorAgendamentosPlano;
-    });
-    valorComissao = (valorAgendamentosPlano * porcentComissao / 100);
-    valorAgendamentos = (valorAgendamentosPlano + valorAgendamentosAvulso);
-    /*info.totalAgendamentosColaborador(
-        int.parse(widget.idColaborador).then((dynamic result2) {
+  Future _obterQuantidadeAgendamentos(
+      String id, DateTime dataInicio, DateTime dataFinal) async {
+    await info
+        .quantidadeAgendamentosColaboradorApi(
+            widget.idColaborador, dataInicio, dataFinal)
+        .then((dynamic qtd) {
       setState(() {
-        if (result2[0]['total'] != null) {
-          valorAgendamentosPlano = (result2[0]['total'] * 25 / 100);
+        if (qtd['COUNT(*)'] != null) {
+          qtdAgendamentos = int.parse(qtd['COUNT(*)']);
         }
-        valorComissao = (valorAgendamentosPlano * porcentComissao / 100);
-        valorAgendamentos = (valorComissao + valorComissaoAvulso);
       });
-    }));*/
+    });
   }
 
-  Future _totalAgendamentosAvulso(String id) async {
-    QuerySnapshot query = (await db
-        .collection("agendamentos")
-        .where('idColaborador', isEqualTo: id)
-        .where('planoVencido', isEqualTo: 'P')
-        .get());
-    valorAgendamentosAvulso = 0;
-    query.docs.forEach((doc) {
-      valorAgendamentosAvulso = doc.get("valorTotal") + valorAgendamentosAvulso;
-    });
-    valorComissaoAvulso = (valorAgendamentosAvulso * porcentComissao / 100);
-    valorAgendamentos = (valorAgendamentosPlano + valorAgendamentosAvulso);
-    totalPagar = (valorComissaoAvulso + valorComissaoParticipanteAvulso);
-/*
-    info.totalAgendamentosColaboradorAvulso(
-        int.parse(widget.idColaborador).then((dynamic result2) {
+  Future _totalAgendamentosColaborador(
+      String id, DateTime dataInicio, DateTime dataFinal) async {
+    await info
+        .totalAgendamentosColaboradorPlanoApi(
+            widget.idColaborador, dataInicio, dataFinal)
+        .then((dynamic result2) {
       setState(() {
-        if (result2[0]['total'] != null) {
-          valorAgendamentosAvulso = result2[0]['total'];
+        if (result2 != null && result2['total'] != null) {
+          valorAgendamentosPlano = (double.parse((result2['total'])) / 4);
+          valorComissaoPlano = (valorAgendamentosPlano * porcentComissao / 100);
+          totalPagar = (valorComissaoPlano + valorComissaoAvulso);
+          valorAgendamentos =
+              valorAgendamentosAvulso + (valorAgendamentosPlano * 4);
+        } else {
+          valorAgendamentosPlano = 0;
+          valorComissaoPlano = (valorAgendamentosPlano * porcentComissao / 100);
+          totalPagar = (valorComissaoPlano + valorComissaoAvulso);
+          valorAgendamentos =
+              valorAgendamentosAvulso + (valorAgendamentosPlano * 4);
         }
-        valorComissaoAvulso = (valorAgendamentosAvulso * porcentComissao / 100);
-        valorAgendamentos = (valorComissao + valorComissaoAvulso);
       });
-    }));*/
+    });
+  }
+
+  Future _totalAgendamentosAvulso(
+      String id, DateTime dataInicio, DateTime dataFinal) async {
+    await info
+        .totalAgendamentosColaboradorAvulsoApi(
+            widget.idColaborador, dataInicio, dataFinal)
+        .then((dynamic result) {
+      setState(() {
+        if (result != null && result['total'] != null) {
+          valorAgendamentosAvulso = double.parse(result['total'].toString());
+          valorComissaoAvulso =
+              (valorAgendamentosAvulso * porcentComissao / 100);
+          totalPagar = (valorComissaoPlano + valorComissaoAvulso);
+          valorAgendamentos =
+              valorAgendamentosAvulso + (valorAgendamentosPlano * 4);
+        } else {
+          valorAgendamentosAvulso = 0;
+          valorComissaoAvulso =
+              (valorAgendamentosAvulso * porcentComissao / 100);
+          totalPagar = (valorComissaoPlano + valorComissaoAvulso);
+          valorAgendamentos =
+              valorAgendamentosAvulso + (valorAgendamentosPlano * 4);
+        }
+      });
+    });
   }
 
   Future _totalAgendamentosParticipanteAvulso(String id) async {
-    QuerySnapshot query = (await db
+    /* QuerySnapshot query = (await db
         .collection("agendamentos")
         .where('idParticipante', isEqualTo: id)
         .where('planoVencido', isEqualTo: 'P')
@@ -658,29 +761,19 @@ class _DetalheColaboradorState extends State<DetalheColaborador> {
         100);
     valorAgendamentosParticipante = (valorAgendamentosParticipantePlano +
         valorAgendamentosParticipanteAvulso);
-    totalPagar = (valorComissaoAvulso + valorComissaoParticipanteAvulso);
-/*
-    info.totalAgendamentosColaboradorAvulso(
-        int.parse(widget.idColaborador).then((dynamic result2) {
-      setState(() {
-        if (result2[0]['total'] != null) {
-          valorAgendamentosAvulso = result2[0]['total'];
-        }
-        valorComissaoAvulso = (valorAgendamentosAvulso * porcentComissao / 100);
-        valorAgendamentos = (valorComissao + valorComissaoAvulso);
-      });
-    }));*/
+    totalPagar = (valorComissaoAvulso + valorComissaoParticipanteAvulso);*/
   }
 
   Future _obterColaboradores() async {
     await infoColaborador
-        .obterDadosColaboradorFirestore(widget.idColaborador)
+        .obterDadosColaboradorApi(widget.idColaborador)
         .then((dynamic listaColaborador) {
       setState(() {
         colaborador = listaColaborador;
-        porcentComissao = colaborador[0].porcenComissao as double;
+        porcentComissao = double.parse(colaborador.porcenComissao) ?? 0;
         porcentComissaoParticipante =
-            colaborador[0].porcenParticipante as double;
+            double.parse(colaborador.porcenParticipante) ?? 0;
+        //vCarregando = vCarregando + 1;
       });
     });
   }

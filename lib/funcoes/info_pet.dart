@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
@@ -241,6 +240,23 @@ class InfoPet {
     return primeiroPet;
   }
 
+  Future<List<Pet>> pesquisarPetApi(String teclado) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/pet/pesquisa/$teclado', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Pet> listaPet = [];
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+
+      for (Map m in listMap) {
+        listaPet.add(Pet.fromJson(m));
+      }
+    }
+    return listaPet;
+  }
+
   Future<String> salvarPetApi(Pet pet) async {
     final url =
         Uri.http('fb.servicos.ws', '/petBosque/pet/adiciona', {'q': '{http}'});
@@ -453,7 +469,7 @@ class InfoPet {
 //=========================================================================
 
   //FUNÇÕES FIRESTORE
-
+/*
   Future<List> obterTodosPetFirestore() async {
     CollectionReference petCollection =
         FirebaseFirestore.instance.collection('pet');
@@ -577,7 +593,7 @@ class InfoPet {
               planoVencido: doc['planoVencido'],
             ))
         .toList();
-  }
+  }*/
 }
 
 class Pet {

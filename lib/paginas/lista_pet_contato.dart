@@ -28,6 +28,7 @@ class ListaPetContato extends StatefulWidget {
 class _ListaPetContatoState extends State<ListaPetContato> {
   InfoPet info = InfoPet();
   List<Pet> pet = [];
+  bool loading = true;
 
   @override
   void initState() {
@@ -95,19 +96,23 @@ class _ListaPetContatoState extends State<ListaPetContato> {
             foregroundColor: Colors.white,
             label: const Text("Novo"),
           ),
-          body: ListView.builder(
-              padding: const EdgeInsets.all(10.0),
-              itemCount: pet.length,
-              itemBuilder: (context, index) {
-                return _cartaoPet(context, index);
-              }),
+          body: !loading
+              ? ListView.builder(
+                  padding: const EdgeInsets.all(10.0),
+                  itemCount: pet.length,
+                  itemBuilder: (context, index) {
+                    return _cartaoPet(context, index);
+                  })
+              : const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.greenAccent,
+                    backgroundColor: Colors.grey,
+                  ),
+                ),
         ));
   }
 
   Widget _cartaoPet(BuildContext context, int index) {
-    DateTime dataNasc = DateTime.parse(pet[index].dtNasc.toString());
-    DateTime dataCad = DateTime.parse(pet[index].dataCadastro.toString());
-
     return GestureDetector(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),
@@ -239,7 +244,9 @@ class _ListaPetContatoState extends State<ListaPetContato> {
                       ),
                     ),
                     Text(
-                      DateFormat("dd/MM/yyyy").format(dataCad) ?? "",
+                      DateFormat("dd/MM/yyyy").format(DateTime.parse(
+                              pet[index].dataCadastro.toString())) ??
+                          "",
                       style: const TextStyle(
                         fontSize: 12,
                       ),
@@ -257,7 +264,9 @@ class _ListaPetContatoState extends State<ListaPetContato> {
                       ),
                     ),
                     Text(
-                      DateFormat("dd/MM/yyyy").format(dataNasc) ?? "",
+                      DateFormat("dd/MM/yyyy").format(
+                              DateTime.parse(pet[index].dtNasc.toString())) ??
+                          "",
                       style: const TextStyle(
                         fontSize: 12,
                       ),
@@ -383,7 +392,9 @@ class _ListaPetContatoState extends State<ListaPetContato> {
                         ),
                       ),
                       Text(
-                        pet[index].valorPlano ?? "",
+                        double.parse(pet[index].valorPlano.toString())
+                                .toStringAsFixed(2) ??
+                            "0,00",
                         style: const TextStyle(
                           fontSize: 12,
                         ),
@@ -400,7 +411,9 @@ class _ListaPetContatoState extends State<ListaPetContato> {
                         ),
                       ),
                       Text(
-                        pet[index].dataContrato ?? "",
+                        DateFormat("dd/MM/yyyy").format(DateTime.parse(
+                                pet[index].dataContrato.toString())) ??
+                            "",
                         style: const TextStyle(
                           fontSize: 12,
                         ),
@@ -454,10 +467,11 @@ class _ListaPetContatoState extends State<ListaPetContato> {
     _obterTodosPetContato();
   }
 
-  void _obterTodosPetContato() {
-    info.obterTodosPetClienteApi(widget.idContato).then((dynamic list) {
+  Future _obterTodosPetContato() async {
+    await info.obterTodosPetClienteApi(widget.idContato).then((dynamic list) {
       setState(() {
         pet = list;
+        loading = false;
       });
     });
   }

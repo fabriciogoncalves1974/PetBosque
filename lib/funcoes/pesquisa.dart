@@ -114,7 +114,7 @@ class PesquisaPage extends SearchDelegate<Contato?> {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
-                              color: const Color.fromRGBO(204, 236, 247, 100),
+                              color: Colors.grey[200],
                             ),
                             padding: const EdgeInsets.all(16),
                             child: Column(
@@ -198,6 +198,6 @@ class PesquisaPage extends SearchDelegate<Contato?> {
   }
 
   Future<List<Contato>> _pesquisarTodosContatos() {
-    return info.pesquisarTodosContatosFirestore(query);
+    return info.pesquisarTodosContatos(query);
   }
 }

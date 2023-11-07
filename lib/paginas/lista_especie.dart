@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:pet_bosque/funcoes/info_plano.dart';
+import 'package:pet_bosque/funcoes/info_especie.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
-import 'package:pet_bosque/paginas/novo_plano.dart';
+import 'package:pet_bosque/paginas/nova_especie.dart';
 
 enum OrderOption { orderaz, orderza }
 
-class ListaPlanos extends StatefulWidget {
-  const ListaPlanos({Key? key}) : super(key: key);
+class ListaEspecie extends StatefulWidget {
+  const ListaEspecie({Key? key}) : super(key: key);
 
   @override
-  State<ListaPlanos> createState() => _ListaPlanosState();
+  State<ListaEspecie> createState() => _ListaEspecieState();
 }
 
 //FirebaseFirestore db = FirebaseFirestore.instance;
 
-class _ListaPlanosState extends State<ListaPlanos> {
-  InfoPlano info = InfoPlano();
+class _ListaEspecieState extends State<ListaEspecie> {
+  InfoEspecie info = InfoEspecie();
   bool loading = true;
-  List<Plano> plano = [];
+  List<Especie> especie = [];
 
   paginaInicial() {
     Navigator.of(context).push(
@@ -34,7 +34,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
   void initState() {
     super.initState();
     setState(() {
-      _obterTodosPlanos();
+      _obterTodasEspecies();
     });
   }
 
@@ -50,7 +50,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text("Planos"),
+          title: const Text("Espécies"),
           centerTitle: true,
           automaticallyImplyLeading: false,
           leading: IconButton(
@@ -63,7 +63,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => NovoPlano()));
+                MaterialPageRoute(builder: (context) => NovaEspecie()));
           },
           icon: const Icon(Icons.add),
           backgroundColor: const Color.fromRGBO(35, 151, 166, 1),
@@ -74,7 +74,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
         body: !loading
             ? ListView.builder(
                 padding: const EdgeInsets.all(10.0),
-                itemCount: plano.length,
+                itemCount: especie.length,
                 itemBuilder: (context, index) {
                   return _cartaoPet(context, index);
                 })
@@ -106,7 +106,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
                     builder: (context) {
                       return AlertDialog(
                         title: Text(
-                            "Deseja realmente excluir o plano  ${plano[index].nomePlano}!"),
+                            "Deseja realmente excluir a espécie  ${especie[index].nome}!"),
                         actions: <Widget>[
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -140,7 +140,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
                                   borderRadius: BorderRadius.circular(10)),
                             ),
                             onPressed: () {
-                              excluirPlano(plano[index].id!);
+                              excluirEspecie(especie[index].id!);
                             },
                             child: const Text(
                               "Sim",
@@ -165,7 +165,7 @@ class _ListaPlanosState extends State<ListaPlanos> {
                 Row(
                   children: [
                     const Text(
-                      "Plano: ",
+                      "Nome: ",
                       style: TextStyle(
                         color: Color.fromARGB(255, 73, 66, 2),
                         fontSize: 16,
@@ -173,138 +173,10 @@ class _ListaPlanosState extends State<ListaPlanos> {
                       ),
                     ),
                     Text(
-                      plano[index].nomePlano ?? "",
+                      especie[index].nome ?? "",
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const Row(children: [
-                  Text(
-                    "Serviços: ",
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 73, 66, 2),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ]),
-                Row(children: [
-                  if (plano[index].svBanho == "S")
-                    const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    ),
-                  if (plano[index].svBanho == "S")
-                    const Text(
-                      "Banho",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  if (plano[index].svTosa == "S")
-                    const Icon(color: Colors.green, Icons.check),
-                  if (plano[index].svTosa == "S")
-                    const Text(
-                      "Tosa",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  if (plano[index].svTosaHigienica == "S")
-                    const Icon(color: Colors.green, Icons.check),
-                  if (plano[index].svTosaHigienica == "S")
-                    const Text(
-                      "Tosa Hig",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  if (plano[index].svHidratacao == "S")
-                    const Icon(color: Colors.green, Icons.check),
-                  if (plano[index].svHidratacao == "S")
-                    const Text(
-                      "Hidratação",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                ]),
-                Row(children: [
-                  if (plano[index].svPintura == "S")
-                    const Icon(color: Colors.green, Icons.check),
-                  if (plano[index].svPintura == "S")
-                    const Text(
-                      "Pintura",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  if (plano[index].svCorteUnha == "S")
-                    const Icon(color: Colors.green, Icons.check),
-                  if (plano[index].svCorteUnha == "S")
-                    const Text(
-                      "Corte Unha",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  if (plano[index].svHospedagem == "S")
-                    const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    ),
-                  if (plano[index].svHospedagem == "S")
-                    const Text(
-                      "Hospedagem",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  if (plano[index].svTransporte == "S")
-                    const Icon(color: Colors.green, Icons.check),
-                  if (plano[index].svTransporte == "S")
-                    const Text(
-                      "Transporte",
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                ]),
-                Row(
-                  children: [
-                    const Text(
-                      "Nº de Banhos ",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 73, 66, 2),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      plano[index].contaPlano.toString() ?? "",
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      "Valor: ",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 73, 66, 2),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      plano[index].valor.toString() ?? "",
-                      style: const TextStyle(
-                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -318,8 +190,8 @@ class _ListaPlanosState extends State<ListaPlanos> {
     );
   }
 
-  void excluirPlano(id) {
-    info.excluirPlanoApi(id).then((value) {
+  void excluirEspecie(id) {
+    info.excluirEspecieApi(id).then((value) {
       menssagem = value;
 
       setState(() {
@@ -345,29 +217,25 @@ class _ListaPlanosState extends State<ListaPlanos> {
     });
   }
 
-  void _ExibirNovoPlano({Plano? plano}) async {
-    final gravaPlano = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => NovoPlano(
-                  plano: plano,
-                )));
-    if (gravaPlano != null) {
-      if (plano != null) {
-        await info.atualizarPlano(gravaPlano);
+  void _ExibirNovaEspecie({Especie? especie}) async {
+    final gravaEspecie = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => NovaEspecie()));
+    if (gravaEspecie != null) {
+      if (especie != null) {
+        await info.atualizarEspecieApi(gravaEspecie);
 
-        _obterTodosPlanos();
+        _obterTodasEspecies();
       } else {
-        await info.salvarPlano(gravaPlano);
+        await info.salvarEspecieApi(gravaEspecie);
       }
-      _obterTodosPlanos();
+      _obterTodasEspecies();
     }
   }
 
-  Future _obterTodosPlanos() async {
-    await info.obterTodosPlanosApi().then((dynamic list) {
+  Future _obterTodasEspecies() async {
+    await info.obterTodasEspecieApi().then((dynamic list) {
       setState(() {
-        plano = list;
+        especie = list;
         loading = false;
       });
     });

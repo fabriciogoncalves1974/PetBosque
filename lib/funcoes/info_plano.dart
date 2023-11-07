@@ -195,7 +195,7 @@ class InfoPlano {
   }
 
 //=======================================================================
-
+/*
   Future<List> obterTodosPlanosFirestore() async {
     CollectionReference planoCollection =
         FirebaseFirestore.instance.collection('planos');
@@ -265,7 +265,7 @@ class InfoPlano {
       var a = query.docs;
       print(lista);
     });
-  }
+  }*/
 
   Future<List> obterPlanosPet2(int id) async {
     Database? db = await DB.instance.database;
