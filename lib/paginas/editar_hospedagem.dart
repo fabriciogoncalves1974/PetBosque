@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_hospedagem.dart';
@@ -28,10 +27,9 @@ InfoHospedagem info = InfoHospedagem();
 
 class _EditarHospedagemState extends State<EditarHospedagem> {
   final _formKey = GlobalKey<FormState>();
-
+  String menssagem = "";
   late Hospedagem _editarHospedagem;
   late String portePet;
-
   bool _hospedagemEditada = false;
   int diaria = 0;
   double totalHospedagem = 0;
@@ -39,21 +37,20 @@ class _EditarHospedagemState extends State<EditarHospedagem> {
   @override
   void initState() {
     super.initState();
+
     _editarHospedagem = Hospedagem.fromMap(widget._hospedagem.toMap());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _dateTime = (DateFormat('dd/MM/yyyy')
-          .parse(_editarHospedagem.dataCheckIn.toString()));
-      _dataCheckOut = (DateFormat('dd/MM/yyyy')
-          .parse(_editarHospedagem.dataCheckOut.toString()));
-      _time = TimeOfDay.fromDateTime(
-          DateTime.parse('0000-00-00 ${_editarHospedagem.horaCheckIn}:00Z'));
-      _timeCheckOut = TimeOfDay.fromDateTime(
-          DateTime.parse('0000-00-00 ${_editarHospedagem.horaCheckOut}:00Z'));
-      diaria = _editarHospedagem.dia;
+      diaria = int.parse(_editarHospedagem.dia);
       valorDiariaController.text = _editarHospedagem.valorDia.toString();
       adicionalController.text = _editarHospedagem.adicional.toString();
       observacaoController.text = _editarHospedagem.observacao.toString();
       valorTotalController.text = _editarHospedagem.valorTotal.toString();
+      _dateTime = DateTime.parse(_editarHospedagem.dataCheckIn.toString());
+      _dataCheckOut = DateTime.parse(_editarHospedagem.dataCheckOut.toString());
+      _time = TimeOfDay.fromDateTime(
+          DateTime.parse('0000-00-00 ${_editarHospedagem.horaCheckIn}'));
+      _timeCheckOut = TimeOfDay.fromDateTime(
+          DateTime.parse('0000-00-00 ${_editarHospedagem.horaCheckOut}'));
 
       _calculaDiaria();
     });
@@ -218,7 +215,14 @@ class _EditarHospedagemState extends State<EditarHospedagem> {
           child: Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(
-              title: const Text("Nova Hospedagem"),
+              title: Text(
+                _editarHospedagem.nomePet ?? "",
+                style: const TextStyle(
+                  color: Color.fromARGB(255, 73, 66, 2),
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () {
@@ -231,6 +235,7 @@ class _EditarHospedagemState extends State<EditarHospedagem> {
                 if (_dataCheckOut.compareTo(_dateTime) < 0) {
                   showDialog(
                       context: context,
+                      barrierDismissible: false,
                       builder: (context) {
                         return AlertDialog(
                           title: const Text("Data Invalida!"),
@@ -265,42 +270,46 @@ class _EditarHospedagemState extends State<EditarHospedagem> {
                       });
                 } else {
                   _totalHospedagem();
-                  // info.salvarHospedagem(_editarHospedagem);
-
-                  /*  db.collection("hospedagem").doc(_editarHospedagem.id).set({
-                    "idHospedagem": _editarHospedagem.id,
-                    "idPet": _editarHospedagem.idPet,
-                    "nomeContato": _editarHospedagem.nomeContato,
-                    "fotoPet": _editarHospedagem.fotoPet,
-                    "nomePet": _editarHospedagem.nomePet,
-                    "dataCheckIn": _editarHospedagem.dataCheckIn,
-                    "horaCheckIn": _editarHospedagem.horaCheckIn,
-                    "dataCheckOut": _editarHospedagem.dataCheckOut,
-                    "horaCheckOut": _editarHospedagem.horaCheckOut,
-                    "dia": _editarHospedagem.dia,
-                    "valorDia": _editarHospedagem.valorDia,
-                    "adicional": _editarHospedagem.adicional,
-                    "valorTotal": totalHospedagem,
-                    "observacao": _editarHospedagem.observacao,
-                    "status": _editarHospedagem.status,
-                    "colaborador": _editarHospedagem.colaborador,
-                    "idColaborador": _editarHospedagem.idColaborador,
-                    "genero": _editarHospedagem.genero,
-                    "porte": _editarHospedagem.porte
-                  });*/
-
-                  _limpaCampos();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ListaHospedagem()));
+                  info.AtualizarHospedagemApi(_editarHospedagem).then((value) {
+                    menssagem = value;
+                    setState(() {
+                      showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) {
+                            Future.delayed(const Duration(seconds: 2), () {
+                              _limpaCampos();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ListaHospedagem()));
+                            });
+                            return AlertDialog(
+                              content: Text(
+                                menssagem,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 73, 66, 2),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              icon: const Icon(
+                                Icons.check,
+                                weight: 30,
+                                color: Colors.green,
+                              ),
+                            );
+                          });
+                    });
+                  });
                 }
               },
               icon: const Icon(Icons.edit),
-              backgroundColor: Color.fromRGBO(35, 151, 166, 1),
-              hoverColor: Color.fromRGBO(35, 151, 166, 50),
+              backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
+              hoverColor: const Color.fromRGBO(249, 94, 0, 100),
               foregroundColor: Colors.white,
-              label: Text("Alterar"),
+              label: const Text("Alterar"),
             ),
             body: SingleChildScrollView(
                 padding: const EdgeInsets.all(10.0),
@@ -619,6 +628,7 @@ class _EditarHospedagemState extends State<EditarHospedagem> {
   Future<bool> _retornaPop(BuildContext context) {
     if (_hospedagemEditada) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             return AlertDialog(

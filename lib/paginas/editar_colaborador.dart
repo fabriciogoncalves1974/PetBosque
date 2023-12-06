@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_bosque/funcoes/info_coloborador.dart';
 import 'package:pet_bosque/paginas/lista_colaborador.dart';
@@ -217,6 +216,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
   Future<bool> _retornaPop(BuildContext context) {
     if (_colaboradorEditado) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             return AlertDialog(

@@ -24,8 +24,9 @@ class Inicio extends StatefulWidget {
 
 class _InicioState extends State<Inicio> {
   setFullscreen() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top]);
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.immersiveSticky,
+    );
   }
 
   final String data = DateFormat("dd/MM/yyyy").format(DateTime.now());
@@ -153,9 +154,9 @@ class _InicioState extends State<Inicio> {
           child: Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(
-                backgroundColor: const Color.fromRGBO(35, 151, 166, 1),
+                backgroundColor: Color.fromRGBO(94, 45, 158, 1),
                 centerTitle: true,
-                title: Container(
+                /*title: Container(
                     height: 60,
                     width: 200,
                     decoration: BoxDecoration(
@@ -166,7 +167,7 @@ class _InicioState extends State<Inicio> {
                       "assets/imagens/petBosque.png",
                       alignment: Alignment.bottomCenter,
                       fit: BoxFit.fitHeight,
-                    )),
+                    )),*/
                 actions: <Widget>[
                   IconButton(
                       onPressed: () {
@@ -183,9 +184,10 @@ class _InicioState extends State<Inicio> {
                 children: <Widget>[
                   const DrawerHeader(
                     decoration: BoxDecoration(
+                        color: Colors.white,
                         image: DecorationImage(
-                            image: AssetImage("assets/imagens/petBosque.png"),
-                            fit: BoxFit.cover)),
+                            image: AssetImage("assets/imagens/logo_menu.png"),
+                            fit: BoxFit.contain)),
                     child: null,
                   ),
                   CustomListTile(
@@ -229,11 +231,6 @@ class _InicioState extends State<Inicio> {
                     onTap: paginaAgendamentos,
                   ),
                   CustomListTile(
-                    icone: Icons.list,
-                    texto: "Agendamentos Pendentes",
-                    onTap: paginaAgendamentosPendentes,
-                  ),
-                  CustomListTile(
                       icone: Icons.exit_to_app,
                       texto: "Sair",
                       onTap: () => exit(0)),
@@ -242,8 +239,8 @@ class _InicioState extends State<Inicio> {
             ),
             body: _paginas[_currentIndex],
             bottomNavigationBar: ConvexAppBar(
-              style: TabStyle.titled,
-              backgroundColor: Color.fromRGBO(35, 151, 166, 1),
+              style: TabStyle.react,
+              backgroundColor: Color.fromRGBO(94, 45, 158, 1),
               items: const [
                 TabItem(
                   icon: Icons.calendar_month,

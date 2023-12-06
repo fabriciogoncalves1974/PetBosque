@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
@@ -181,20 +179,17 @@ class PesquisaPetPage extends SearchDelegate<Pet?> {
                             ),
                           ],
                           actions: [
-                            GestureDetector(
-                              child: Image.file(
-                                File(pets[index].foto ?? ""),
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Image.asset("assets/imagens/pet.png"),
-                                fit: BoxFit.cover,
-                              ),
+                            IconSlideAction(
+                              color: Colors.blueAccent,
+                              icon: Icons.photo,
+                              caption: 'Foto',
                               onTap: () {},
                             ),
                           ],
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
-                              color: Colors.grey[200],
+                              color: const Color.fromRGBO(204, 236, 247, 100),
                             ),
                             padding: const EdgeInsets.all(16),
                             child: Column(
@@ -237,6 +232,25 @@ class PesquisaPetPage extends SearchDelegate<Pet?> {
                                     ),
                                   ],
                                 ),
+                                if (pets[index].nomePlano != 'N')
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        "Plano: ",
+                                        style: TextStyle(
+                                          color: Color.fromARGB(255, 73, 66, 2),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      Text(
+                                        pets[index].nomePlano ?? "",
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                               ],
                             ),
                           ),
@@ -260,6 +274,6 @@ class PesquisaPetPage extends SearchDelegate<Pet?> {
   }
 
   Future<List<Pet>> _pesquisarTodosPets() {
-    return infoPet.pesquisarPetApi(query);
+    return infoPet.pesquisarTodosPetApi(query);
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
@@ -48,7 +46,7 @@ class PesquisaTodosPetPage extends SearchDelegate<Pet?> {
   @override
   Widget buildSuggestions(BuildContext context) {
     return FutureBuilder<List<Pet>>(
-      //future: _pesquisarTodosPets(),
+      future: _pesquisarTodosPets(),
       builder: (context, snapshot) {
         final List<Pet>? pets = snapshot.data;
         if (snapshot.hasData && pets != null) {
@@ -155,13 +153,10 @@ class PesquisaTodosPetPage extends SearchDelegate<Pet?> {
                             ),
                           ],
                           actions: [
-                            GestureDetector(
-                              child: Image.file(
-                                File(pets[index].foto ?? ""),
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Image.asset("assets/imagens/pet.png"),
-                                fit: BoxFit.cover,
-                              ),
+                            IconSlideAction(
+                              color: Colors.blueAccent,
+                              icon: Icons.photo,
+                              caption: 'Foto',
                               onTap: () {},
                             ),
                           ],
@@ -418,7 +413,7 @@ class PesquisaTodosPetPage extends SearchDelegate<Pet?> {
     );
   }
 
-  // Future<List<Pet>> _pesquisarTodosPets() {
-  //  return infoPet.pesquisarTodosPetFirestore(query);
-  // }
+  Future<List<Pet>> _pesquisarTodosPets() {
+    return infoPet.pesquisarTodosPetApi(query);
+  }
 }

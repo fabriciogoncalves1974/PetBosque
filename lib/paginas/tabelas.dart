@@ -42,46 +42,49 @@ class _TabelasState extends State<Tabelas> {
                   ),
                   Row(
                     children: [
-                      InkWell(
-                        child: Container(
-                          height: 100,
-                          width: 371,
-                          color: Color.fromRGBO(35, 151, 166, 1),
-                          /*decoration: BoxDecoration(
-                            image: const DecorationImage(
-                                image: AssetImage("assets/imagens/botao.png"),
-                                fit: BoxFit.cover),
-                            border: Border.all(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(25.0),
-                          ),*/
-                          child: Row(children: [
-                            IconButton(
-                              iconSize: 72,
-                              color: Colors.white70,
-                              icon: const Icon(Icons.view_timeline_outlined),
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const ListaPet()));
-                              },
-                            ),
-                            const Text(
-                              "-- COLABORADOR --",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white70,
+                      Flexible(
+                        flex: 2,
+                        child: InkWell(
+                          child: Container(
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              image: const DecorationImage(
+                                  image: AssetImage(
+                                      "assets/imagens/bt_agenda.png"),
+                                  fit: BoxFit.cover),
+                              border: Border.all(
+                                color: Colors.white,
                               ),
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                          ]),
+                            child: Row(children: [
+                              IconButton(
+                                iconSize: 72,
+                                color: Colors.white70,
+                                icon: const Icon(Icons.view_timeline_outlined),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => const ListaPet()));
+                                },
+                              ),
+                              const Text(
+                                "-- COLABORADOR --",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ]),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    const ListaColaborador()));
+                          },
                         ),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const ListaColaborador()));
-                        },
-                      ),
+                      )
                     ],
                   ),
                   const SizedBox(
@@ -89,46 +92,48 @@ class _TabelasState extends State<Tabelas> {
                   ),
                   Row(
                     children: [
-                      InkWell(
-                        child: Container(
-                          height: 100,
-                          width: 371,
-                          color: Color.fromRGBO(35, 151, 166, 1),
-                          /*decoration: BoxDecoration(
-                            image: const DecorationImage(
-                                image: AssetImage("assets/imagens/botao.png"),
-                                fit: BoxFit.cover),
-                            border: Border.all(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(25.0),
-                          ),*/
-                          child: Row(children: [
-                            IconButton(
-                              iconSize: 72,
-                              color: Colors.white70,
-                              icon: const Icon(Icons.view_timeline_outlined),
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const ListaPet()));
-                              },
-                            ),
-                            const Text(
-                              "-- PLANOS --",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white70,
+                      Flexible(
+                        flex: 2,
+                        child: InkWell(
+                          child: Container(
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              image: const DecorationImage(
+                                  image: AssetImage(
+                                      "assets/imagens/bt_agenda2.png"),
+                                  fit: BoxFit.cover),
+                              border: Border.all(
+                                color: Colors.white,
                               ),
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                          ]),
+                            child: Row(children: [
+                              IconButton(
+                                iconSize: 72,
+                                color: Colors.white70,
+                                icon: const Icon(Icons.view_timeline_outlined),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => const ListaPet()));
+                                },
+                              ),
+                              const Text(
+                                "-- PLANOS --",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ]),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const ListaPlanos()));
+                          },
                         ),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const ListaPlanos()));
-                        },
-                      ),
+                      )
                     ],
                   ),
                   const SizedBox(
@@ -136,47 +141,49 @@ class _TabelasState extends State<Tabelas> {
                   ),
                   Row(
                     children: [
-                      InkWell(
-                        child: Container(
-                          height: 100,
-                          width: 371,
-                          color: Color.fromRGBO(35, 151, 166, 1),
-                          /*decoration: BoxDecoration(
-                            image: const DecorationImage(
-                                image: AssetImage("assets/imagens/botao.png"),
-                                fit: BoxFit.cover),
-                            border: Border.all(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(25.0),
-                          ),*/
-                          child: Row(children: [
-                            IconButton(
-                              iconSize: 72,
-                              color: Colors.white70,
-                              icon: const Icon(Icons.view_timeline_outlined),
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ListaEspecie()));
-                              },
-                            ),
-                            const Text(
-                              "-- ESPÉCIES --",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white70,
+                      Flexible(
+                        flex: 2,
+                        child: InkWell(
+                          child: Container(
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              image: const DecorationImage(
+                                  image: AssetImage(
+                                      "assets/imagens/bt_agenda.png"),
+                                  fit: BoxFit.cover),
+                              border: Border.all(
+                                color: Colors.white,
                               ),
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                          ]),
+                            child: Row(children: [
+                              IconButton(
+                                iconSize: 72,
+                                color: Colors.white70,
+                                icon: const Icon(Icons.view_timeline_outlined),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ListaEspecie()));
+                                },
+                              ),
+                              const Text(
+                                "-- ESPÉCIES --",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ]),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const ListaEspecie()));
+                          },
                         ),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const ListaEspecie()));
-                        },
-                      ),
+                      )
                     ],
                   ),
                   const SizedBox(
@@ -184,46 +191,48 @@ class _TabelasState extends State<Tabelas> {
                   ),
                   Row(
                     children: [
-                      InkWell(
-                        child: Container(
-                          height: 100,
-                          width: 371,
-                          color: Color.fromRGBO(35, 151, 166, 1),
-                          /*decoration: BoxDecoration(
-                            image: const DecorationImage(
-                                image: AssetImage("assets/imagens/botao.png"),
-                                fit: BoxFit.cover),
-                            border: Border.all(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(25.0),
-                          ),*/
-                          child: Row(children: [
-                            IconButton(
-                              iconSize: 72,
-                              color: Colors.white70,
-                              icon: const Icon(Icons.view_timeline_outlined),
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const ListaRaca()));
-                              },
-                            ),
-                            const Text(
-                              "-- RAÇAS --",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white70,
+                      Flexible(
+                        flex: 2,
+                        child: InkWell(
+                          child: Container(
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              image: const DecorationImage(
+                                  image: AssetImage(
+                                      "assets/imagens/bt_agenda2.png"),
+                                  fit: BoxFit.cover),
+                              border: Border.all(
+                                color: Colors.white,
                               ),
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                          ]),
+                            child: Row(children: [
+                              IconButton(
+                                iconSize: 72,
+                                color: Colors.white70,
+                                icon: const Icon(Icons.view_timeline_outlined),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => const ListaRaca()));
+                                },
+                              ),
+                              const Text(
+                                "-- RAÇAS --",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ]),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const ListaRaca()));
+                          },
                         ),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const ListaRaca()));
-                        },
-                      ),
+                      )
                     ],
                   ),
                 ],

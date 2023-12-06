@@ -114,7 +114,7 @@ class PesquisaPage extends SearchDelegate<Contato?> {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
-                              color: Colors.grey[200],
+                              color: const Color.fromRGBO(204, 236, 247, 100),
                             ),
                             padding: const EdgeInsets.all(16),
                             child: Column(
@@ -160,6 +160,60 @@ class PesquisaPage extends SearchDelegate<Contato?> {
                                 Row(
                                   children: [
                                     const Text(
+                                      "Endereço: ",
+                                      style: TextStyle(
+                                        color: Color.fromARGB(255, 73, 66, 2),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      contatos[index].endereco ?? "",
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Complemento: ",
+                                      style: TextStyle(
+                                        color: Color.fromARGB(255, 73, 66, 2),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      contatos[index].complemento ?? "",
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Bairro: ",
+                                      style: TextStyle(
+                                        color: Color.fromARGB(255, 73, 66, 2),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      contatos[index].bairro ?? "",
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    const Text(
                                       "Cidade: ",
                                       style: TextStyle(
                                         color: Color.fromARGB(255, 73, 66, 2),
@@ -169,6 +223,41 @@ class PesquisaPage extends SearchDelegate<Contato?> {
                                     ),
                                     Text(
                                       contatos[index].cidade ?? "",
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 25,
+                                    ),
+                                    /*const Text(
+                      "UF: ",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 73, 66, 2),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      contatos[index].uf ?? "",
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),*/
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Email: ",
+                                      style: TextStyle(
+                                        color: Color.fromARGB(255, 73, 66, 2),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      contatos[index].email ?? "",
                                       style: const TextStyle(
                                         fontSize: 12,
                                       ),
@@ -198,6 +287,6 @@ class PesquisaPage extends SearchDelegate<Contato?> {
   }
 
   Future<List<Contato>> _pesquisarTodosContatos() {
-    return info.pesquisarTodosContatos(query);
+    return info.pesquisarTodosContatosApi(query);
   }
 }

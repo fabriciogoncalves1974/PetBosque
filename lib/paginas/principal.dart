@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/funcoes/info_hospedagem.dart';
@@ -26,6 +27,12 @@ DateTime now = DateTime.now();
 String formattedDate = DateFormat.yMMMMEEEEd().format(DateTime.now());
 
 class _PrincipalState extends State<Principal> {
+  setFullscreen() {
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.immersiveSticky,
+    );
+  }
+
   List<Agendamento> agendamento = [];
   List<Hospedagem> hospedagem = [];
   String contatoPrimeiroAgendamento = "";
@@ -41,8 +48,6 @@ class _PrincipalState extends State<Principal> {
   int qtdHospedagem = 0;
   int index = 0;
   int index2 = 0;
-  String _apiResponse = '';
-  List<Cliente> _clientes = [];
 
   @override
   void initState() {
@@ -151,7 +156,7 @@ class _PrincipalState extends State<Principal> {
                   ),
                   Divider(
                     thickness: 1,
-                    color: Colors.teal.shade100,
+                    color: Color.fromRGBO(94, 45, 158, 1),
                   ),
                   const SizedBox(
                     height: 30,
@@ -208,9 +213,8 @@ class _PrincipalState extends State<Principal> {
                                   border: Border.all(
                                     color: Colors.white,
                                   ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  color:
-                                      const Color.fromRGBO(204, 236, 247, 100),
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: Color.fromRGBO(94, 45, 158, 1),
                                 ),
                                 child: Column(children: [
                                   const SizedBox(
@@ -312,19 +316,20 @@ class _PrincipalState extends State<Principal> {
                   if (contatoPrimeiroAgendamento == "")
                     Row(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2),
+                        Flexible(
+                          flex: 2,
                           child: InkWell(
                             child: Container(
-                                height: 115,
-                                width: 380,
+                                padding: const EdgeInsets.all(5.0),
                                 decoration: BoxDecoration(
+                                  image: const DecorationImage(
+                                      image: AssetImage(
+                                          "assets/imagens/bt_agenda2.png"),
+                                      fit: BoxFit.cover),
                                   border: Border.all(
                                     color: Colors.white,
                                   ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  color:
-                                      const Color.fromRGBO(204, 236, 247, 100),
+                                  borderRadius: BorderRadius.circular(5.0),
                                 ),
                                 child: const Column(children: [
                                   SizedBox(
@@ -336,7 +341,7 @@ class _PrincipalState extends State<Principal> {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 14.0,
-                                        color: Colors.black,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ]),
@@ -351,7 +356,7 @@ class _PrincipalState extends State<Principal> {
                   ),
                   Divider(
                     thickness: 1,
-                    color: Colors.teal.shade100,
+                    color: Color.fromRGBO(94, 45, 158, 1),
                   ),
                   const SizedBox(
                     height: 25,
@@ -408,9 +413,8 @@ class _PrincipalState extends State<Principal> {
                                   border: Border.all(
                                     color: Colors.white,
                                   ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  color:
-                                      const Color.fromRGBO(204, 236, 247, 100),
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: const Color.fromRGBO(249, 94, 0, 1),
                                 ),
                                 child: Column(children: [
                                   const SizedBox(
@@ -422,7 +426,7 @@ class _PrincipalState extends State<Principal> {
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                         fontSize: 16.0,
-                                        color: Colors.black,
+                                        color: Colors.white,
                                       ),
                                     ),
                                     Text(
@@ -508,34 +512,39 @@ class _PrincipalState extends State<Principal> {
                   if (contatoPrimeiroHospedagem == "")
                     Row(
                       children: [
-                        InkWell(
-                          child: Container(
-                              height: 120,
-                              width: 380,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.white,
-                                ),
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color.fromRGBO(204, 236, 247, 100),
-                              ),
-                              child: const Column(children: [
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(children: [
-                                  Text(
-                                    "Sem hospedagem para hoje!  ",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.black,
-                                    ),
+                        Flexible(
+                          flex: 2,
+                          child: InkWell(
+                            child: Container(
+                                padding: const EdgeInsets.all(5.0),
+                                decoration: BoxDecoration(
+                                  image: const DecorationImage(
+                                      image: AssetImage(
+                                          "assets/imagens/bt_agenda2.png"),
+                                      fit: BoxFit.cover),
+                                  border: Border.all(
+                                    color: Colors.white,
                                   ),
-                                ]),
-                              ])),
-                          onTap: () {},
-                        ),
+                                  borderRadius: BorderRadius.circular(5.0),
+                                ),
+                                child: const Column(children: [
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(children: [
+                                    Text(
+                                      "Sem hospedagem para hoje!  ",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ]),
+                                ])),
+                            onTap: () {},
+                          ),
+                        )
                       ],
                     ),
                 ],

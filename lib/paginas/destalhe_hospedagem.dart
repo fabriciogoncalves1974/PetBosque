@@ -14,11 +14,15 @@ InfoColaborador infoColaborador = InfoColaborador();
 
 class DetalheHospedagem extends StatefulWidget {
   const DetalheHospedagem(
-      {Key? key, required this.idHospedagem, required this.pendente})
+      {Key? key,
+      required this.idHospedagem,
+      required this.pendente,
+      required this.status})
       : super(key: key);
 
   final String idHospedagem;
   final bool pendente;
+  final String status;
 
   @override
   State<DetalheHospedagem> createState() => _DetalheHospedagemState();
@@ -30,15 +34,14 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
   List<Colaborador> colaborador = [];
   List<Colaborador> itens = [];
 
-  late String status;
+  String atualizaStatus = "";
   late String idHospedagem;
-  late String hospedagemId;
+
   String nomeColaborador = "Geral";
   String idColaborador = "1";
   late String observacao;
   late String porte;
-  // TimeOfDay _time = TimeOfDay.now();
-  //DateTime _dateTime = DateTime.now();
+
   paginaContatos() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const ListaContatos()),
@@ -71,8 +74,6 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
 
   @override
   Widget build(BuildContext context) {
-    hospedagemId = hospedagem.id!;
-    status = hospedagem.status!;
     double? totalDiarias =
         (int.parse(hospedagem.dia!) * double.parse(hospedagem.valorDia!));
     double? valorDia = double.parse(hospedagem.valorDia!);
@@ -333,7 +334,7 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
                       ),
                       Text(
                         //"R\$ ${hospedagem.valorDia!.toStringAsFixed(2)}" ?? "",
-                        "R\$ " + valorDia!.toStringAsFixed(2) ?? "",
+                        "R\$ ${valorDia!.toStringAsFixed(2)}" ?? "",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -385,7 +386,7 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
                               width: 150,
                             ),
                             child: Text(
-                              "R\$ " + adicional!.toStringAsFixed(2) ?? "",
+                              "R\$ ${adicional!.toStringAsFixed(2)}" ?? "",
                               textAlign: TextAlign.center,
                               style: const TextStyle(height: 2, fontSize: 20),
                             ),
@@ -412,7 +413,7 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
                             width: 150,
                           ),
                           child: Text(
-                            "R\$ " + valorTotal!.toStringAsFixed(2) ?? "",
+                            "R\$ ${valorTotal!.toStringAsFixed(2)}" ?? "",
                             textAlign: TextAlign.center,
                             style: const TextStyle(height: 2, fontSize: 20),
                           ),
@@ -445,7 +446,7 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
                       ),
                     )
                   ]),
-                  if (status == "Pendente")
+                  if (widget.status == "Pendente")
                     Row(
                       children: [
                         Container(
@@ -508,10 +509,10 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
                                                     BorderRadius.circular(10)),
                                           ),
                                           onPressed: () {
-                                            status = "Cancelado";
-                                            idHospedagem = hospedagemId;
-                                            _alterarStatus(
-                                                idHospedagem, status, "0", "0");
+                                            atualizaStatus = "Cancelado";
+                                            idHospedagem = hospedagem.id;
+                                            _alterarStatus(idHospedagem,
+                                                atualizaStatus, "0", "0");
                                             if (widget.pendente == false) {
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(
@@ -608,11 +609,11 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
                                                           10)),
                                             ),
                                             onPressed: () {
-                                              status = "Finalizado";
-                                              idHospedagem = hospedagemId;
+                                              atualizaStatus = "Finalizado";
+                                              idHospedagem = hospedagem.id;
                                               _alterarStatus(
                                                   idHospedagem,
-                                                  status,
+                                                  atualizaStatus,
                                                   nomeColaborador,
                                                   idColaborador);
                                               if (widget.pendente == false) {
@@ -652,10 +653,10 @@ class _DetalheHospedagemState extends State<DetalheHospedagem> {
     );
   }
 
-  void _alterarStatus(
-      String id, String status, String colaborador, String idColaborador) {
+  void _alterarStatus(String id, String atualizaStatus, String colaborador,
+      String idColaborador) {
     info.atualizarStatusApi(
-        idHospedagem, status, nomeColaborador, idColaborador);
+        idHospedagem, atualizaStatus, nomeColaborador, idColaborador);
     /* db.collection('hospedagem').doc(idHospedagem).update({
       'status': status,
       'colaborador': nomeColaborador,

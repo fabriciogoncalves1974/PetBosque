@@ -4,12 +4,10 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
 import 'package:pet_bosque/paginas/detalhe_agendamento.dart';
-import 'package:pet_bosque/paginas/editar_agendamento.dart';
-import 'package:pet_bosque/paginas/editar_agendamentoPlano.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
 import 'package:pet_bosque/paginas/lista_colaborador.dart';
 import 'package:pet_bosque/paginas/lista_contato.dart';
-import 'package:pet_bosque/paginas/lista_pet.dart';
+import 'package:pet_bosque/paginas/lista_hospedagemPet.dart';
 import 'package:pet_bosque/paginas/lista_planos.dart';
 import 'package:pet_bosque/paginas/principal.dart';
 
@@ -17,37 +15,33 @@ enum OrderOption { orderaz, orderza }
 
 InfoAgendamento info = InfoAgendamento();
 
-class ListaAgendamentos extends StatefulWidget {
-  const ListaAgendamentos({
-    Key? key,
-    required this.data,
-  }) : super(key: key);
-  final String data;
+class ListaAgendamentosPet extends StatefulWidget {
+  const ListaAgendamentosPet(
+      {Key? key, required this.idPet, required this.nomePet})
+      : super(key: key);
+
+  final dynamic idPet;
+  final dynamic nomePet;
+
   @override
-  State<ListaAgendamentos> createState() => _ListaAgendamentosState();
+  State<ListaAgendamentosPet> createState() => _ListaAgendamentosPetState();
 }
 
-class _ListaAgendamentosState extends State<ListaAgendamentos> {
+class _ListaAgendamentosPetState extends State<ListaAgendamentosPet> {
   List<Agendamento> agendamento = [];
-  late String dataAgendamento;
-  late String dataRetorno;
-
+  late String _dataAgendamento;
   DateTime _dateTime = DateTime.now();
-  late String dataAtual;
-  final bool pendente = false;
-  late bool vazio;
+  final bool pendente = true;
   Color corPendente = Colors.yellow;
   Color corCancelado = Colors.red;
   Color corFinalizado = Colors.blue;
-  Color corStatus = const Color.fromRGBO(202, 236, 236, 1);
+  Color corStatus = Color.fromRGBO(202, 236, 236, 1);
   bool loading = true;
-  String statusSelecionado = 'Pendente';
-  bool primeiraConsulta = true;
+  String servicoSelecionado = 'Banho e Tosa';
 
-  var status = [
-    'Pendente',
-    'Finalizado',
-    'Cancelado',
+  var servico = [
+    'Banho e Tosa',
+    'Hotel',
   ];
 
   paginaInicial() {
@@ -67,7 +61,7 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
 
   paginaPets() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const ListaPet()),
+      MaterialPageRoute(builder: (context) => const Inicio(index: 3)),
     );
   }
 
@@ -85,7 +79,7 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
 
   paginaPet() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const ListaPet()),
+      MaterialPageRoute(builder: (context) => const Inicio(index: 3)),
     );
   }
 
@@ -95,129 +89,112 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
     );
   }
 
-  void _showDatePicker(BuildContext context) {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2030),
-    ).then((value) {
-      setState(() {
-        dataAgendamento = DateFormat("yyyy-MM-dd").format(value!);
-        _dateTime = value;
-        primeiraConsulta = false;
-        _obterTodosAgendamentos(dataAgendamento, statusSelecionado);
-      });
-    });
-  }
-
+  // FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
-    dataRetorno = widget.data;
-    toString();
-    _dateTime = DateTime.now();
-    dataAtual = DateFormat("yyyy-MM-dd").format(_dateTime!);
-    dataAgendamento = DateFormat("yyyy-MM-dd").format(_dateTime);
 
     setState(() {
-      if (primeiraConsulta == true) {
-        _obterTodosAgendamentosPrimeiro(statusSelecionado);
-        loading = false;
-      } else {
-        _obterTodosAgendamentos(dataAgendamento, statusSelecionado);
-        loading = false;
-      }
+      _obterTodosAgendamentosPet();
+      loading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/imagens/back_app.png"),
-            fit: BoxFit.cover,
-          ),
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("assets/imagens/back_app.png"),
+          fit: BoxFit.cover,
         ),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            title: const Text("Banho e Tosa"),
-            centerTitle: true,
-            leading: IconButton(
-              onPressed: () {
-                paginaInicial();
-              },
-              icon: const Icon(Icons.home_outlined),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: Text(
+            widget.nomePet,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w600,
             ),
-            actions: <Widget>[
-              IconButton(
-                onPressed: () {
-                  _showDatePicker(context);
-                },
-                icon: const Icon(Icons.calendar_month),
-              ),
-              DropdownButtonHideUnderline(
-                child: DropdownButton2(
-                  value: statusSelecionado,
-                  hint: Text(
-                    statusSelecionado,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).hintColor,
-                    ),
-                  ),
-                  items: status.map((String items) {
-                    return DropdownMenuItem(
-                        value: items,
-                        child: Text(
-                          items,
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
-                        ));
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      if (primeiraConsulta == false) {
-                        statusSelecionado = newValue!;
-                        _obterTodosAgendamentos(
-                            dataAgendamento, statusSelecionado);
-                      } else {
-                        statusSelecionado = newValue!;
-                        _obterTodosAgendamentosPrimeiro(statusSelecionado);
-                      }
-                    });
-                  },
-                ),
-              )
-            ],
           ),
-          floatingActionButton: FloatingActionButton.extended(
+          actions: <Widget>[
+            DropdownButtonHideUnderline(
+              child: DropdownButton2(
+                value: servicoSelecionado,
+                hint: Text(
+                  servicoSelecionado,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).hintColor,
+                  ),
+                ),
+                items: servico.map((String items) {
+                  return DropdownMenuItem(
+                      value: items,
+                      child: Text(
+                        items,
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
+                      ));
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    servicoSelecionado = newValue!;
+                    if (servicoSelecionado == 'Banho e Tosa') {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ListaAgendamentosPet(
+                                idPet: widget.idPet,
+                                nomePet: widget.nomePet,
+                              )));
+                    }
+                    if (servicoSelecionado == 'Hotel') {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ListaHospedagemPet(
+                                idPet: widget.idPet,
+                                nomePet: widget.nomePet,
+                              )));
+                    }
+                  });
+                },
+              ),
+            )
+          ],
+          leading: IconButton(
             onPressed: () {
               paginaPet();
             },
-            icon: const Icon(Icons.add),
-            backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
-            hoverColor: const Color.fromRGBO(249, 94, 0, 100),
-            foregroundColor: Colors.white,
-            label: const Text("Novo"),
+            icon: const Icon(Icons.home_outlined),
           ),
-          body: !loading
-              ? ListView.builder(
-                  padding: const EdgeInsets.all(10.0),
-                  itemCount: agendamento.length,
-                  itemBuilder: (context, index) {
-                    return _cartaoContato(context, index);
-                  })
-              : const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.greenAccent,
-                    backgroundColor: Colors.grey,
-                  ),
+          centerTitle: true,
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            paginaPets();
+          },
+          icon: const Icon(Icons.add),
+          backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
+          hoverColor: const Color.fromRGBO(249, 94, 0, 100),
+          foregroundColor: Colors.white,
+          label: Text("Novo"),
+        ),
+        body: !loading
+            ? ListView.builder(
+                padding: const EdgeInsets.all(10.0),
+                itemCount: agendamento.length,
+                itemBuilder: (context, index) {
+                  return _cartaoContato(context, index);
+                })
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Colors.greenAccent,
+                  backgroundColor: Colors.grey,
                 ),
-        ));
+              ),
+      ),
+    );
   }
 
   Widget _cartaoContato(BuildContext context, int index) {
@@ -240,87 +217,14 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
             actionPane: const SlidableDrawerActionPane(),
             secondaryActions: [
               IconSlideAction(
-                color: Colors.blueAccent,
-                icon: Icons.edit,
-                caption: 'Editar',
-                onTap: () {
-                  if (agendamento[index].planoVencido == "P")
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => EditarAgendamento(
-                              agendamento: agendamento[index],
-                            )));
-                  if (agendamento[index].planoVencido == "N")
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => EditarAgendamentoPlano(
-                              agendamento: agendamento[index],
-                            )));
-                  if (agendamento[index].planoVencido == "S")
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => EditarAgendamentoPlano(
-                              agendamento: agendamento[index],
-                            )));
-                },
-              ),
-              IconSlideAction(
                 color: Colors.redAccent,
                 icon: Icons.delete,
                 caption: 'Excluir',
                 onTap: () {
-                  showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text(
-                              "Deseja realmente excluir o agendamento do Pet  ${agendamento[index].nomePet}?"),
-                          actions: <Widget>[
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                fixedSize: const Size(120, 50),
-                                backgroundColor: Colors.redAccent,
-                                side: const BorderSide(
-                                    width: 3, color: Colors.redAccent),
-                                elevation: 3,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text(
-                                "Não",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                fixedSize: const Size(120, 50),
-                                backgroundColor: Colors.blueAccent,
-                                side: const BorderSide(
-                                    width: 3, color: Colors.blueAccent),
-                                elevation: 3,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                              onPressed: () {
-                                /* info.deletarAgendamentoFirestore(
-                                    agendamento[index].id!);
-                                setState(() {
-                                  agendamento.removeAt(index);
-                                });*/
-                                Navigator.pop(context);
-                              },
-                              child: const Text(
-                                "Sim",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ],
-                        );
-                      });
+                  //info.deletarAgendamentoFirestore(agendamento[index].id!);
+                  setState(() {
+                    agendamento.removeAt(index);
+                  });
                 },
               ),
             ],
@@ -413,20 +317,6 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
                       ),
                     ],
                   ),
-                  if (agendamento[index].planoVencido == "S")
-                    const Row(
-                      children: [
-                        Icon(color: Colors.green, Icons.money),
-                        Text(
-                          "Pagamento Pendente",
-                          style: TextStyle(
-                            backgroundColor: Colors.red,
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
                   const Row(children: [
                     Text(
                       "Serviços: ",
@@ -536,26 +426,8 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
         });
   }
 
-  void _obterTodosAgendamentos(String dataAgendamento, String status) {
-    /*if (dataAtual != dataRetorno) {
-      _dataAgendamento =  dataRetorno;
-      dataRetorno = _dataAgendamento;
-    }*/
-    info
-        .obterAgendamentosDataStatusApi(dataAgendamento, statusSelecionado)
-        .then((dynamic list) {
-      setState(() {
-        agendamento = list;
-      });
-    });
-  }
-
-  void _obterTodosAgendamentosPrimeiro(status) {
-    /*if (dataAtual != dataRetorno) {
-      _dataAgendamento =  dataRetorno;
-      dataRetorno = _dataAgendamento;
-    }*/
-    info.obterAgendamentosStatusApi(statusSelecionado).then((dynamic list) {
+  void _obterTodosAgendamentosPet() {
+    info.obterTodosAgendamentosPetApi(widget.idPet).then((dynamic list) {
       setState(() {
         agendamento = list;
       });
@@ -578,13 +450,13 @@ class _ListaAgendamentosState extends State<ListaAgendamentos> {
 }
 
 //Customizar ListTile do menu
-class CustomListTile extends StatelessWidget {
+class CustomListTilePendentes extends StatelessWidget {
   final IconData icone;
   final String texto;
   final void Function()? onTap;
 
   //CustomListTile(this.icone, this.texto);
-  const CustomListTile({
+  const CustomListTilePendentes({
     super.key,
     required this.icone,
     required this.texto,

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
@@ -28,8 +27,6 @@ class InfoPlano {
   factory InfoPlano() => _instance;
 
   InfoPlano.internal();
-
-  late CollectionReference planoCollection;
 
   Future<Plano> salvarPlano(Plano plano) async {
     Database? db = await DB.instance.database;

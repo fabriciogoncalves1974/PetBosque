@@ -81,6 +81,7 @@ class _NovaRacaState extends State<NovaRaca> {
                   menssagem = value;
                   setState(() {
                     showDialog(
+                        barrierDismissible: false,
                         context: context,
                         builder: (context) {
                           Future.delayed(const Duration(seconds: 2), () {
@@ -113,10 +114,10 @@ class _NovaRacaState extends State<NovaRaca> {
               }
             },
             icon: const Icon(Icons.save),
-            backgroundColor: Color.fromRGBO(35, 151, 166, 1),
-            hoverColor: Color.fromRGBO(35, 151, 166, 50),
+            backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
+            hoverColor: const Color.fromRGBO(249, 94, 0, 10),
             foregroundColor: Colors.white,
-            label: Text("Salvar"),
+            label: const Text("Salvar"),
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(10.0),
@@ -206,6 +207,7 @@ class _NovaRacaState extends State<NovaRaca> {
   Future<bool> _retornaPop(BuildContext context) {
     if (_racaEditado) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             return AlertDialog(

@@ -101,14 +101,14 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
 
   @override
   Widget build(BuildContext context) {
-    agendamentoId = agendamento.id!;
-    status = agendamento.status!;
+    agendamentoId = agendamento.id ?? "";
+    status = agendamento.status ?? "";
     participante = agendamento.participante ?? "";
     nomeColaborador = agendamento.colaborador ?? "";
     if (agendamento.valorAdicional == null) {
       valoradicional = "0.00";
     } else {
-      valoradicional = agendamento.valorAdicional!.toString() ?? "";
+      valoradicional = agendamento.valorAdicional!.toString();
     }
     if (agendamento.observacao == null) {
       observacao = "Sem observação";
@@ -151,7 +151,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                       //   color: Colors.red,
                       // ),
                     ),
-                    child: Image.file(File(agendamento.fotoPet!),
+                    child: Image.file(File(agendamento.fotoPet ?? ''),
                         errorBuilder: (context, error, stackTrace) =>
                             Image.asset("assets/imagens/pet.png"),
                         fit: BoxFit.cover),
@@ -266,7 +266,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                                 width: 150,
                               ),
                               child: Text(
-                                agendamento.valorBanho!.toString() ?? "",
+                                agendamento.valorBanho.toString(),
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(height: 2, fontSize: 15),
                               ),
@@ -299,7 +299,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                                 width: 150,
                               ),
                               child: Text(
-                                agendamento.valorTosa!.toString() ?? "",
+                                agendamento.valorTosa.toString(),
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(height: 2, fontSize: 15),
                               ),
@@ -332,8 +332,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                                 width: 150,
                               ),
                               child: Text(
-                                agendamento.valorTosaHigienica!.toString() ??
-                                    "",
+                                agendamento.valorTosaHigienica.toString() ?? "",
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(height: 2, fontSize: 15),
                               ),
@@ -366,7 +365,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                                 width: 150,
                               ),
                               child: Text(
-                                agendamento.valorCorteUnha!.toString() ?? "",
+                                agendamento.valorCorteUnha.toString(),
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(height: 2, fontSize: 15),
                               ),
@@ -399,7 +398,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                                 width: 150,
                               ),
                               child: Text(
-                                agendamento.valorHidratacao!.toString() ?? "",
+                                agendamento.valorHidratacao.toString(),
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(height: 2, fontSize: 15),
                               ),
@@ -432,7 +431,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                                 width: 150,
                               ),
                               child: Text(
-                                agendamento.valorPintura!.toString() ?? "",
+                                agendamento.valorPintura.toString(),
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(height: 2, fontSize: 15),
                               ),
@@ -465,7 +464,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                                 width: 150,
                               ),
                               child: Text(
-                                agendamento.valorHospedagem!.toString() ?? "",
+                                agendamento.valorHospedagem.toString(),
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(height: 2, fontSize: 15),
                               ),
@@ -498,7 +497,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                                 width: 150,
                               ),
                               child: Text(
-                                agendamento.valorTransporte!.toString() ?? "",
+                                agendamento.valorTransporte.toString(),
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(height: 2, fontSize: 15),
                               ),
@@ -554,7 +553,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                               width: 150,
                             ),
                             child: Text(
-                              "R\$ " + agendamento.valorTotal!.toString() ?? "",
+                              "R\$ ${agendamento.valorTotal}",
                               textAlign: TextAlign.center,
                               style: const TextStyle(height: 2, fontSize: 20),
                             ),
@@ -668,7 +667,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                           },
                           buttonStyleData: const ButtonStyleData(
                             height: 40,
-                            width: 140,
+                            width: 213,
                           ),
                           menuItemStyleData: const MenuItemStyleData(
                             height: 40,
@@ -724,7 +723,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                           },
                           buttonStyleData: const ButtonStyleData(
                             height: 40,
-                            width: 140,
+                            width: 213,
                           ),
                           menuItemStyleData: const MenuItemStyleData(
                             height: 40,
@@ -751,6 +750,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                             ),
                             onPressed: () {
                               showDialog(
+                                  barrierDismissible: false,
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
@@ -851,6 +851,7 @@ class _DetalheAgendamentosState extends State<DetalheAgendamentos> {
                               ),
                               onPressed: () {
                                 showDialog(
+                                    barrierDismissible: false,
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(

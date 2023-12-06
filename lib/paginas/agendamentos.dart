@@ -39,46 +39,48 @@ class _AgendamentosState extends State<Agendamentos> {
                   ),
                   Row(
                     children: [
-                      InkWell(
-                        child: Container(
-                          height: 100,
-                          width: 371,
-                          color: Color.fromRGBO(35, 151, 166, 1),
-                          /*decoration: BoxDecoration(
-                            image: const DecorationImage(
-                                image: AssetImage("assets/imagens/botao.png"),
-                                fit: BoxFit.cover),
-                            border: Border.all(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(25.0),
-                          ),*/
-                          child: Row(children: [
-                            IconButton(
-                              iconSize: 72,
-                              color: Colors.white70,
-                              icon: const Icon(Icons.pets),
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const ListaPet()));
-                              },
-                            ),
-                            const Text(
-                              "BANHO E TOSA",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white70,
+                      Flexible(
+                        flex: 2,
+                        child: InkWell(
+                          child: Container(
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              image: const DecorationImage(
+                                  image: AssetImage(
+                                      "assets/imagens/bt_agenda.png"),
+                                  fit: BoxFit.cover),
+                              border: Border.all(
+                                color: Colors.white,
                               ),
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                          ]),
+                            child: Row(children: [
+                              IconButton(
+                                iconSize: 72,
+                                color: Colors.white70,
+                                icon: const Icon(Icons.pets),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => const ListaPet()));
+                                },
+                              ),
+                              const Text(
+                                "BANHO E TOSA",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ]),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const ListaPet()));
+                          },
                         ),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const ListaPet()));
-                        },
-                      ),
+                      )
                     ],
                   ),
                   const SizedBox(
@@ -86,47 +88,49 @@ class _AgendamentosState extends State<Agendamentos> {
                   ),
                   Row(
                     children: [
-                      InkWell(
-                        child: Container(
-                          height: 100,
-                          width: 371,
-                          color: Color.fromRGBO(35, 151, 166, 1),
-                          /*decoration: BoxDecoration(
-                            image: const DecorationImage(
-                                image: AssetImage("assets/imagens/botao.png"),
-                                fit: BoxFit.cover),
-                            border: Border.all(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(25.0),
-                          ),*/
-                          child: Row(children: [
-                            IconButton(
-                              iconSize: 72,
-                              color: Colors.white70,
-                              icon: const Icon(Icons.home_filled),
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const ListaPet()));
-                              },
-                            ),
-                            const Text(
-                              "HOSPEDAGEM",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white70,
+                      Flexible(
+                        flex: 2,
+                        child: InkWell(
+                          child: Container(
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              image: const DecorationImage(
+                                  image: AssetImage(
+                                      "assets/imagens/bt_agenda2.png"),
+                                  fit: BoxFit.cover),
+                              border: Border.all(
+                                color: Colors.white,
                               ),
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                          ]),
+                            child: Row(children: [
+                              IconButton(
+                                iconSize: 72,
+                                color: Colors.white70,
+                                icon: const Icon(Icons.home_filled),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => const ListaPet()));
+                                },
+                              ),
+                              const Text(
+                                "HOSPEDAGEM",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ]),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    const ListaPetHospedagem()));
+                          },
                         ),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  const ListaPetHospedagem()));
-                        },
-                      ),
+                      )
                     ],
                   ),
                   const SizedBox(
@@ -134,43 +138,45 @@ class _AgendamentosState extends State<Agendamentos> {
                   ),
                   Row(
                     children: [
-                      InkWell(
-                        child: Container(
-                          height: 100,
-                          width: 371,
-                          color: Color.fromRGBO(35, 151, 166, 1),
-                          /*decoration: BoxDecoration(
-                            image: const DecorationImage(
-                                image: AssetImage("assets/imagens/botao.png"),
-                                fit: BoxFit.cover),
-                            border: Border.all(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(25.0),
-                          ),*/
-                          child: Row(children: [
-                            IconButton(
-                              iconSize: 72,
-                              color: Colors.white70,
-                              icon: const Icon(Icons.medical_services),
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const ListaPet()));
-                              },
-                            ),
-                            const Text(
-                              "VETERINÁRIO",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white70,
+                      Flexible(
+                        flex: 2,
+                        child: InkWell(
+                          child: Container(
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              image: const DecorationImage(
+                                  image: AssetImage(
+                                      "assets/imagens/bt_agenda.png"),
+                                  fit: BoxFit.cover),
+                              border: Border.all(
+                                color: Colors.white,
                               ),
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                          ]),
+                            child: Row(children: [
+                              IconButton(
+                                iconSize: 72,
+                                color: Colors.white70,
+                                icon: const Icon(Icons.medical_services),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => const ListaPet()));
+                                },
+                              ),
+                              const Text(
+                                "VETERINÁRIO",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ]),
+                          ),
+                          onTap: () {},
                         ),
-                        onTap: () {},
-                      ),
+                      )
                     ],
                   ),
                 ],

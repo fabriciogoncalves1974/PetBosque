@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_bosque/funcoes/info_plano.dart';
 
@@ -17,7 +16,6 @@ class list {
 
 class _ListaState extends State<Lista> {
   InfoPlano info = InfoPlano();
-  //FirebaseFirestore db = FirebaseFirestore.instance;
 
   List<Plano> plano = [];
 

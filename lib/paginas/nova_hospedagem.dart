@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_hospedagem.dart';
 import 'package:pet_bosque/paginas/lista_hospedagem.dart';
 import 'package:pet_bosque/paginas/lista_petHospedagem.dart';
-import 'package:uuid/uuid.dart';
 
 class NovaHospedagem extends StatefulWidget {
   final Hospedagem _hospedagem;
@@ -54,6 +52,7 @@ class _NovaHospedagemState extends State<NovaHospedagem> {
   bool _hospedagemEditada = false;
   late int diaria;
   double totalHospedagem = 0;
+  String menssagem = "";
   //FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
@@ -287,44 +286,50 @@ class _NovaHospedagemState extends State<NovaHospedagem> {
                       });
                 } else {
                   _totalHospedagem();
-                  // info.salvarHospedagem(_novaHospedagem);
+
                   DateTime dtCheckIn =
                       DateTime.parse(_novaHospedagem.dataCheckIn.toString());
                   DateTime dtCheckOut =
                       DateTime.parse(_novaHospedagem.dataCheckOut.toString());
-                  String id = Uuid().v1();
-                  /*  db.collection("hospedagem").doc(id).set({
-                    "idHospedagem": id,
-                    "idPet": _novaHospedagem.idPet,
-                    "nomeContato": _novaHospedagem.nomeContato,
-                    "fotoPet": _novaHospedagem.fotoPet,
-                    "nomePet": _novaHospedagem.nomePet,
-                    "dataCheckIn": dtCheckIn,
-                    "horaCheckIn": _novaHospedagem.horaCheckIn,
-                    "dataCheckOut": dtCheckOut,
-                    "horaCheckOut": _novaHospedagem.horaCheckOut,
-                    "dia": _novaHospedagem.dia,
-                    "valorDia": _novaHospedagem.valorDia,
-                    "adicional": _novaHospedagem.adicional,
-                    "valorTotal": totalHospedagem,
-                    "observacao": _novaHospedagem.observacao,
-                    "status": _novaHospedagem.status,
-                    "colaborador": _novaHospedagem.colaborador,
-                    "idColaborador": _novaHospedagem.idColaborador,
-                    "genero": _novaHospedagem.genero,
-                    "porte": _novaHospedagem.porte
-                  });*/
 
-                  _limpaCampos();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ListaHospedagem()));
+                  info.salvarHospedagemApi(_novaHospedagem).then((value) {
+                    menssagem = value;
+                    setState(() {
+                      showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) {
+                            Future.delayed(const Duration(seconds: 2), () {
+                              _limpaCampos();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ListaHospedagem()),
+                              );
+                            });
+                            return AlertDialog(
+                              content: Text(
+                                menssagem,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 73, 66, 2),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              icon: const Icon(
+                                Icons.check,
+                                weight: 30,
+                                color: Colors.green,
+                              ),
+                            );
+                          });
+                    });
+                  });
                 }
               },
               icon: const Icon(Icons.save),
-              backgroundColor: Color.fromRGBO(35, 151, 166, 1),
-              hoverColor: Color.fromRGBO(35, 151, 166, 50),
+              backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
+              hoverColor: const Color.fromRGBO(249, 94, 0, 100),
               foregroundColor: Colors.white,
               label: Text("Salvar"),
             ),
@@ -645,6 +650,7 @@ class _NovaHospedagemState extends State<NovaHospedagem> {
   Future<bool> _retornaPop(BuildContext context) {
     if (_hospedagemEditada) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             return AlertDialog(

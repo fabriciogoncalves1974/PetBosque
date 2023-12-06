@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
@@ -44,17 +43,19 @@ class _EditarAgendamentoPlanoState extends State<EditarAgendamentoPlano> {
   double valorAdicional = 0;
   double valorTotal = 0;
 
-  FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
     _editarAgendamento = Agendamento.fromMap(widget._agendamento.toMap());
-    valorAdicional = _editarAgendamento.valorAdicional ?? 0;
-    valorTotal = _editarAgendamento.valorTotal ?? 0;
+    valorAdicional =
+        double.parse(_editarAgendamento.valorAdicional.toString()) ?? 0;
+    valorTotal = double.parse(_editarAgendamento.valorTotal.toString()) ?? 0;
     valorPlano = (valorTotal - valorAdicional);
     valorAdicionalController.text =
         _editarAgendamento.valorAdicional.toString() ?? '0';
-
+    _dateTime = DateTime.parse(_editarAgendamento.data.toString());
+    _time = TimeOfDay.fromDateTime(
+        DateTime.parse('0000-00-00 ${_editarAgendamento.hora}'));
     observacaoController.text = _editarAgendamento.observacao.toString();
   }
 
@@ -101,7 +102,7 @@ class _EditarAgendamentoPlanoState extends State<EditarAgendamentoPlano> {
       valorTotal = (valorPlano + valorAdicional);
 
       _editarAgendamento.valorTotal = valorTotal;
-      _editarAgendamento.data = DateFormat("dd/MM/yyyy").format(_dateTime);
+      _editarAgendamento.data = DateFormat("yyyy-MM-dd").format(_dateTime);
       _editarAgendamento.hora = _time.format(context);
       _editarAgendamento.status = status;
       if (itens?.svBanho.toString() == "S") {
@@ -162,7 +163,7 @@ class _EditarAgendamentoPlanoState extends State<EditarAgendamentoPlano> {
           child: Scaffold(
               backgroundColor: Colors.transparent,
               appBar: AppBar(
-                title: const Text("Novo Agendamento"),
+                title: const Text("Editar Agendamento"),
                 leading: BackButton(onPressed: () {
                   if (_agendamentoEditado != true) {
                     Navigator.of(context).push(MaterialPageRoute(
@@ -175,54 +176,20 @@ class _EditarAgendamentoPlanoState extends State<EditarAgendamentoPlano> {
                 onPressed: () {
                   loading = true;
                   if (loading = true) {
-                    Center(
+                    const Center(
                       child: CircularProgressIndicator(
                         color: Colors.greenAccent,
                         backgroundColor: Colors.grey,
                       ),
                     );
                   }
-
-                  //info.salvarAgendamento(_editarAgendamento);
                   _executaFuncoes();
+                  info.atualizarAgendamentoApi(_editarAgendamento);
+
                   if (_editarAgendamento.valorAdicional == null) {
                     _editarAgendamento.valorAdicional = 0;
                   }
 
-                  db.collection("agendamentos").doc(_editarAgendamento.id).set({
-                    "idAgendamento": _editarAgendamento.id,
-                    "idPet": _editarAgendamento.idPet,
-                    "nomeContato": _editarAgendamento.nomeContato,
-                    "fotoPet": _editarAgendamento.fotoPet,
-                    "nomePet": _editarAgendamento.nomePet,
-                    "data": _editarAgendamento.data,
-                    "hora": _editarAgendamento.hora,
-                    "svBanho": _editarAgendamento.svBanho,
-                    "valorBanho": _editarAgendamento.valorBanho,
-                    "svTosa": _editarAgendamento.svTosa,
-                    "valorTosa": _editarAgendamento.valorTosa,
-                    "svCorteUnha": _editarAgendamento.svCorteUnha,
-                    "valorCorteUnha": _editarAgendamento.valorCorteUnha,
-                    "svHidratacao": _editarAgendamento.svHidratacao,
-                    "valorHidratacao": _editarAgendamento.valorHidratacao,
-                    "svTosaHigienica": _editarAgendamento.svTosaHigienica,
-                    "valorTosaHigienica": _editarAgendamento.valorTosaHigienica,
-                    "svPintura": _editarAgendamento.svPintura,
-                    "valorPintura": _editarAgendamento.valorPintura,
-                    "svHospedagem": _editarAgendamento.svHospedagem,
-                    "valorHospedagem": _editarAgendamento.valorHospedagem,
-                    "svTransporte": _editarAgendamento.svTransporte,
-                    "valorTransporte": _editarAgendamento.valorTransporte,
-                    "valorAdicional": _editarAgendamento.valorAdicional,
-                    "valorTotal": _editarAgendamento.valorTotal,
-                    "observacao": _editarAgendamento.observacao,
-                    "status": _editarAgendamento.status,
-                    "colaborador": _editarAgendamento.colaborador,
-                    "idColaborador": _editarAgendamento.idColaborador,
-                    "idParticipante": _editarAgendamento.id,
-                    "participante": _editarAgendamento.participante,
-                    "planoVencido": _editarAgendamento.planoVencido
-                  });
                   loading = false;
                   Navigator.push(
                       context,
@@ -232,10 +199,10 @@ class _EditarAgendamentoPlanoState extends State<EditarAgendamentoPlano> {
                               )));
                 },
                 icon: const Icon(Icons.save),
-                backgroundColor: Color.fromRGBO(35, 151, 166, 1),
-                hoverColor: Color.fromRGBO(35, 151, 166, 50),
+                backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
+                hoverColor: const Color.fromRGBO(249, 94, 0, 100),
                 foregroundColor: Colors.white,
-                label: Text("Alterar"),
+                label: const Text("Alterar"),
               ),
               body: SingleChildScrollView(
                 padding: const EdgeInsets.all(10.0),
@@ -538,7 +505,7 @@ class _EditarAgendamentoPlanoState extends State<EditarAgendamentoPlano> {
                                   width: 150,
                                 ),
                                 child: Text(
-                                  "R\$ ${_editarAgendamento.valorTotal!.toStringAsFixed(2)}" ??
+                                  "R\$ ${_editarAgendamento.valorTotal!.toString()}" ??
                                       "",
                                   textAlign: TextAlign.center,
                                   style:
@@ -555,6 +522,7 @@ class _EditarAgendamentoPlanoState extends State<EditarAgendamentoPlano> {
   Future<bool> _retornaPop(BuildContext context) {
     if (_agendamentoEditado) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             return AlertDialog(

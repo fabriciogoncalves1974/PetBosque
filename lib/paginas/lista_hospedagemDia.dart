@@ -186,8 +186,8 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
             paginaPetHospedagem();
           },
           icon: const Icon(Icons.add),
-          backgroundColor: Color.fromRGBO(35, 151, 166, 1),
-          hoverColor: Color.fromRGBO(35, 151, 166, 50),
+          backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
+          hoverColor: const Color.fromRGBO(249, 94, 0, 100),
           foregroundColor: Colors.white,
           label: Text("Novo"),
         ),
@@ -432,7 +432,10 @@ class _ListaHospedagemDiaState extends State<ListaHospedagemDia> {
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => DetalheHospedagem(
-                  idHospedagem: hospedagen[index].id, pendente: pendente)));
+                    idHospedagem: hospedagen[index].id,
+                    pendente: pendente,
+                    status: hospedagen[index].status.toString(),
+                  )));
         });
   }
 

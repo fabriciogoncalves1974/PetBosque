@@ -130,6 +130,7 @@ class _NovoPlanoState extends State<NovoPlano> {
                   menssagem = value;
                   setState(() {
                     showDialog(
+                        barrierDismissible: false,
                         context: context,
                         builder: (context) {
                           Future.delayed(const Duration(seconds: 2), () {
@@ -163,8 +164,8 @@ class _NovoPlanoState extends State<NovoPlano> {
               }
             },
             icon: const Icon(Icons.save),
-            backgroundColor: Color.fromRGBO(35, 151, 166, 1),
-            hoverColor: Color.fromRGBO(35, 151, 166, 50),
+            backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
+            hoverColor: const Color.fromRGBO(249, 94, 0, 100),
             foregroundColor: Colors.white,
             label: Text("Salvar"),
           ),
@@ -392,6 +393,7 @@ class _NovoPlanoState extends State<NovoPlano> {
   Future<bool> _retornaPop(BuildContext context) {
     if (_planoEditado) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             return AlertDialog(

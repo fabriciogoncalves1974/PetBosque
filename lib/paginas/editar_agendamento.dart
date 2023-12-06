@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
@@ -69,6 +68,7 @@ class _EditarAgendamentoState extends State<EditarAgendamento> {
   bool _agendamentoEditado = false;
   String data = DateFormat("dd/MM/yyyy").format(DateTime.now());
   String infoValor = "0,00";
+  String menssagem = "";
 
   @override
   void initState() {
@@ -80,12 +80,10 @@ class _EditarAgendamentoState extends State<EditarAgendamento> {
     observacaoController.text = _editarAgendamento.observacao.toString();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _dateTime =
-          (DateFormat('dd/MM/yyyy').parse(_editarAgendamento.data.toString()));
-      _dataAgendamento =
-          (DateFormat('dd/MM/yyyy').parse(_editarAgendamento.data.toString()));
+      _dateTime = DateTime.parse(_editarAgendamento.data.toString());
+      _dataAgendamento = DateTime.parse(_editarAgendamento.data.toString());
       _time = TimeOfDay.fromDateTime(
-          DateTime.parse('0000-00-00 ${_editarAgendamento.hora}:00Z'));
+          DateTime.parse('0000-00-00 ${_editarAgendamento.hora}'));
 
       _editarAgendamento.nomeContato =
           _editarAgendamento.nomeContato.toString();
@@ -121,7 +119,6 @@ class _EditarAgendamentoState extends State<EditarAgendamento> {
   late TimeOfDay picked;
   late String hora;
 
-  FirebaseFirestore db = FirebaseFirestore.instance;
   void _executaFuncoes() {
     _editarCheck();
     _total();
@@ -262,7 +259,7 @@ class _EditarAgendamentoState extends State<EditarAgendamento> {
       //_editarAgendamento.svTransporte = transporte;
       _editarAgendamento.valorTransporte = vTransporte;
       _editarAgendamento.valorTotal = valor;
-      _editarAgendamento.data = DateFormat("dd/MM/yyyy").format(_dateTime);
+      _editarAgendamento.data = DateFormat("yyyy-MM-dd").format(_dateTime);
       _editarAgendamento.hora = _time.format(context);
       _editarAgendamento.status = status;
     });
@@ -305,57 +302,42 @@ class _EditarAgendamentoState extends State<EditarAgendamento> {
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
-              _editarAgendamento.planoVencido = planoVencido;
-              //info.salvarAgendamento(_editarAgendamento);
               _executaFuncoes();
-              String id = _editarAgendamento.id.toString();
-              db.collection("agendamentos").doc(id).set({
-                "idAgendamento": id,
-                "idPet": _editarAgendamento.idPet,
-                "nomeContato": _editarAgendamento.nomeContato,
-                "fotoPet": _editarAgendamento.fotoPet,
-                "nomePet": _editarAgendamento.nomePet,
-                "data": _editarAgendamento.data,
-                "hora": _editarAgendamento.hora,
-                "svBanho": _editarAgendamento.svBanho,
-                "valorBanho": _editarAgendamento.valorBanho,
-                "svTosa": _editarAgendamento.svTosa,
-                "valorTosa": _editarAgendamento.valorTosa,
-                "svCorteUnha": _editarAgendamento.svCorteUnha,
-                "valorCorteUnha": _editarAgendamento.valorCorteUnha,
-                "svHidratacao": _editarAgendamento.svHidratacao,
-                "valorHidratacao": _editarAgendamento.valorHidratacao,
-                "svTosaHigienica": _editarAgendamento.svTosaHigienica,
-                "valorTosaHigienica": _editarAgendamento.valorTosaHigienica,
-                "svPintura": _editarAgendamento.svPintura,
-                "valorPintura": _editarAgendamento.valorPintura,
-                "svHospedagem": _editarAgendamento.svHospedagem,
-                "valorHospedagem": _editarAgendamento.valorHospedagem,
-                "svTransporte": _editarAgendamento.svTransporte,
-                "valorTransporte": _editarAgendamento.valorTransporte,
-                "valorAdicional": _editarAgendamento.valorAdicional,
-                "valorTotal": _editarAgendamento.valorTotal,
-                "observacao": _editarAgendamento.observacao,
-                "status": _editarAgendamento.status,
-                "colaborador": _editarAgendamento.colaborador,
-                "idColaborador": _editarAgendamento.idColaborador,
-                "idParticipante": _editarAgendamento.id,
-                "participante": _editarAgendamento.participante,
-                "planoVencido": _editarAgendamento.planoVencido
+              _editarAgendamento.planoVencido = planoVencido;
+              info.atualizarAgendamentoApi(_editarAgendamento).then((value) {
+                menssagem = value;
+              });
+              setState(() {
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      Future.delayed(const Duration(seconds: 3), () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ListaAgendamentos(
+                                      data: data,
+                                    )));
+                      });
+
+                      return AlertDialog(
+                        content: Text(
+                          menssagem,
+                          style: const TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      );
+                    });
               });
 
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ListaAgendamentos(
-                            data: data,
-                          )));
+              ;
             },
             icon: const Icon(Icons.save),
-            backgroundColor: Color.fromRGBO(35, 151, 166, 1),
-            hoverColor: Color.fromRGBO(35, 151, 166, 50),
-            foregroundColor: Colors.white,
-            label: Text("Alterar"),
+            backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
+            hoverColor: const Color.fromRGBO(249, 94, 0, 100),
+            label: const Text("Alterar"),
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(10.0),
@@ -941,7 +923,7 @@ class _EditarAgendamentoState extends State<EditarAgendamento> {
                             width: 150,
                           ),
                           child: Text(
-                            "R\$ ${_editarAgendamento.valorTotal!.toStringAsFixed(2)}",
+                            "R\$ ${_editarAgendamento.valorTotal!.toString()}",
                             textAlign: TextAlign.center,
                             style: const TextStyle(height: 2, fontSize: 20),
                           ),
@@ -982,6 +964,7 @@ class _EditarAgendamentoState extends State<EditarAgendamento> {
   Future<bool> _retornaPop(BuildContext context) {
     if (_agendamentoEditado) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             return AlertDialog(

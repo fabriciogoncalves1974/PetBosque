@@ -110,8 +110,8 @@ class _ListaRacaState extends State<ListaRaca> {
                 MaterialPageRoute(builder: (context) => NovaRaca()));
           },
           icon: const Icon(Icons.add),
-          backgroundColor: const Color.fromRGBO(35, 151, 166, 1),
-          hoverColor: const Color.fromRGBO(35, 151, 166, 50),
+          backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
+          hoverColor: const Color.fromRGBO(249, 94, 0, 100),
           foregroundColor: Colors.white,
           label: const Text("Novo"),
         ),
@@ -146,6 +146,7 @@ class _ListaRacaState extends State<ListaRaca> {
               caption: 'Excluir',
               onTap: () {
                 showDialog(
+                    barrierDismissible: false,
                     context: context,
                     builder: (context) {
                       return AlertDialog(
@@ -259,6 +260,7 @@ class _ListaRacaState extends State<ListaRaca> {
 
       setState(() {
         showDialog(
+            barrierDismissible: false,
             context: context,
             builder: (context) {
               return AlertDialog(

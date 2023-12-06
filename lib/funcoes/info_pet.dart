@@ -240,9 +240,9 @@ class InfoPet {
     return primeiroPet;
   }
 
-  Future<List<Pet>> pesquisarPetApi(String teclado) async {
+  Future<List<Pet>> pesquisarTodosPetApi(String teclado) async {
     final url = Uri.http(
-        'fb.servicos.ws', '/petBosque/pet/pesquisa/$teclado', {'q': '{http}'});
+        'fb.servicos.ws', '/petBosque/pet/pesquisar/$teclado', {'q': '{http}'});
 
     final response = await http.get(url);
     final map = await jsonDecode(response.body);
@@ -465,135 +465,6 @@ class InfoPet {
 
     return retorno;
   }
-
-//=========================================================================
-
-  //FUNÇÕES FIRESTORE
-/*
-  Future<List> obterTodosPetFirestore() async {
-    CollectionReference petCollection =
-        FirebaseFirestore.instance.collection('pet');
-    var result =
-        await petCollection.orderBy('nomePet').orderBy('nomePlano').get();
-    return result.docs
-        .map((doc) => Pet(
-            id: doc['idPet'],
-            idContato: doc['idContato'],
-            nomePet: doc['nomePet'],
-            raca: doc['raca'],
-            peso: doc['peso'],
-            genero: doc['genero'],
-            dtNasc: doc['dtNasc'],
-            especie: doc['especie'],
-            cor: doc['cor'],
-            foto: doc['foto'],
-            nomeContato: doc['nomeContato'],
-            nomePlano: doc['nomePlano'],
-            idPlano: doc['idPlano'],
-            dataContrato: doc['dataContrato'],
-            dataCadastro: doc['dataCadastro'],
-            valorPlano: doc['valorPlano'],
-            porte: doc['porte'],
-            planoVencido: doc['planoVencido'],
-            contaPlano: doc['contaPlano']))
-        .toList();
-  }
-
-  Future<List> obterTodosPetContatoFirestore(String id) async {
-    CollectionReference petCollection =
-        FirebaseFirestore.instance.collection('pet');
-    var result = await petCollection.where('idContato', isEqualTo: id).get();
-    return result.docs
-        .map((doc) => Pet(
-              id: doc['idPet'],
-              idContato: doc['idContato'],
-              nomePet: doc['nomePet'],
-              raca: doc['raca'],
-              peso: doc['peso'],
-              genero: doc['genero'],
-              dtNasc: doc['dtNasc'],
-              especie: doc['especie'],
-              cor: doc['cor'],
-              foto: doc['foto'],
-              nomeContato: doc['nomeContato'],
-              contaPlano: doc['contaPlano'],
-              nomePlano: doc['nomePlano'],
-              idPlano: doc['idPlano'],
-              dataContrato: doc['dataContrato'],
-              dataCadastro: doc['dataCadastro'],
-              valorPlano: doc['valorPlano'],
-              porte: doc['porte'],
-              planoVencido: doc['planoVencido'],
-            ))
-        .toList();
-  }
-
-  Future<List<Pet>> pesquisarTodosPetFirestore(teclado) async {
-    CollectionReference petCollection =
-        FirebaseFirestore.instance.collection('pet');
-    var result = await petCollection
-        .orderBy('nomePet')
-        .where('nomePet', isGreaterThanOrEqualTo: teclado)
-        .where('nomePet', isLessThan: teclado + 'z')
-        .get();
-    return result.docs
-        .map((doc) => Pet(
-            id: doc['idPet'],
-            idContato: doc['idContato'],
-            nomePet: doc['nomePet'],
-            raca: doc['raca'],
-            peso: doc['peso'],
-            genero: doc['genero'],
-            dtNasc: doc['dtNasc'],
-            especie: doc['especie'],
-            cor: doc['cor'],
-            foto: doc['foto'],
-            nomeContato: doc['nomeContato'],
-            nomePlano: doc['nomePlano'],
-            idPlano: doc['idPlano'],
-            dataContrato: doc['dataContrato'],
-            dataCadastro: doc['dataCadastro'],
-            valorPlano: doc['valorPlano'],
-            porte: doc['porte'],
-            planoVencido: doc['planoVencido'],
-            contaPlano: doc['contaPlano']))
-        .toList();
-  }
-
-  deletarPetFirestore(id) async {
-    CollectionReference planoCollection =
-        FirebaseFirestore.instance.collection('pet');
-    planoCollection.doc(id).delete();
-  }
-
-  Future<List> deletarPetContatoFirestore(String id) async {
-    CollectionReference petCollection =
-        FirebaseFirestore.instance.collection('pet');
-    var result = await petCollection.where('idContato', isEqualTo: id).get();
-    return result.docs
-        .map((doc) => Pet(
-              id: doc['idPet'],
-              idContato: doc['idContato'],
-              nomePet: doc['nomePet'],
-              raca: doc['raca'],
-              peso: doc['peso'],
-              genero: doc['genero'],
-              dtNasc: doc['dtNasc'],
-              especie: doc['especie'],
-              cor: doc['cor'],
-              foto: doc['foto'],
-              nomeContato: doc['nomeContato'],
-              contaPlano: doc['contaPlano'],
-              nomePlano: doc['nomePlano'],
-              idPlano: doc['idPlano'],
-              dataContrato: doc['dataContrato'],
-              dataCadastro: doc['dataCadastro'],
-              valorPlano: doc['valorPlano'],
-              porte: doc['porte'],
-              planoVencido: doc['planoVencido'],
-            ))
-        .toList();
-  }*/
 }
 
 class Pet {

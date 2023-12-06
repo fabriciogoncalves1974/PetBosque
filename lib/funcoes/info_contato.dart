@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
@@ -131,6 +130,25 @@ class InfoContato {
   Future<List> obterTodosClientesApi() async {
     final url = Uri.http(
         'fb.servicos.ws', '/petBosque/clientes/lista', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Contato> listaContato = [];
+
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+      for (Map m in listMap) {
+        listaContato.add(Contato.fromJson(m));
+      }
+    }
+    return listaContato;
+  }
+
+  Future<List<Contato>> pesquisarTodosContatosApi(teclado) async {
+
+    ;
+    final url = Uri.http('fb.servicos.ws',
+        '/petBosque/clientes/pesquisar/$teclado', {'q': '{http}'});
 
     final response = await http.get(url);
     final map = await jsonDecode(response.body);

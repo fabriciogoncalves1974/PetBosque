@@ -6,9 +6,9 @@ import 'package:pet_bosque/funcoes/info_hospedagem.dart';
 import 'package:pet_bosque/paginas/destalhe_hospedagem.dart';
 import 'package:pet_bosque/paginas/editar_hospedagem.dart';
 import 'package:pet_bosque/paginas/inicio.dart';
+import 'package:pet_bosque/paginas/lista_agendamentosPet.dart';
 import 'package:pet_bosque/paginas/lista_colaborador.dart';
 import 'package:pet_bosque/paginas/lista_contato.dart';
-import 'package:pet_bosque/paginas/lista_pet.dart';
 import 'package:pet_bosque/paginas/lista_petHospedagem.dart';
 import 'package:pet_bosque/paginas/lista_planos.dart';
 import 'package:pet_bosque/paginas/principal.dart';
@@ -17,14 +17,19 @@ enum OrderOption { orderaz, orderza }
 
 InfoHospedagem info = InfoHospedagem();
 
-class ListaHospedagem extends StatefulWidget {
-  const ListaHospedagem({Key? key}) : super(key: key);
-
+class ListaHospedagemPet extends StatefulWidget {
+  const ListaHospedagemPet({
+    Key? key,
+    required this.idPet,
+    required this.nomePet,
+  }) : super(key: key);
+  final dynamic idPet;
+  final String nomePet;
   @override
-  State<ListaHospedagem> createState() => _ListaHospedagemState();
+  State<ListaHospedagemPet> createState() => _ListaHospedagemPetState();
 }
 
-class _ListaHospedagemState extends State<ListaHospedagem> {
+class _ListaHospedagemPetState extends State<ListaHospedagemPet> {
   List<Hospedagem> hospedagen = [];
   late String _dataAgendamento;
   DateTime _dateTime = DateTime.now();
@@ -33,16 +38,13 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
   Color corPendente = Colors.yellow;
   Color corCancelado = Colors.red;
   Color corFinalizado = Colors.blue;
-  Color corStatus = const Color.fromRGBO(202, 236, 236, 1);
+  Color corStatus = Color.fromRGBO(202, 236, 236, 1);
   bool loading = true;
-  String statusSelecionado = 'Pendente';
-  late String mensagem;
-  bool vazio = false;
+  String servicoSelecionado = 'Hotel';
 
-  var status = [
-    'Pendente',
-    'Finalizado',
-    'Cancelado',
+  var servico = [
+    'Banho e Tosa',
+    'Hotel',
   ];
 
   paginaInicial() {
@@ -62,7 +64,10 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
 
   paginaPets() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const ListaPet()),
+      MaterialPageRoute(
+          builder: (context) => const Inicio(
+                index: 3,
+              )),
     );
   }
 
@@ -90,32 +95,11 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
     );
   }
 
-  void _showDatePicker(BuildContext context) {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2030),
-    ).then((value) {
-      setState(() {
-        _dataAgendamento = DateFormat("dd/MM/yyyy").format(value!);
-        _dateTime = value;
-        _obterTodasHospedagem(statusSelecionado);
-        loading = false;
-      });
-    });
-  }
-
-  //FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
 
-    setState(() {
-      _dataAgendamento = DateFormat("dd/MM/yyyy").format(_dateTime);
-      _obterTodasHospedagem(statusSelecionado);
-      loading = false;
-    });
+    _obterTodasHospedagem();
   }
 
   @override
@@ -130,38 +114,25 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text(
-            "Hospedagens",
+          title: Text(
+            widget.nomePet,
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.w600,
             ),
           ),
-          centerTitle: true,
-          leading: IconButton(
-            onPressed: () {
-              paginaInicial();
-            },
-            icon: const Icon(Icons.home_outlined),
-          ),
           actions: <Widget>[
-            /* IconButton(
-              onPressed: () {
-                _showDatePicker(context);
-              },
-              icon: const Icon(Icons.calendar_month),
-            ),*/
             DropdownButtonHideUnderline(
               child: DropdownButton2(
-                value: statusSelecionado,
+                value: servicoSelecionado,
                 hint: Text(
-                  statusSelecionado,
+                  servicoSelecionado,
                   style: TextStyle(
                     fontSize: 16,
                     color: Theme.of(context).hintColor,
                   ),
                 ),
-                items: status.map((String items) {
+                items: servico.map((String items) {
                   return DropdownMenuItem(
                       value: items,
                       child: Text(
@@ -173,13 +144,33 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                 }).toList(),
                 onChanged: (String? newValue) {
                   setState(() {
-                    statusSelecionado = newValue!;
-                    _obterTodasHospedagem(statusSelecionado);
+                    servicoSelecionado = newValue!;
+                    if (servicoSelecionado == 'Banho e Tosa') {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ListaAgendamentosPet(
+                                idPet: widget.idPet,
+                                nomePet: widget.nomePet,
+                              )));
+                    }
+                    if (servicoSelecionado == 'Hotel') {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ListaHospedagemPet(
+                                idPet: widget.idPet,
+                                nomePet: widget.nomePet,
+                              )));
+                    }
                   });
                 },
               ),
             )
           ],
+          centerTitle: true,
+          leading: IconButton(
+            onPressed: () {
+              paginaPets();
+            },
+            icon: const Icon(Icons.home_outlined),
+          ),
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
@@ -189,47 +180,16 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
           backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
           hoverColor: const Color.fromRGBO(249, 94, 0, 100),
           foregroundColor: Colors.white,
-          label: const Text("Novo"),
+          label: Text("Novo"),
         ),
         body: !loading
             ? ListView.builder(
                 padding: const EdgeInsets.all(10.0),
                 itemCount: hospedagen.length,
                 itemBuilder: (context, index) {
-                  if (vazio == true) {
-                    return Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              color: const Color.fromRGBO(204, 236, 247, 100),
-                            ),
-                            padding: const EdgeInsets.all(16),
-                            child: const Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "menssagemmmm",
-                                        style: TextStyle(
-                                          color: Color.fromARGB(255, 73, 66, 2),
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ])));
-                  } else {
-                    return _cartaoHospedagem(context, index);
-                  }
+                  return _cartaoHospedagem(context, index);
                 })
-            : const Center(
+            : Center(
                 child: CircularProgressIndicator(
                   color: Colors.greenAccent,
                   backgroundColor: Colors.grey,
@@ -281,61 +241,10 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                   icon: Icons.delete,
                   caption: 'Excluir',
                   onTap: () {
-                    showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text(
-                                "Deseja realmente excluir a hospedagem do Pet  ${hospedagen[index].nomePet}?"),
-                            actions: <Widget>[
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  fixedSize: const Size(120, 50),
-                                  backgroundColor: Colors.redAccent,
-                                  side: const BorderSide(
-                                      width: 3, color: Colors.redAccent),
-                                  elevation: 3,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text(
-                                  "Não",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  fixedSize: const Size(120, 50),
-                                  backgroundColor: Colors.blueAccent,
-                                  side: const BorderSide(
-                                      width: 3, color: Colors.blueAccent),
-                                  elevation: 3,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                ),
-                                onPressed: () {
-                                  info.excluirHospedagemApi(
-                                      hospedagen[index].id!);
-                                  setState(() {
-                                    Navigator.pop(context);
-                                    hospedagen.removeAt(index);
-                                  });
-                                },
-                                child: const Text(
-                                  "Sim",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ],
-                          );
-                        });
+                    // info.deletarHospedagemFirestore(hospedagen[index].id!);
+                    setState(() {
+                      hospedagen.removeAt(index);
+                    });
                   },
                 ),
               ],
@@ -344,6 +253,7 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
                 decoration: BoxDecoration(
                   border: Border(
                     left: BorderSide(
+                      //                   <--- left side
                       color: corStatus,
                       width: 5.0,
                     ),
@@ -520,17 +430,11 @@ class _ListaHospedagemState extends State<ListaHospedagem> {
         });
   }
 
-  Future _obterTodasHospedagem(String status) async {
-    await info
-        .obterTodasHospedagensStatusApi(statusSelecionado)
-        .then((dynamic list) {
+  void _obterTodasHospedagem() {
+    info.obterTodasHospedagensPetApi(widget.idPet).then((dynamic list) {
       setState(() {
         hospedagen = list;
-        if (hospedagen.isEmpty) {
-          vazio = true;
-        } else {
-          vazio = false;
-        }
+        loading = false;
       });
     });
   }

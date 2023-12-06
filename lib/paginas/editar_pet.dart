@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -126,7 +125,7 @@ class _EditarPetState extends State<EditarPet> {
             }),
             title: Text(
               _editarPet.nomePet ?? "",
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color.fromARGB(255, 73, 66, 2),
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
@@ -165,6 +164,7 @@ class _EditarPetState extends State<EditarPet> {
                 });
                 setState(() {
                   showDialog(
+                      barrierDismissible: false,
                       context: context,
                       builder: (context) {
                         Future.delayed(const Duration(seconds: 3), () {
@@ -195,8 +195,8 @@ class _EditarPetState extends State<EditarPet> {
               }
             },
             icon: const Icon(Icons.save),
-            backgroundColor: Color.fromRGBO(35, 151, 166, 1),
-            hoverColor: Color.fromRGBO(35, 151, 166, 50),
+            backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
+            hoverColor: const Color.fromRGBO(249, 94, 0, 100),
             foregroundColor: Colors.white,
             label: Text("Alterar"),
           ),
@@ -426,6 +426,7 @@ class _EditarPetState extends State<EditarPet> {
                       color: Colors.red,
                       onPressed: () {
                         showDialog(
+                            barrierDismissible: false,
                             context: context,
                             builder: (context) {
                               return AlertDialog(
@@ -766,6 +767,7 @@ class _EditarPetState extends State<EditarPet> {
   Future<bool> _retornaPop(BuildContext context) {
     if (_petEditado) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             return AlertDialog(

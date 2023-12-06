@@ -307,6 +307,23 @@ class InfoHospedagem {
     return listaHospedagem;
   }
 
+  Future<List> obterTodasHospedagensPetApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/hospedagem/pet/$id', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Hospedagem> listaHospedagem = [];
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+
+      for (Map m in listMap) {
+        listaHospedagem.add(Hospedagem.fromJson(m));
+      }
+    }
+    return listaHospedagem;
+  }
+
   Future<List> obterTodasHospedagensStatusApi(String status) async {
     final url = Uri.http('fb.servicos.ws',
         '/petBosque/hospedagem/lista/status/$status', {'q': '{http}'});
@@ -377,10 +394,50 @@ class InfoHospedagem {
     return retorno;
   }
 
+  Future<String> AtualizarHospedagemApi(Hospedagem hospedagem) async {
+    final url = Uri.http('fb.servicos.ws',
+        '/petBosque/hospedagem/update/' + hospedagem.id, {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "PUT",
+        'idPet': hospedagem.idPet.toString(),
+        'adicional': hospedagem.adicional.toString(),
+        'colaborador': hospedagem.colaborador.toString(),
+        'dataCheckIn': hospedagem.dataCheckIn.toString(),
+        'dataCheckOut': hospedagem.dataCheckOut.toString(),
+        'dia': hospedagem.dia.toString(),
+        'fotoPet': hospedagem.fotoPet.toString(),
+        'genero': hospedagem.genero.toString(),
+        'horaCheckIn': hospedagem.horaCheckIn.toString(),
+        'horaCheckOut': hospedagem.horaCheckOut.toString(),
+        'idColaborador': hospedagem.idColaborador.toString(),
+        'nomeContato': hospedagem.nomeContato.toString(),
+        'nomePet': hospedagem.nomePet.toString(),
+        'observacao': hospedagem.observacao.toString(),
+        'porte': hospedagem.porte.toString(),
+        'status': hospedagem.status.toString(),
+        'valorDia': hospedagem.valorDia.toString(),
+        'valorTotal': hospedagem.valorTotal.toString(),
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
   Future<String> atualizarStatusApi(String id, String status,
       String colaborador, String idColaborador) async {
-    final url = Uri.http('fb.servicos.ws', '/petBosque/hospedagem/status/' + id,
-        {'q': '{http}'});
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/hospedagem/status/$id', {'q': '{http}'});
 
     final response = await http.post(
       Uri.parse("$url"),
@@ -403,7 +460,7 @@ class InfoHospedagem {
     return retorno;
   }
 
-  Future<String> excluirPlanoApi(id) async {
+  Future<String> excluirHospedagemApi(id) async {
     final url = Uri.http(
         'fb.servicos.ws',
         // ignore: prefer_interpolation_to_compose_strings

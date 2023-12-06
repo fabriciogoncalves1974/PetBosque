@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart'
     show Sqflite, getDatabasesPath, openDatabase;
@@ -222,191 +221,6 @@ class InfoAgendamento {
     dbAgendamento!.close();
   }
 
-  Future<List> obterTodosAgendamentosFirestore(dataAge) async {
-    CollectionReference agendamentoCollection =
-        FirebaseFirestore.instance.collection('agendamentos');
-    var result = await agendamentoCollection
-        .where('data', isEqualTo: '$dataAge')
-        .where('status', isEqualTo: 'Pendente')
-        .get();
-    return result.docs
-        .map((doc) => Agendamento(
-            idPet: doc['idPet'],
-            nomeContato: doc['nomeContato'],
-            fotoPet: doc['fotoPet'],
-            nomePet: doc['nomePet'],
-            data: doc['data'],
-            hora: doc['hora'],
-            svBanho: doc['svBanho'],
-            valorBanho: doc['valorBanho'],
-            svTosa: doc['svTosa'],
-            valorTosa: doc['valorTosa'],
-            svCorteUnha: doc['svCorteUnha'],
-            valorCorteUnha: doc['valorCorteUnha'],
-            svHidratacao: doc['svHidratacao'],
-            valorHidratacao: doc['valorHidratacao'],
-            svTosaHigienica: doc['svTosaHigienica'],
-            valorTosaHigienica: doc['valorTosaHigienica'],
-            svPintura: doc['svPintura'],
-            valorPintura: doc['valorPintura'],
-            svHospedagem: doc['svHospedagem'],
-            valorHospedagem: doc['valorHospedagem'],
-            svTransporte: doc['svTransporte'],
-            valorTransporte: doc['valorTransporte'],
-            valorAdicional: doc['valorAdicional'],
-            valorTotal: doc['valorTotal'],
-            observacao: doc['observacao'],
-            status: doc['status'],
-            colaborador: doc['colaborador'],
-            idColaborador: doc['idColaborador'],
-            idParticipante: doc['idParticipante'],
-            participante: doc['participante'],
-            planoVencido: doc['planoVencido'],
-            id: doc['idAgendamento']))
-        .toList();
-  }
-
-  Future<List> obterTodosAgendamentosPendentesFirestore() async {
-    CollectionReference agendamentoCollection =
-        FirebaseFirestore.instance.collection('agendamentos');
-    var result = await agendamentoCollection
-        .where('status', isEqualTo: 'Pendente')
-        .get();
-    return result.docs
-        .map((doc) => Agendamento(
-            idPet: doc['idPet'],
-            nomeContato: doc['nomeContato'],
-            fotoPet: doc['fotoPet'],
-            nomePet: doc['nomePet'],
-            data: doc['data'],
-            hora: doc['hora'],
-            svBanho: doc['svBanho'],
-            valorBanho: doc['valorBanho'],
-            svTosa: doc['svTosa'],
-            valorTosa: doc['valorTosa'],
-            svCorteUnha: doc['svCorteUnha'],
-            valorCorteUnha: doc['valorCorteUnha'],
-            svHidratacao: doc['svHidratacao'],
-            valorHidratacao: doc['valorHidratacao'],
-            svTosaHigienica: doc['svTosaHigienica'],
-            valorTosaHigienica: doc['valorTosaHigienica'],
-            svPintura: doc['svPintura'],
-            valorPintura: doc['valorPintura'],
-            svHospedagem: doc['svHospedagem'],
-            valorHospedagem: doc['valorHospedagem'],
-            svTransporte: doc['svTransporte'],
-            valorTransporte: doc['valorTransporte'],
-            valorAdicional: doc['valorAdicional'],
-            valorTotal: doc['valorTotal'],
-            observacao: doc['observacao'],
-            status: doc['status'],
-            colaborador: doc['colaborador'],
-            idColaborador: doc['idColaborador'],
-            idParticipante: doc['idParticipante'],
-            participante: doc['participante'],
-            planoVencido: doc['planoVencido'],
-            id: doc['idAgendamento']))
-        .toList();
-  }
-
-  Future<List> obterAgendamentoDetalheFirestore(id) async {
-    CollectionReference agendamentoCollection =
-        FirebaseFirestore.instance.collection('agendamentos');
-    var result = await agendamentoCollection
-        .where('idAgendamento', isEqualTo: '$id')
-        .get();
-    return result.docs
-        .map((doc) => Agendamento(
-            idPet: doc['idPet'],
-            nomeContato: doc['nomeContato'],
-            fotoPet: doc['fotoPet'],
-            nomePet: doc['nomePet'],
-            data: doc['data'],
-            hora: doc['hora'],
-            svBanho: doc['svBanho'],
-            valorBanho: doc['valorBanho'],
-            svTosa: doc['svTosa'],
-            valorTosa: doc['valorTosa'],
-            svCorteUnha: doc['svCorteUnha'],
-            valorCorteUnha: doc['valorCorteUnha'],
-            svHidratacao: doc['svHidratacao'],
-            valorHidratacao: doc['valorHidratacao'],
-            svTosaHigienica: doc['svTosaHigienica'],
-            valorTosaHigienica: doc['valorTosaHigienica'],
-            svPintura: doc['svPintura'],
-            valorPintura: doc['valorPintura'],
-            svHospedagem: doc['svHospedagem'],
-            valorHospedagem: doc['valorHospedagem'],
-            svTransporte: doc['svTransporte'],
-            valorTransporte: doc['valorTransporte'],
-            valorAdicional: doc['valorAdicional'],
-            valorTotal: doc['valorTotal'],
-            observacao: doc['observacao'],
-            status: doc['status'],
-            colaborador: doc['colaborador'],
-            idColaborador: doc['idColaborador'],
-            idParticipante: doc['idParticipante'],
-            participante: doc['participante'],
-            planoVencido: doc['planoVencido'],
-            id: doc['idAgendamento']))
-        .toList();
-  }
-/*
-  Future<List> obterTodosAgendamentosColaboradorFirestore(id) async {
-    CollectionReference agendamentoCollection =
-        FirebaseFirestore.instance.collection('agendamentos');
-    var result = await agendamentoCollection
-        .where('idColaborador', isEqualTo: '$id')
-        .get();
-    return result.docs
-        .map((doc) => Agendamento(
-            idPet: doc['idPet'],
-            nomeContato: doc['nomeContato'],
-            fotoPet: doc['fotoPet'],
-            nomePet: doc['nomePet'],
-            data: doc['data'],
-            hora: doc['hora'],
-            svBanho: doc['svBanho'],
-            valorBanho: doc['valorBanho'],
-            svTosa: doc['svTosa'],
-            valorTosa: doc['valorTosa'],
-            svCorteUnha: doc['svCorteUnha'],
-            valorCorteUnha: doc['valorCorteUnha'],
-            svHidratacao: doc['svHidratacao'],
-            valorHidratacao: doc['valorHidratacao'],
-            svTosaHigienica: doc['svTosaHigienica'],
-            valorTosaHigienica: doc['valorTosaHigienica'],
-            svPintura: doc['svPintura'],
-            valorPintura: doc['valorPintura'],
-            svHospedagem: doc['svHospedagem'],
-            valorHospedagem: doc['valorHospedagem'],
-            svTransporte: doc['svTransporte'],
-            valorTransporte: doc['valorTransporte'],
-            valorAdicional: doc['valorAdicional'],
-            valorTotal: doc['valorTotal'],
-            observacao: doc['observacao'],
-            status: doc['status'],
-            colaborador: doc['colaborador'],
-            idColaborador: doc['idColaborador'],
-            idParticipante: doc['idParticipante'],
-            participante: doc['participante'],
-            planoVencido: doc['planoVencido'],
-            id: doc['idAgendamento']))
-        .toList();
-  }
-
-  Future<int?> quantidadeAgendamentosColaboradorFirestore(id) async {
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    var qtd = db.collection("contato").count().get();
-    return null;
-  }
-
-  deletarAgendamentoFirestore(id) async {
-    CollectionReference planoCollection =
-        FirebaseFirestore.instance.collection('agendamentos');
-    planoCollection.doc(id).delete();
-  }
-*/
 //=========================================================================
 
   //FUNÇÕES API
@@ -428,9 +242,61 @@ class InfoAgendamento {
     return listaAgendamento;
   }
 
+  Future<List> obterAgendamentosStatusApi(String status) async {
+    final url = Uri.http('fb.servicos.ws',
+        '/petBosque/agendamento/status/$status', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Agendamento> listaAgendamento = [];
+
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+      for (Map m in listMap) {
+        listaAgendamento.add(Agendamento.fromJson(m));
+      }
+    }
+    return listaAgendamento;
+  }
+
+  Future<List> obterAgendamentosDataStatusApi(
+      String data, String status) async {
+    final url = Uri.http('fb.servicos.ws',
+        '/petBosque/agendamento/data/$data/$status', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Agendamento> listaAgendamento = [];
+
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+      for (Map m in listMap) {
+        listaAgendamento.add(Agendamento.fromJson(m));
+      }
+    }
+    return listaAgendamento;
+  }
+
   Future<List> obterTodosAgendamentosColaboradorApi(id) async {
     final url = Uri.http('fb.servicos.ws',
         '/petBosque/agendamento/colaborador/$id', {'q': '{http}'});
+
+    final response = await http.get(url);
+    final map = await jsonDecode(response.body);
+    List<Agendamento> listaAgendamento = [];
+
+    if (map.containsKey("dados") && map["dados"] is List) {
+      List listMap = map["dados"];
+      for (Map m in listMap) {
+        listaAgendamento.add(Agendamento.fromJson(m));
+      }
+    }
+    return listaAgendamento;
+  }
+
+  Future<List> obterTodosAgendamentosPetApi(id) async {
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/agendamento/pet/$id', {'q': '{http}'});
 
     final response = await http.get(url);
     final map = await jsonDecode(response.body);
@@ -594,6 +460,62 @@ class InfoAgendamento {
     return retorno;
   }
 
+  Future<String> atualizarAgendamentoApi(Agendamento agendamento) async {
+    final url = Uri.http(
+        // ignore: prefer_interpolation_to_compose_strings
+        'fb.servicos.ws',
+        '/petBosque/agendamento/update/' + agendamento.id,
+        {'q': '{http}'});
+
+    final response = await http.post(
+      Uri.parse("$url"),
+      body: {
+        "_method": "PUT",
+        "idPet": agendamento.idPet.toString(),
+        "colaborador": agendamento.colaborador.toString(),
+        "data": agendamento.data.toString(),
+        "fotoPet": agendamento.fotoPet.toString(),
+        "hora": agendamento.hora.toString(),
+        "idColaborador": agendamento.idColaborador.toString(),
+        "idParticipante": agendamento.idParticipante.toString(),
+        "participante": agendamento.participante.toString(),
+        "nomeContato": agendamento.nomeContato.toString(),
+        "nomePet": agendamento.nomePet.toString(),
+        "observacao": agendamento.observacao.toString(),
+        "planoVencido": agendamento.planoVencido.toString(),
+        "status": agendamento.status.toString(),
+        "svBanho": agendamento.svBanho.toString(),
+        "svCorteUnha": agendamento.svCorteUnha.toString(),
+        "svHidratacao": agendamento.svHidratacao.toString(),
+        "svHospedagem": agendamento.svHospedagem.toString(),
+        "svPintura": agendamento.svPintura.toString(),
+        "svTosa": agendamento.svTosa.toString(),
+        "svTosaHigienica": agendamento.svTosaHigienica.toString(),
+        "svTransporte": agendamento.svTransporte.toString(),
+        "valorAdicional": agendamento.valorAdicional.toString(),
+        "valorBanho": agendamento.valorBanho.toString(),
+        "valorCorteUnha": agendamento.valorCorteUnha.toString(),
+        "valorHidratacao": agendamento.valorHidratacao.toString(),
+        "valorHospedagem": agendamento.valorHospedagem.toString(),
+        "valorPintura": agendamento.valorPintura.toString(),
+        "valorTosa": agendamento.valorTosa.toString(),
+        "valorTosaHigienica": agendamento.valorTosaHigienica.toString(),
+        "valorTotal": agendamento.valorTotal.toString(),
+        "valorTransporte": agendamento.valorTransporte.toString(),
+      },
+    );
+    String retorno = "";
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      retorno = jsonResponse['dados'];
+    } else {
+      retorno = "Erro na requisição: ${response.statusCode}";
+    }
+
+    return retorno;
+  }
+
   Future<String> excluirPlanoApi(id) async {
     final url = Uri.http(
         'fb.servicos.ws',
@@ -626,8 +548,8 @@ class InfoAgendamento {
       String idColaborador,
       String participante,
       String idParticipante) async {
-    final url = Uri.http('fb.servicos.ws',
-        '/petBosque/agendamento/status/' + id, {'q': '{http}'});
+    final url = Uri.http(
+        'fb.servicos.ws', '/petBosque/agendamento/status/$id', {'q': '{http}'});
 
     final response = await http.post(
       Uri.parse("$url"),
@@ -654,7 +576,7 @@ class InfoAgendamento {
 
   Future<String> atualizaPlanoVencidoApi(String id, String planoVencido) async {
     final url = Uri.http('fb.servicos.ws',
-        '/petBosque/agendamento/planoVencido/' + id, {'q': '{http}'});
+        '/petBosque/agendamento/planoVencido/$id', {'q': '{http}'});
 
     final response = await http.post(
       Uri.parse("$url"),

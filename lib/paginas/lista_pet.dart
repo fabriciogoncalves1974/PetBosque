@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -131,6 +129,7 @@ class _ListaPetState extends State<ListaPet> {
                     int.parse(pet[index].contaPlano!) > 0) {
                   contadorPlano = pet[index].contaPlano.toString();
                   showDialog(
+                      barrierDismissible: false,
                       context: context,
                       builder: (context) {
                         return AlertDialog(
@@ -195,6 +194,7 @@ class _ListaPetState extends State<ListaPet> {
                     int.parse(pet[index].contaPlano!) == 0) {
                   contadorPlano = pet[index].contaPlano.toString();
                   showDialog(
+                      barrierDismissible: false,
                       context: context,
                       builder: (context) {
                         return AlertDialog(
@@ -301,13 +301,10 @@ class _ListaPetState extends State<ListaPet> {
             ),
           ],
           actions: [
-            GestureDetector(
-              child: Image.file(
-                File(pet[index].foto ?? ""),
-                errorBuilder: (context, error, stackTrace) =>
-                    Image.asset("assets/imagens/pet.png"),
-                fit: BoxFit.cover,
-              ),
+            IconSlideAction(
+              color: Colors.blueAccent,
+              icon: Icons.photo,
+              caption: 'Foto',
               onTap: () {},
             ),
           ],

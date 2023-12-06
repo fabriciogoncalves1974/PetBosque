@@ -1,15 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_pet.dart';
 import 'package:pet_bosque/funcoes/pesquisa_todosPet.dart';
-import 'package:pet_bosque/paginas/detalhe_contato.dart';
+import 'package:pet_bosque/paginas/lista_hospedagemPet.dart';
 
 import 'editar_pet.dart';
 
 enum OrderOption { orderaz, orderza }
+
+enum Options { Add, Edit, Delete, Thankyou }
 
 class ListaTodosPets extends StatefulWidget {
   const ListaTodosPets({Key? key}) : super(key: key);
@@ -19,6 +19,8 @@ class ListaTodosPets extends StatefulWidget {
 }
 
 class _ListaTodosPetsState extends State<ListaTodosPets> {
+  String selected = "Home Page";
+  var appBarHeight = AppBar().preferredSize.height;
   InfoPet info = InfoPet();
   List<Pet> pet = [];
   bool loading = true;
@@ -114,12 +116,12 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
               caption: 'Excluir',
               onTap: () {
                 showDialog(
+                    barrierDismissible: false,
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text("Deseja realmente excluir o Pet  " +
-                            pet[index].nomePet.toString() +
-                            "?"),
+                        title: Text(
+                            "Deseja realmente excluir o Pet  ${pet[index].nomePet}?"),
                         actions: <Widget>[
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -172,13 +174,10 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
             ),
           ],
           actions: [
-            GestureDetector(
-              child: Image.file(
-                File(pet[index].foto ?? ""),
-                errorBuilder: (context, error, stackTrace) =>
-                    Image.asset("assets/imagens/pet.png"),
-                fit: BoxFit.cover,
-              ),
+            IconSlideAction(
+              color: Colors.blueAccent,
+              icon: Icons.photo,
+              caption: 'Foto',
               onTap: () {},
             ),
           ],
@@ -207,6 +206,17 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.list),
+                      color: Colors.blue,
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ListaHospedagemPet(
+                                  idPet: pet[index].id!,
+                                  nomePet: pet[index].nomePet.toString(),
+                                )));
+                      },
                     ),
                   ],
                 ),
@@ -441,10 +451,38 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
         ),
       ),
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                DetalheContato(idContato: pet[index].idContato.toString())));
+        menu();
       },
+    );
+  }
+
+  Padding menu() {
+    return Padding(
+      padding: EdgeInsets.only(right: 20),
+      child: CircleAvatar(
+          backgroundColor: Colors.cyanAccent,
+          child: PopupMenuButton(
+            icon: const Icon(Icons.more_vert_rounded),
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(8),
+              bottomRight: Radius.circular(8),
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+            )),
+            offset: Offset(0.0, appBarHeight),
+            itemBuilder: (ctx) => [
+              _buildPopupMenuItem("Add", Icons.add, Options.Add.index),
+              _buildPopupMenuItem("Edit", Icons.edit, Options.Edit.index),
+              _buildPopupMenuItem(
+                  "Delete", Icons.remove_circle, Options.Delete.index),
+              _buildPopupMenuItem(
+                  "Thankyou", Icons.remove_circle, Options.Thankyou.index),
+            ],
+            onSelected: (value) {
+              _onSelectedItem(value as int);
+            },
+          )),
     );
   }
 
@@ -488,5 +526,45 @@ class _ListaTodosPetsState extends State<ListaTodosPets> {
         break;
     }
     setState(() {});
+  }
+
+  PopupMenuItem _buildPopupMenuItem(
+      String title, IconData iconData, int position) {
+    return PopupMenuItem(
+      value: position,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+              padding: EdgeInsets.all(10),
+              child: Icon(iconData, color: Colors.black)),
+          Text(title),
+        ],
+      ),
+    );
+  }
+
+  _onSelectedItem(int value) {
+    if (value == Options.Add.index) {
+      print("Add Menu Click");
+      setState(() {
+        selected = "Add Page";
+      });
+    } else if (value == Options.Edit.index) {
+      print("Edit Menu Click");
+      setState(() {
+        selected = "Edit Page";
+      });
+    } else if (value == Options.Delete.index) {
+      print("Delete Menu Click");
+      setState(() {
+        selected = "Delete Page";
+      });
+    } else {
+      print("Thank you :)");
+      setState(() {
+        selected = "Thank you :)";
+      });
+    }
   }
 }

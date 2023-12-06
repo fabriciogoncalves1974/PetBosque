@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_bosque/funcoes/info_agendamento.dart';
@@ -267,8 +266,8 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
                           )));
             },
             icon: const Icon(Icons.save),
-            backgroundColor: Color.fromRGBO(35, 151, 166, 1),
-            hoverColor: Color.fromRGBO(35, 151, 166, 50),
+            backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
+            hoverColor: const Color.fromRGBO(249, 94, 0, 100),
             foregroundColor: Colors.white,
             label: Text("Salvar"),
           ),
@@ -867,6 +866,7 @@ class _NovoAgendamentoState extends State<NovoAgendamento> {
   Future<bool> _retornaPop(BuildContext context) {
     if (_agendamentoEditado) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             return AlertDialog(

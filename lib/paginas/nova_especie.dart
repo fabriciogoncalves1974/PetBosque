@@ -76,6 +76,7 @@ class _NovaEspecieState extends State<NovaEspecie> {
                   menssagem = value;
                   setState(() {
                     showDialog(
+                        barrierDismissible: false,
                         context: context,
                         builder: (context) {
                           Future.delayed(const Duration(seconds: 2), () {
@@ -108,8 +109,8 @@ class _NovaEspecieState extends State<NovaEspecie> {
               }
             },
             icon: const Icon(Icons.save),
-            backgroundColor: const Color.fromRGBO(35, 151, 166, 1),
-            hoverColor: const Color.fromRGBO(35, 151, 166, 50),
+            backgroundColor: const Color.fromRGBO(249, 94, 0, 1),
+            hoverColor: const Color.fromRGBO(249, 94, 0, 100),
             foregroundColor: Colors.white,
             label: const Text("Salvar"),
           ),
@@ -147,6 +148,7 @@ class _NovaEspecieState extends State<NovaEspecie> {
   Future<bool> _retornaPop(BuildContext context) {
     if (_especieEditado) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             return AlertDialog(
